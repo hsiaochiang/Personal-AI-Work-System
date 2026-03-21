@@ -10,3 +10,4 @@
 | 2026-03-14 | 長期成果應包含 UI，但第一階段先不做完整介面 | 先把工作流跑通，再設計 UI | 產品方向與階段順序 | `docs/memory/decision-log.md` |
 | 2026-03-14 | V1 採 4 週穩健版 | 先追求可持續使用，再追求更多自動化 | V1 時程與實作順序 | `docs/memory/decision-log.md` |
 | 2026-03-14 | 文件重組到 `docs/` 並導入 copilot-workspace-template | 分離閱讀文件與 workspace 開放檔案 | 專案結構與維護方式 | `docs/memory/decision-log.md` |
+| 2026-03-21 | 專案版控基線採本地 Git + GitHub remote 模式 | 目前已存在本地 Git 倉庫，但尚未設定 GitHub remote；先補齊可安全推送的忽略規則與留痕 | 後續只需補上 remote 並 push，即可完成 GitHub 版控接軌 | `docs/runlog/2026-03-21_README.md` |

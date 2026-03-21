@@ -14,10 +14,11 @@
 
 ## 目前狀態
 
-- Current：S1（2026-03-14）
-- Next：在 VS Code 新 session 中開始執行 Phase 1，手動跑 2 到 3 次真實工作流程
-- Blockers：尚未選定第一個真實驗證專案
+- Current：S1（2026-03-21）
+- Next：補上 GitHub remote 後，於 VS Code 新 session 中開始執行 Phase 1，手動跑 2 到 3 次真實工作流程
+- Blockers：尚未選定第一個真實驗證專案；GitHub remote 尚未建立/綁定
 - Evidence：
   - `docs/roadmap/v1-roadmap.md`
   - `docs/roadmap/project-roadmap.md`
   - `docs/workflows/update-workflow.md`
+  - `docs/runlog/2026-03-21_README.md`
