@@ -15,8 +15,8 @@
 ## 目前狀態
 
 - Current：S1（2026-03-21）
-- Next：補上 GitHub remote 後，於 VS Code 新 session 中開始執行 Phase 1，手動跑 2 到 3 次真實工作流程
-- Blockers：尚未選定第一個真實驗證專案；GitHub remote 尚未建立/綁定
+- Next：確認 GitHub repository 可存取後，完成首次 push，接著於 VS Code 新 session 中開始執行 Phase 1，手動跑 2 到 3 次真實工作流程
+- Blockers：尚未選定第一個真實驗證專案；GitHub repository 尚未建立、名稱不一致，或目前帳號無權限存取
 - Evidence：
   - `docs/roadmap/v1-roadmap.md`
   - `docs/roadmap/project-roadmap.md`
