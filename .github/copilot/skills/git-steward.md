@@ -30,6 +30,12 @@
 - 至少一人 review（或自己用 checklist 自審）
 - 合併前確認 smoke test 通過
 
+## Template File Guard
+- commit 前先檢查 `.github/copilot/template-lock.json` 的 `managed_files`
+- 若本次變更包含 managed files，先明確提醒：這些檔案下次 template upgrade 可能被覆蓋
+- 若 managed files 的修改其實屬於模板缺陷，優先回到上游 template repo 修正
+- protected files 可正常提交，但盡量維持模板提供的欄位與結構
+
 ## Outputs
 - 建議的 git 指令序列
 - commit message（繁中，含 What/Why/Impact/Evidence）

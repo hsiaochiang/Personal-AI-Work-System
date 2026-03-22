@@ -12,6 +12,8 @@
 - 新增或升級 dependency（套件 / 函式庫）
 - 新增或移除頁面路由（navigation route）
 - 變更資料庫 schema 或本地儲存結構
+- 修改 managed files（模板擁有的檔案；下次 upgrade 可能覆蓋）
 
 ## 拆解策略
 - 先把「最短修復」做出來 → 先通過 smoke → 再做重構/美化
+- 若要修改 managed files，先確認是否應回到上游模板修正，而不是只在下游專案局部改動
