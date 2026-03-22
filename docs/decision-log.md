@@ -1,13 +1,8 @@
-# Decision Log（決策索引）
+# Decision Log（決策紀錄）
 
-> 詳細決策請以 `docs/memory/decision-log.md` 為主。此檔保留給 template workflow 快速索引。
+> 所有取捨與規格變更都要留痕（尤其是 Style Freeze / 規範變更）。
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
-| 2026-03-12 | 核心目標定版 | 讓專案從 prompt 管理轉向工作記憶系統 | 整體專案方向 | `docs/memory/decision-log.md` |
-| 2026-03-12 | 第一階段先從 VS Code / Copilot Chat 做 MVP | 最容易取得資料且可先驗證效果 | V1 範圍與資料來源 | `docs/memory/decision-log.md` |
-| 2026-03-12 | 第一階段以專案為核心、採半自動模式 | 兼顧品質與可用性 | 文件結構、流程設計 | `docs/memory/decision-log.md` |
-| 2026-03-14 | 長期成果應包含 UI，但第一階段先不做完整介面 | 先把工作流跑通，再設計 UI | 產品方向與階段順序 | `docs/memory/decision-log.md` |
-| 2026-03-14 | V1 採 4 週穩健版 | 先追求可持續使用，再追求更多自動化 | V1 時程與實作順序 | `docs/memory/decision-log.md` |
-| 2026-03-14 | 文件重組到 `docs/` 並導入 copilot-workspace-template | 分離閱讀文件與 workspace 開放檔案 | 專案結構與維護方式 | `docs/memory/decision-log.md` |
-| 2026-03-21 | 專案版控基線採本地 Git + GitHub remote 模式 | 目前已存在本地 Git 倉庫，但尚未設定 GitHub remote；先補齊可安全推送的忽略規則與留痕 | 後續只需補上 remote 並 push，即可完成 GitHub 版控接軌 | `docs/runlog/2026-03-21_README.md` |
+| 2026-03-22 | 導入 `copilot-workspace-template` v1.3.0 的模板邊界模型 | 需要讓本專案能分辨 managed / protected / init-only 檔案，避免之後升級再把模板檔與專案檔混在一起 | 根目錄新增 `TEMPLATE-FILES.md`，並以 `template-lock.json`、`80-template-boundary.md`、`90-project-custom.md` 作為模板治理基線 | `TEMPLATE-FILES.md` |
+| 2026-03-22 | handoff 與當日 runlog 在 init 後改由本專案自行維護 | `current-task`、`blockers`、當日 runlog 屬短期證據，不適合繼續由模板 seed | 後續模板升級不再補入這些檔案；本 repo 必須自行維護 handoff 與 runlog，並以第二個 commit 收錄這類治理更新 | `docs/handoff/current-task.md` |

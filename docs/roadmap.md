@@ -2,23 +2,23 @@
 
 > 用來回答：「目前在哪個階段？下一步是什麼？」
 
-## 階段
-
-- S0：規劃與骨架建立
-- S1：V1 Phase 1 手動流程跑通
-- S2：V1 Phase 2 半自動提取 MVP
-- S3：V1 Phase 3 真實專案驗證
-- S4：V1 Phase 4 收斂定版
-- S5：V2 輕量 UI 工作台
-- S6：V3 多工具接入
+## 階段（可自行增修）
+- S0：Stitch UI 基準（HTML）
+- S1：Bootstrap workspace（rules/skills）
+- S2：UI/UX 盤點 + Style Freeze
+- S3：OpenSpec 規格（spec→tasks）
+- S4：Implement
+- S5：Bugfix 收斂 + Smoke + 回歸驗證
+- S6：整理投影片素材（分享）
 
 ## 目前狀態
-
 - Current：S1（2026-03-21）
-- Next：確認 GitHub repository 可存取後，完成首次 push，接著於 VS Code 新 session 中開始執行 Phase 1，手動跑 2 到 3 次真實工作流程
-- Blockers：尚未選定第一個真實驗證專案；GitHub repository 尚未建立、名稱不一致，或目前帳號無權限存取
+- Next：完成 template 導入後的 protected / init-only 治理檔回填，接著開始 V1 Phase 1 的真實手動 workflow 驗證
+- Blockers：無
 - Evidence：
-  - `docs/roadmap/v1-roadmap.md`
-  - `docs/roadmap/project-roadmap.md`
-  - `docs/workflows/update-workflow.md`
-  - `docs/runlog/2026-03-21_README.md`
+	- `docs/planning/project-overview.md`
+	- `docs/memory/project-context.md`
+	- `docs/roadmap/project-roadmap.md`
+	- `docs/roadmap/v1-roadmap.md`
+	- `docs/runlog/2026-03-22_README.md`
+	- `docs/decision-log.md`
