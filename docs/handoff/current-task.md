@@ -3,7 +3,7 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: `phase1-entrypoint-guidance-pilot` 第 2 次比較型手動 workflow pilot 實跑與留痕
+- Name: `phase1-entrypoint-guidance-pilot` 第 2 次比較型手動 workflow pilot 收尾完成，等待下一個 Phase 1 決策
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-24
 - Last updated on: 2026-03-24
@@ -11,7 +11,7 @@
 - Branch / worktree: `main`
 
 ## Goal
-- 以第 1 次 pilot 的 QA 發現為基線，完成第 2 次手動 workflow pilot 實跑，驗證入口順序收斂與 `openspec instructions` / `openspec change validate` 指引是否能實際降低啟動摩擦。
+- 以第 1 次 pilot 的 QA 發現為基線，完成第 2 次手動 workflow pilot 的實跑、比較證據、commit / push、main spec sync 與 archive，並為下一個 Phase 1 決策留下可重播基線。
 
 ## Scope
 - In scope: 收斂 `phase1-entrypoint-guidance-pilot` 的 change name、scope、non-scope、acceptance criteria、主要風險與交棒內容；以第 1 次 pilot 的 QA 記錄為基線定義可比較的第 2 次 pilot 驗收方式
@@ -39,17 +39,21 @@
 - 已再次執行 `openspec change validate phase1-entrypoint-guidance-pilot --strict` 與 workspace `--verify-only` smoke，結果皆為 PASS
 - 已完成第 2 次 pilot 的比較型 QA、tasks、runlog、roadmap、UI review 與 UX review 同步
 - 已確認第 2 次 pilot 比第 1 次更順：沒有重演 artifact 反查摩擦與 validate 命令誤判，且入口掃描已收斂到既定順序
+- 已完成第 2 次 pilot 的 scoped commit / push，commit 為 `0d5197d`
+- 已將第 2 次 pilot 的 delta spec 同步到 `openspec/specs/entrypoint-guidance-pilot/spec.md`
+- 已以 `openspec archive phase1-entrypoint-guidance-pilot -y --skip-specs` 成功歸檔為 `2026-03-24-phase1-entrypoint-guidance-pilot`
 
 ## In Progress
-- 等待人工確認是否進入 code review / commit / sync / archive；本次依要求停在 commit 前
+- 等待人工決定是否以兩次 archived pilot 作為 Phase 1 的最小完成線，或再規劃第 3 次 pilot
 
 ## Next Step
-- 先做 code review，確認本次治理證據變更沒有混入 worktree 中與本次 change 無關的既有未提交修改
-- 若 review 無 blocker，再依序進行 commit / sync / archive，並保留第 1 次與第 2 次 pilot 的比較證據鏈
-- 若後續仍要補強入口指引，只能針對比較型 QA 仍留存的最小摩擦點做修正，不把 handoff 模板重寫納入本次 change
+- 以 `openspec/changes/archive/2026-03-24-phase1-single-workflow-pilot/` 與 `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/` 為基線，判斷 Phase 1 是否已滿足「至少 2 次真實 workflow 驗證」
+- 若仍需第 3 次 pilot，只能聚焦在比較型 QA 尚未消除的最小摩擦點，不把 handoff 模板重寫直接併入
+- 若判定 Phase 1 可收斂，下一個 active change 應改為 Phase 2 或明確的新問題，而不是再重做同質 pilot
 
 ## Files Touched
-- `openspec/changes/phase1-entrypoint-guidance-pilot/tasks.md`
+- `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/tasks.md`
+- `openspec/specs/entrypoint-guidance-pilot/spec.md`
 - `docs/qa/2026-03-24_smoke.md`
 - `docs/uiux/2026-03-24_ui-review.md`
 - `docs/uiux/2026-03-24_ux-review.md`
@@ -61,20 +65,21 @@
 
 ## Key Symbols / Entry Points
 - `2026-03-24-phase1-single-workflow-pilot`
-- `phase1-entrypoint-guidance-pilot`
+- `2026-03-24-phase1-entrypoint-guidance-pilot`
 - `openspec instructions proposal --change phase1-entrypoint-guidance-pilot`
 - `openspec instructions specs --change phase1-entrypoint-guidance-pilot`
 - `openspec instructions design --change phase1-entrypoint-guidance-pilot`
 - `openspec instructions tasks --change phase1-entrypoint-guidance-pilot`
 - `openspec change validate phase1-entrypoint-guidance-pilot --strict`
 - `openspec archive phase1-single-workflow-pilot -y --skip-specs`
+- `openspec archive phase1-entrypoint-guidance-pilot -y --skip-specs`
 - `docs/roadmap/v1-roadmap.md`
 - `docs/qa/2026-03-24_smoke.md`
 
 ## Interfaces / Contracts Affected
 - API / schema / types:
 - UI contract / user flow: 第 2 次 pilot 應驗證固定入口順序 `AGENTS.md` → handoff → roadmap → commands 是否足以降低啟動摩擦
-- Config / env / migration: `manual-workflow-pilot` 已同步到 main specs；第一個 pilot 已 archive，下一個 change 可直接建立在 main spec 基線上
+- Config / env / migration: `manual-workflow-pilot` 與 `entrypoint-guidance-pilot` 已同步到 main specs，且兩個 pilot 都已 archive；下一個 change 可直接建立在這兩個基線之上
 
 ## Risks / Watchouts
 - 若第 2 次 pilot 沒有強制留下比較型 QA，仍會退化成單純再跑一次流程，無法證明啟動摩擦是否下降
@@ -82,9 +87,9 @@
 - 若沒有明確鎖定 `openspec instructions` 與 `openspec change validate` 的使用方式，CLI 摩擦可能再次重演
 
 ## Validation Status
-- Commands run: `openspec instructions proposal --change phase1-entrypoint-guidance-pilot`；`openspec instructions specs --change phase1-entrypoint-guidance-pilot`；`openspec instructions design --change phase1-entrypoint-guidance-pilot`；`openspec instructions tasks --change phase1-entrypoint-guidance-pilot`；`openspec change validate phase1-entrypoint-guidance-pilot --strict`；`d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --verify-only --root D:/program/Personal-AI-Work-System`
-- Result: PASS；第 2 次 pilot 已完成比較型 workflow 實跑，artifact 指引、strict validate 與 workspace smoke 皆已留下證據
-- Not run yet: code review、commit / push、active change sync / archive
+- Commands run: `openspec instructions proposal --change phase1-entrypoint-guidance-pilot`；`openspec instructions specs --change phase1-entrypoint-guidance-pilot`；`openspec instructions design --change phase1-entrypoint-guidance-pilot`；`openspec instructions tasks --change phase1-entrypoint-guidance-pilot`；`openspec change validate phase1-entrypoint-guidance-pilot --strict`；`d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --verify-only --root D:/program/Personal-AI-Work-System`；`openspec archive phase1-entrypoint-guidance-pilot -y --skip-specs`
+- Result: PASS；第 2 次 pilot 已完成比較型 workflow 實跑、commit / push、main spec sync 與 archive，artifact 指引、strict validate、workspace smoke 與 archive 均已留下證據
+- Not run yet: Phase 1 是否以兩次 archived pilot 收斂的人工判定
 
 ## Rollback / Recovery Notes
 - 若要回退模板導入內容，可依 git diff 分別撤回 managed 導入 commit 或專案治理回填 commit；不要直接手動刪 template lock
@@ -94,5 +99,6 @@
 
 ## Notes for Next Agent
 - 第 1 次 pilot 已 archived，歷史證據入口為 `openspec/changes/archive/2026-03-24-phase1-single-workflow-pilot/`
-- 第 2 次 pilot 的比較型 QA 已寫入 `docs/qa/2026-03-24_smoke.md`，不要再重做一次沒有比較基線的同質驗證
-- 若要往下執行，下一步應先做 code review，再決定是否 commit / sync / archive `phase1-entrypoint-guidance-pilot`
+- 第 2 次 pilot 也已 archived，歷史證據入口為 `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/`
+- 比較型 QA 已寫入 `docs/qa/2026-03-24_smoke.md`，不要再重做一次沒有比較基線的同質驗證
+- 若要往下執行，下一步應是判斷 Phase 1 是否已達成最小完成線，或另開更小範圍的第 3 次 pilot

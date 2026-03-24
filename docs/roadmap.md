@@ -13,7 +13,7 @@
 
 ## 目前狀態
 - Current：S4（2026-03-24）
-- Next：完成 `phase1-entrypoint-guidance-pilot` 的 code review，若無 blocker 再進入 commit / sync / archive 收尾
+- Next：依兩次 archived pilot 的證據，決定是關閉 Phase 1 還是再規劃第 3 次更小範圍的 pilot
 - Blockers：無
 - Evidence：
 	- `docs/planning/project-overview.md`
@@ -25,7 +25,9 @@
 	- `docs/qa/2026-03-24_smoke.md`
 	- `docs/uiux/2026-03-24_ui-review.md`
 	- `docs/uiux/2026-03-24_ux-review.md`
+	- `openspec/specs/entrypoint-guidance-pilot/spec.md`
 	- `openspec/specs/manual-workflow-pilot/spec.md`
 
 ## 階段轉換記錄
 - 2026-03-24：`phase1-entrypoint-guidance-pilot` 已完成第 2 次比較型 pilot、strict validate 與 workspace smoke，roadmap 狀態由 S3 推進到 S4，待 code review / commit / sync / archive 收尾
+- 2026-03-24：`phase1-entrypoint-guidance-pilot` 已完成 commit / push、main spec sync 與 archive；目前等待依兩次 archived pilot 決定 Phase 1 是否收斂或繼續第 3 次 pilot
