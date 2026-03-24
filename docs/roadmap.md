@@ -12,8 +12,8 @@
 - S6：整理投影片素材（分享）
 
 ## 目前狀態
-- Current：S3（2026-03-24）
-- Next：以 `phase1-entrypoint-guidance-pilot` 作為第 2 次手動 workflow pilot 的 change，聚焦驗證入口順序收斂與 `openspec instructions` 提示補強是否降低啟動摩擦
+- Current：S4（2026-03-24）
+- Next：完成 `phase1-entrypoint-guidance-pilot` 的 code review，若無 blocker 再進入 commit / sync / archive 收尾
 - Blockers：無
 - Evidence：
 	- `docs/planning/project-overview.md`
@@ -23,4 +23,9 @@
 	- `docs/runlog/2026-03-24_README.md`
 	- `docs/decision-log.md`
 	- `docs/qa/2026-03-24_smoke.md`
+	- `docs/uiux/2026-03-24_ui-review.md`
+	- `docs/uiux/2026-03-24_ux-review.md`
 	- `openspec/specs/manual-workflow-pilot/spec.md`
+
+## 階段轉換記錄
+- 2026-03-24：`phase1-entrypoint-guidance-pilot` 已完成第 2 次比較型 pilot、strict validate 與 workspace smoke，roadmap 狀態由 S3 推進到 S4，待 code review / commit / sync / archive 收尾
