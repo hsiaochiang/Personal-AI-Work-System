@@ -12,8 +12,8 @@
 - S6：整理投影片素材（分享）
 
 ## 目前狀態
-- Current：S4（2026-03-24）
-- Next：完成本次 pilot 的 scoped commit / push 後，評估是否執行 sync / archive；若暫不收尾，將以本次 pilot 證據作為基線啟動第 2 次手動 workflow 驗證
+- Current：S3（2026-03-24）
+- Next：以 `phase1-entrypoint-guidance-pilot` 作為第 2 次手動 workflow pilot 的 change，聚焦驗證入口順序收斂與 `openspec instructions` 提示補強是否降低啟動摩擦
 - Blockers：無
 - Evidence：
 	- `docs/planning/project-overview.md`
@@ -23,4 +23,4 @@
 	- `docs/runlog/2026-03-24_README.md`
 	- `docs/decision-log.md`
 	- `docs/qa/2026-03-24_smoke.md`
-	- `openspec/changes/phase1-single-workflow-pilot/proposal.md`
+	- `openspec/specs/manual-workflow-pilot/spec.md`
