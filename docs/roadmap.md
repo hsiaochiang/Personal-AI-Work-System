@@ -12,13 +12,15 @@
 - S6：整理投影片素材（分享）
 
 ## 目前狀態
-- Current：S1（2026-03-21）
-- Next：完成 template 導入後的 protected / init-only 治理檔回填，接著開始 V1 Phase 1 的真實手動 workflow 驗證
+- Current：S4（2026-03-24）
+- Next：完成本次 pilot 的 scoped commit / push 後，評估是否執行 sync / archive；若暫不收尾，將以本次 pilot 證據作為基線啟動第 2 次手動 workflow 驗證
 - Blockers：無
 - Evidence：
 	- `docs/planning/project-overview.md`
 	- `docs/memory/project-context.md`
 	- `docs/roadmap/project-roadmap.md`
 	- `docs/roadmap/v1-roadmap.md`
-	- `docs/runlog/2026-03-22_README.md`
+	- `docs/runlog/2026-03-24_README.md`
 	- `docs/decision-log.md`
+	- `docs/qa/2026-03-24_smoke.md`
+	- `openspec/changes/phase1-single-workflow-pilot/proposal.md`

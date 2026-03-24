@@ -13,6 +13,16 @@
 - Initialize dev environment: 先閱讀 `README.md`、`docs/planning/project-overview.md`、`docs/agents/project-context.md`，再確認 `docs/handoff/current-task.md`
 - Database / local services: 無
 
+## OpenSpec CLI
+- Install prerequisite: 若要在本機執行 OpenSpec CLI，需先安裝 Node.js 與 npm；若只使用 agent workflow 與 `openspec/` 目錄結構，可先不安裝
+- Install globally: `npm install -g @fission-ai/openspec`
+- Install specific latest tested version: `npm install -g @fission-ai/openspec@1.2.0`
+- One-off usage: `npx @fission-ai/openspec --version`
+- Verify install: `openspec --version`
+- Strict validate example: `openspec change validate "<change-name>" --strict`
+- Official source: `https://www.npmjs.com/package/@fission-ai/openspec`
+- Upstream repository: `https://github.com/Fission-AI/OpenSpec`
+
 ## Daily Commands
 - Dev server: 無；目前不是執行型 app
 - Lint: 無正式 lint；文件變更以人工審閱與結構一致性為主
@@ -56,6 +66,8 @@
 - Small change: 至少同步 handoff / runlog 或對應證據，並跑 template verify 或等價 smoke
 - Medium change: 檢查 roadmap / decision-log / current-task 一致性，再跑 targeted verify
 - High-risk change: 補充人工 walkthrough，確認模板邊界、handoff 可接手性與主要記憶入口未被破壞
+- 若本次 change 需要在本機執行 OpenSpec strict validate，先確認 `openspec --version` 可用；若未安裝，可先用 `npx @fission-ai/openspec --version` 驗證是否能執行，再決定是否全域安裝
+- active change 的 strict validate 以 `openspec change validate "<change-name>" --strict` 為準，不使用 `openspec validate` 縮寫形式
 
 ## Notes
 - 新增或變更命令時，同步更新本檔
@@ -63,3 +75,4 @@
 - 若要修改模板檔案，先看根目錄 `TEMPLATE-FILES.md`；managed files 應優先回到 template repo 修正
 - 若要補專案特定規則，優先使用 `.github/copilot/rules/90-project-custom.md`，不要直接改 managed rules
 - 目前 repo 仍處於 docs-first / workflow-first 階段，若未來加入可執行程式碼，再補 lint / test / build 指令
+- OpenSpec CLI 目前屬可選工具，不是所有協作流程的必備前置；只有在本機要執行 strict validate 時才需要安裝

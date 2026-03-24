@@ -3,87 +3,94 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: 模板導入後的治理骨架回填與提交拆分
+- Name: `phase1-single-workflow-pilot` 單次手動 workflow pilot 執行與留痕
 - Owner agent: GitHub Copilot
-- Started on: 2026-03-21
-- Last updated on: 2026-03-22
-- Related issue / spec: `copilot-workspace-template` v1.3.0 套用與治理收斂
+- Started on: 2026-03-24
+- Last updated on: 2026-03-24
+- Related issue / spec: V1 Phase 1 手動 workflow 驗證
 - Branch / worktree: `main`
 
 ## Goal
-- 讓本專案在導入最新版模板後，保留模板邊界帶來的升級能力，同時把 protected / init-only 檔補成專案真實內容，避免後續 agent 仍讀到模板骨架。
+- 用本 repo 既有治理檔與 OpenSpec 流程，完成 1 次可追溯、可重播的手動 workflow pilot，並把實際摩擦與最小修補寫回 repo。
 
 ## Scope
-- In scope: 回填 `docs/agents/project-context.md`、`docs/agents/commands.md`、`docs/decision-log.md`、`docs/roadmap.md`、handoff、runlog 與 `.github/copilot/rules/90-project-custom.md`
-- Out of scope: 新增執行型 app、導入新 dependency、開始實作 V1 半自動提取或 UI
+- In scope: 建立 `phase1-single-workflow-pilot` 的 OpenSpec artifacts、執行一次真實手動 workflow、回填 handoff / runlog / roadmap / QA / 專案記憶、記錄摩擦點與最小必要修正
+- Out of scope: 正式 UI、多工具同步、半自動提取 MVP、向量資料庫、一次完成 2 到 3 次對話驗證、整體模板大改
 
 ## Constraints
-- Technical constraints: 保持模板 managed files 不在下游直接修改；專案事實以 `docs/memory/`、`docs/planning/`、`docs/roadmap/` 既有內容為準
-- Product / UX constraints: 治理檔要能被 WOS / OpenSpec 直接讀懂，不再依賴人工補充說明
+- Technical constraints: 維持 smallest safe change；只修正本次 pilot 直接暴露的流程說明、欄位與使用順序；不改 managed rules
+- Product / UX constraints: pilot 結束後，下一位 agent 應只靠 repo 內現有文件就能接續下一次手動 workflow
 
 ## Implementation Plan
-- Step 1: 接受模板導入成果，確認 managed / protected / init-only 邊界已穩定
-- Step 2: 回填 protected 與 init-only 檔，讓本專案的背景、命令、handoff、runlog 可直接使用
-- Step 3: 將 commit 拆成「模板導入成果」與「專案治理回填」兩組
+- Step 1: 用 OpenSpec CLI 建立 change 骨架，補齊 proposal / design / tasks / delta spec
+- Step 2: 執行 strict validate 與 repo smoke，確認手動 workflow 可被文件重播
+- Step 3: 將摩擦點、可用入口與最小修正寫回 governance、QA 與 memory
 
 ## Done
-- 已將 `copilot-workspace-template` v1.3.0 套用到本 repo，並取得 `AGENTS.md`、多 agent 入口、`TEMPLATE-FILES.md`、`template-lock.json`、`80-template-boundary.md`、`90-project-custom.md`
-- 已確認 `docs/handoff/current-task.md`、`docs/handoff/blockers.md` 屬 init-only，後續不再由 template upgrade 持續補入
-- 已回填 `docs/agents/project-context.md`、`docs/agents/commands.md`、`docs/decision-log.md`、`docs/roadmap.md`、handoff 與當日 runlog，讓治理檔脫離模板占位狀態
-- 已重新執行 target repo `--verify-only`，確認回填後的治理檔仍通過模板安裝檢查
-- 已依「模板導入成果 / 專案治理回填」兩組提交策略完成 commit 與 push，保留升級邊界可追溯性
+- 已確認本機 `openspec` CLI 可用，版本為 `1.2.0`
+- 已用 OpenSpec CLI 建立 `openspec/changes/phase1-single-workflow-pilot/` 骨架
+- 已補齊 proposal、design、tasks 與 delta spec，讓第一個 change 可被 strict validate
+- 已完成 1 次真實手動 workflow pilot 的治理留痕，包含 handoff、runlog、QA、UI/UX review 與專案記憶更新
+- 已記錄本次 pilot 的實際摩擦點、未使用欄位與最小修正建議
+- 已依 Review Gate 建議修正 `docs/agents/commands.md` 的 strict validate 命令入口，解除主要 replayability blocker
 
 ## In Progress
-- 無
+- 依已通過的 Gate 結論執行本次 pilot 的 scoped commit / push，完成後再決定是否 sync / archive
 
 ## Next Step
-- 後續若要開始 Phase 1 workflow 驗證，應先以本 repo 已回填的 project-context、commands、handoff 作為真實入口，不再回頭依賴模板占位內容
+- 完成本次 pilot 的 scoped commit / push，避免混入 worktree 內其他無關變更
+- commit / push 後，評估是否將本次 change sync / archive
+- 若先不做不可逆操作，下一位 agent 可直接依本次 artifacts 與 QA 紀錄啟動第 2 次手動 workflow 驗證
+- 第 2 次 pilot 應優先驗證這次列出的摩擦點是否已明顯下降，不要擴大到 Phase 2 自動化
 
 ## Files Touched
-- `AGENTS.md`
-- `.github/copilot-instructions.md`
-- `.github/copilot/rules/80-template-boundary.md`
-- `.github/copilot/rules/90-project-custom.md`
-- `.github/copilot/template-lock.json`
-- `TEMPLATE-FILES.md`
-- `docs/agents/project-context.md`
+- `openspec/changes/phase1-single-workflow-pilot/.openspec.yaml`
+- `openspec/changes/phase1-single-workflow-pilot/README.md`
+- `openspec/changes/phase1-single-workflow-pilot/proposal.md`
+- `openspec/changes/phase1-single-workflow-pilot/design.md`
+- `openspec/changes/phase1-single-workflow-pilot/tasks.md`
+- `openspec/changes/phase1-single-workflow-pilot/specs/manual-workflow-pilot/spec.md`
 - `docs/agents/commands.md`
 - `docs/decision-log.md`
 - `docs/roadmap.md`
 - `docs/handoff/current-task.md`
 - `docs/handoff/blockers.md`
-- `docs/runlog/2026-03-22_README.md`
+- `docs/runlog/2026-03-24_README.md`
+- `docs/qa/2026-03-24_smoke.md`
+- `docs/uiux/2026-03-24_ui-review.md`
+- `docs/uiux/2026-03-24_ux-review.md`
+- `docs/memory/task-patterns.md`
 
 ## Key Symbols / Entry Points
-- `TEMPLATE-FILES.md`
-- `.github/copilot/template-lock.json`
-- `.github/copilot/rules/90-project-custom.md`
+- `phase1-single-workflow-pilot`
+- `openspec change validate phase1-single-workflow-pilot --strict`
+- `docs/roadmap/v1-roadmap.md`
 - `docs/agents/project-context.md`
 - `docs/agents/commands.md`
 
 ## Interfaces / Contracts Affected
 - API / schema / types:
-- UI contract / user flow: WOS / OpenSpec 之後應從本 repo 的 project-context、commands、handoff 與 runlog 直接得到正確背景，而不是看到模板占位內容
-- Config / env / migration: 模板邊界採 managed / protected / init-only；handoff 在 init 後改由本 repo 自維，`90-project-custom.md` 作為專案自訂規則入口
+- UI contract / user flow: 第一次 pilot 已確認流程入口以 `AGENTS.md`、handoff、roadmap、project-context、commands 組合最可重播；結尾需同步 QA、runlog 與至少一份專案記憶
+- Config / env / migration: 本 repo 現可用 OpenSpec CLI 驗證 active change；未引入新 runtime、無 migration
 
 ## Risks / Watchouts
-- 若下次直接改 managed files，模板升級可能覆蓋本地修補
-- 目前尚無 automated tests；若治理檔再次失真，問題會先反映在 agent 行為與 handoff 品質上
-- commit 時需避免把模板導入成果與專案治理回填混成單一 commit，否則後續很難判讀升級影響
+- 若第一個 change 同時要求 2 到 3 次對話驗證，會把 pilot、比較與模板收斂混成一個範圍過大的 change
+- 若 pilot 沒有明確要求證據鏈，最後可能只留下主觀感受，無法判定 workflow 是否真的可重播
+- 單次 pilot 只能證明流程可跑通，不能代表整個 Phase 1 已完成
+- commit / push / archive 屬不可逆操作，仍需人工確認後再執行
 
 ## Validation Status
-- Commands run: `d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --upgrade-preview --root D:/program/Personal-AI-Work-System`；`d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --upgrade --root D:/program/Personal-AI-Work-System`；`d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --verify-only --root D:/program/Personal-AI-Work-System`
-- Result: PASS；模板邊界已生效，`current-task` / `blockers` 不再被列為 protected missing，回填後的治理檔也未破壞模板安裝檢查；提交已拆成模板導入與專案治理回填兩組並推送到 `origin/main`
-- Not run yet: Phase 1 workflow 實際操作驗證
+- Commands run: `openspec new change phase1-single-workflow-pilot --description "以一次完整、真實、手動的 workflow 驗證作為第一個 Phase 1 pilot"`；`openspec instructions proposal --change phase1-single-workflow-pilot`；`openspec instructions specs --change phase1-single-workflow-pilot`；`openspec instructions design --change phase1-single-workflow-pilot`；`openspec change validate phase1-single-workflow-pilot --strict`；`d:/program/copilot-workspace-template/.venv/Scripts/python.exe D:/program/copilot-workspace-template/bootstrap_copilot_workspace.py --verify-only --root D:/program/Personal-AI-Work-System`
+- Result: PASS；active change strict validate 與 repo smoke 均通過，且已留下可重播的 pilot 證據鏈。Review Gate 指出的主要 blocker 已透過修正 `docs/agents/commands.md` 解除
+- Not run yet: sync / archive
 
 ## Rollback / Recovery Notes
 - 若要回退模板導入內容，可依 git diff 分別撤回 managed 導入 commit 或專案治理回填 commit；不要直接手動刪 template lock
 
 ## Pending Decisions
-- 何時開始 Phase 1 的真實 workflow 驗證
-- 是否要補一份本專案自己的 `docs/qa/` smoke 範本，作為之後每次治理調整的固定驗證清單
+- 是否在 commit / push 後立刻 sync / archive 本次 change
 
 ## Notes for Next Agent
-- 若接手後要升級模板，先看 `TEMPLATE-FILES.md` 判斷邊界，再保留本 repo 已回填的 protected / init-only 內容
-- 若只是調整本專案的合作規則，優先寫 `.github/copilot/rules/90-project-custom.md`，不要改 managed rules
-- 本輪模板導入與治理回填已完成並推上遠端；目前不建議把 `README.md`、`docs/planning/project-overview.md`、`docs/runlog/2026-03-21_README.md` 混入同一條治理提交線
+- 本次 pilot 的主要證據入口是 `openspec/changes/phase1-single-workflow-pilot/`、`docs/qa/2026-03-24_smoke.md`、`docs/runlog/2026-03-24_README.md`
+- 若要啟動下一次手動 workflow，先讀 QA 的摩擦紀錄，再依 current-task 的 Next Step 接續
+- 若要正式收尾，先取得人工對 commit / push / archive 的確認
