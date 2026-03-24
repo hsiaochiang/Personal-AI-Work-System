@@ -3,7 +3,7 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: `phase1-entrypoint-guidance-pilot` 第 2 次比較型手動 workflow pilot 收尾完成，等待下一個 Phase 1 決策
+- Name: Phase 1 收斂 review 完成，暫不需要第 3 次同質 manual workflow pilot
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-24
 - Last updated on: 2026-03-24
@@ -11,7 +11,7 @@
 - Branch / worktree: `main`
 
 ## Goal
-- 以第 1 次 pilot 的 QA 發現為基線，完成第 2 次手動 workflow pilot 的實跑、比較證據、commit / push、main spec sync 與 archive，並為下一個 Phase 1 決策留下可重播基線。
+- 以兩次 archived pilot 與比較型 QA 為基線，判定 Phase 1 是否已達到最小完成線，並避免在沒有新摩擦假設時重做第 3 次同質 pilot。
 
 ## Scope
 - In scope: 收斂 `phase1-entrypoint-guidance-pilot` 的 change name、scope、non-scope、acceptance criteria、主要風險與交棒內容；以第 1 次 pilot 的 QA 記錄為基線定義可比較的第 2 次 pilot 驗收方式
@@ -44,12 +44,12 @@
 - 已以 `openspec archive phase1-entrypoint-guidance-pilot -y --skip-specs` 成功歸檔為 `2026-03-24-phase1-entrypoint-guidance-pilot`
 
 ## In Progress
-- 等待人工決定是否以兩次 archived pilot 作為 Phase 1 的最小完成線，或再規劃第 3 次 pilot
+- 等待人工決定是直接關閉 Phase 1，還是轉入下一個非同質 change 的規劃
 
 ## Next Step
-- 以 `openspec/changes/archive/2026-03-24-phase1-single-workflow-pilot/` 與 `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/` 為基線，判斷 Phase 1 是否已滿足「至少 2 次真實 workflow 驗證」
-- 若仍需第 3 次 pilot，只能聚焦在比較型 QA 尚未消除的最小摩擦點，不把 handoff 模板重寫直接併入
-- 若判定 Phase 1 可收斂，下一個 active change 應改為 Phase 2 或明確的新問題，而不是再重做同質 pilot
+- 以 `openspec/changes/archive/2026-03-24-phase1-single-workflow-pilot/` 與 `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/` 作為 Phase 1 基線，準備關閉 Phase 1
+- 若下一步要開新 change，應改為 Phase 2 或新的具體摩擦問題；不要再重做入口順序 / `openspec instructions` / `openspec change validate` 的同質驗證
+- 若有人主張第 3 次 pilot，必須先提出新的具體風險與驗收條件，不能只因 roadmap 寫了 2 到 3 次就機械地補跑
 
 ## Files Touched
 - `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/tasks.md`
@@ -95,10 +95,11 @@
 - 若要回退模板導入內容，可依 git diff 分別撤回 managed 導入 commit 或專案治理回填 commit；不要直接手動刪 template lock
 
 ## Pending Decisions
-- 是否在第 2 次 pilot 後再決定 current-task 某些欄位是否需要結構調整
+- 是否直接以現有兩次 archived pilot 宣告 Phase 1 收斂，並開始規劃 Phase 2 change
 
 ## Notes for Next Agent
 - 第 1 次 pilot 已 archived，歷史證據入口為 `openspec/changes/archive/2026-03-24-phase1-single-workflow-pilot/`
 - 第 2 次 pilot 也已 archived，歷史證據入口為 `openspec/changes/archive/2026-03-24-phase1-entrypoint-guidance-pilot/`
 - 比較型 QA 已寫入 `docs/qa/2026-03-24_smoke.md`，不要再重做一次沒有比較基線的同質驗證
-- 若要往下執行，下一步應是判斷 Phase 1 是否已達成最小完成線，或另開更小範圍的第 3 次 pilot
+- 目前 review 結論為：兩次 archived pilot 已達最小完成線，暫不需要第 3 次同質 pilot
+- 若要往下執行，下一步應是關閉 Phase 1 或規劃 Phase 2 / 新問題的 change
