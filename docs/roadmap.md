@@ -11,16 +11,19 @@
 | S1 | V1 Phase 1 手動流程跑通 | ✅ 收尾 |
 | S2 | V1 Phase 2 半自動提取 MVP | ✅ 已完成（已 sync/archive） |
 | S3 | V1 Phase 3 真實專案驗證 | ✅ 已完成（已 sync/archive） |
-| S4 | V1 Phase 4 收斂定版 | ⬜ |
+| S4 | V1 Phase 4 收斂定版 | ✅ 已完成（已 sync/archive） |
 | S5 | V2 輕量 UI 工作台 | ⬜ |
 | S6 | V3 多工具接入 | ⬜ |
 
 ## 目前狀態
-- Current：S3 已完成收尾（`phase3-real-project-validation` 已 sync/archive）
-- Next：啟動 S4（V1 Phase 4 收斂定版）規劃與 acceptance 定義
+- Current：S4 已完成收尾（`phase4-v1-convergence-finalization` 已 sync/archive）
+- Next：啟動 S5（V2 輕量 UI 工作台）規劃
 - Blockers：無
 
 ## 階段轉換記錄
+- 2026-03-26：`phase4-v1-convergence-finalization` 已完成 archive（`2026-03-25-phase4-v1-convergence-finalization`）
+- 2026-03-26：S4 已完成 `#opsx-sync` 與 strict validate（change/spec 皆 PASS），進入 archive 前最終 Gate 判定
+- 2026-03-25：已建立 S4 active change `phase4-v1-convergence-finalization`（proposal/design/tasks/spec 草案完成）
 - 2026-03-25：`phase3-real-project-validation` 已完成 main spec sync 與 archive（`2026-03-25-phase3-real-project-validation`）
 - 2026-03-25：已建立 S3 active change `phase3-real-project-validation`（proposal/design/tasks/spec 草案完成）
 - 2026-03-25：`phase2-semi-auto-memory-extraction-mvp` 已完成 main spec sync 與 archive（`2026-03-25-phase2-semi-auto-memory-extraction-mvp`）

@@ -3,82 +3,80 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: S3 change 收尾完成：phase3-real-project-validation（已 sync/archive）
+- Name: S4 change 收尾完成：phase4-v1-convergence-finalization（已 sync/archive）
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-25
-- Last updated on: 2026-03-25
-- Related issue / spec: V1 Phase 3 真實專案驗證
+- Last updated on: 2026-03-26
+- Related issue / spec: V1 Phase 4 收斂定版
 - Branch / worktree: `main`
 
 ## Goal
-- 完成 S3 change 收尾（sync + archive）並保持治理文件可追溯。
-- 在不擴張 S2 scope 的前提下，沉澱 S3 主規格與 archive 證據，交棒 S4 規劃。
+- 完成 S4 收斂定版收尾（sync + strict validate + archive）。
+- 將 V1 交接基線固定化，交棒 S5 規劃。
 
 ## Scope
-- In scope: S3 真實專案驗證協議、2 次 run 驗收標準、候選品質與 dedupe 檢核、治理同步規範
-- Out of scope: UI 開發、多工具接入、全自動回寫、S2 契約擴張與資料層重構
+- In scope: S4 convergence 規格、release gate 定義、治理證據收斂、交棒可接續性
+- Out of scope: UI 開發、多工具接入、資料層重構、S2/S3 已封存需求改寫
 
 ## Constraints
 - Technical constraints: 僅做 docs-first 與最小安全修改；沿用 `spec-driven` schema；strict validate 必須 PASS
 - Product / UX constraints: 本次不新增 UI，不做多工具接入，不改既有產品互動層
 
 ## Implementation Plan
-- Step 1: 驗證 phase3 change 可 strict validate（archive 前）
-- Step 2: 執行 `#opsx-sync`，同步 delta spec 到 main spec
-- Step 3: 執行 `#opsx-archive`，完成 change 歸檔
-- Step 4: 同步 roadmap/decision-log/runlog/handoff 證據
+- Step 1: 建立 S4 active change artifacts（proposal/design/tasks/spec）
+- Step 2: 盤點 S1-S3 baseline 與 S4 gate checklist
+- Step 3: 執行 `openspec validate phase4-v1-convergence-finalization --type change --strict`
+- Step 4: 同步 roadmap/decision-log/runlog/handoff/qa 證據
 
 ## Done
-- 已執行 `openspec validate phase3-real-project-validation --type change --strict`（PASS）
-- 已完成 `#opsx-sync`：`openspec/specs/real-project-validation/spec.md` 已建立並修補為 main spec 結構
-- 已執行 `#opsx-archive`：`openspec archive phase3-real-project-validation -y --skip-specs`（PASS）
-- 已完成 archive 產物確認：`openspec/changes/archive/2026-03-25-phase3-real-project-validation/`
-- 已完成 `openspec validate real-project-validation --type spec --strict`（PASS）
+- 已補齊 S3 Run A / Run B 證據欄位（runlog + QA）
+- 已建立 S4 active change：`phase4-v1-convergence-finalization`
+- 已完成 S4 artifacts 草案建立（proposal/design/tasks/spec）
+- 已完成 S4 `#opsx-sync`：main spec 已同步至 `openspec/specs/v1-convergence-finalization/spec.md`
+- 已完成 S4 strict validate：change/spec 皆 PASS
 
 ## In Progress
 - 無
 
 ## Next Step
-- 啟動 S4（V1 Phase 4）收斂定版規劃與 acceptance 定義
-- 彙整 S1-S3 證據，評估是否需要新增決策紀錄來定義 S4 邊界
+- 啟動 S5（V2 輕量 UI 工作台）規劃，先定義 scope/non-scope 與 acceptance
+- 維持 docs-first，先建立 S5 active change artifacts 再進執行
 
 ## Files Touched
-- `openspec/specs/real-project-validation/spec.md`
-- `openspec/changes/archive/2026-03-25-phase3-real-project-validation/.openspec.yaml`
-- `openspec/changes/archive/2026-03-25-phase3-real-project-validation/proposal.md`
-- `openspec/changes/archive/2026-03-25-phase3-real-project-validation/design.md`
-- `openspec/changes/archive/2026-03-25-phase3-real-project-validation/tasks.md`
-- `openspec/changes/archive/2026-03-25-phase3-real-project-validation/specs/real-project-validation/spec.md`
+- `openspec/changes/phase4-v1-convergence-finalization/.openspec.yaml`
+- `openspec/changes/phase4-v1-convergence-finalization/proposal.md`
+- `openspec/changes/phase4-v1-convergence-finalization/design.md`
+- `openspec/changes/phase4-v1-convergence-finalization/tasks.md`
+- `openspec/changes/phase4-v1-convergence-finalization/specs/v1-convergence-finalization/spec.md`
+- `docs/runlog/2026-03-25_README.md`
+- `docs/qa/2026-03-25_smoke.md`
 
 ## Key Symbols / Entry Points
-- `phase3-real-project-validation`
-- `real-project-validation`
-- `openspec validate phase3-real-project-validation --type change --strict`
-- `openspec archive phase3-real-project-validation -y --skip-specs`
-- `openspec validate real-project-validation --type spec --strict`
+- `phase4-v1-convergence-finalization`
+- `v1-convergence-finalization`
+- `openspec validate phase4-v1-convergence-finalization --type change --strict`
 
 ## Interfaces / Contracts Affected
-- API / schema / types: 不新增 S2 核心契約；新增 S3 驗證門檻與流程要求
-- UI contract / user flow: 無 UI 變更；仍維持人工審核閘門
+- API / schema / types: 新增 S4 收斂 gate 契約，不變更 S2/S3 已封存需求
+- UI contract / user flow: 無 UI 變更
 - Config / env / migration: 無 migration；維持 docs-first evidence 同步
 
 ## Risks / Watchouts
-- 真實樣本不足導致驗證代表性偏弱
-- 驗證過程偏離為功能擴張而非驗證
-- CLI 指令版本差異造成 validate 路徑混淆
-- 治理同步遺漏造成交接斷點
+- S4 gate 定義過於抽象，導致無法形成明確 pass/fail
+- 文件收斂過程遺漏跨檔一致性，造成 handoff 誤判
+- 提前擴張到 S5/S6 實作，破壞本次最小收斂原則
 
 ## Validation Status
-- Commands run: `openspec --version`、`openspec validate phase3-real-project-validation --type change --strict`、`openspec archive phase3-real-project-validation -y --skip-specs`、`openspec validate real-project-validation --type spec --strict`
-- Result: S3 已完成 sync/archive，archive 路徑與 main spec strict validate 皆已確認
-- Not run yet: S4 change 規劃與驗證
+- Commands run: `openspec validate phase4-v1-convergence-finalization --type change --strict`、`openspec validate v1-convergence-finalization --type spec --strict`
+- Result: S4 sync 後 strict validate（change/spec）皆 PASS，並已完成 `openspec archive phase4-v1-convergence-finalization -y --skip-specs`
+- Not run yet: S5 change 規劃與驗證
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回本次新增的 active change 與同步治理檔案；不得影響已 archived 的 Phase 1 證據
 
 ## Pending Decisions
-- S3 完成後是否將可採納率門檻從 70% 調整為分任務類型門檻
+- S4 是否將可採納率門檻由全域 70% 改為任務分層門檻
 
 ## Notes for Next Agent
-- S1-S3 均已完成 archive；下一步應轉入 S4 收斂定版與驗收準備
-- 若複用本次收尾流程，維持「先 sync main spec，再 archive（必要時 `--skip-specs`）」即可避免重複套用風險
+- S1-S3 均已完成 archive，且 S3 Run A/B 證據已補齊。
+- S4 已完成 archive（`2026-03-25-phase4-v1-convergence-finalization`）；下一步轉入 S5 規劃。
