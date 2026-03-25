@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-25 | S2 `phase2-semi-auto-memory-extraction-mvp` 採單一 change 一次性同步 artifacts 與治理證據 | 本次 acceptance 需要同時滿足 active artifacts、strict validate、閉環證據與 handoff/runlog/roadmap 追溯；最小可行修改已超過 5 檔 | 本次維持 docs-first 與最小安全修改，但允許跨多檔同步，範圍仍限於 S2 MVP，不擴大到 UI、多工具整合與全自動回寫 | `docs/decisions/2026-03-25_phase2-semi-auto-memory-extraction-mvp-evidence-span.md` |
 | 2026-03-22 | 導入 `copilot-workspace-template` v1.3.0 的模板邊界模型 | 需要讓本專案能分辨 managed / protected / init-only 檔案，避免之後升級再把模板檔與專案檔混在一起 | 根目錄新增 `TEMPLATE-FILES.md`，並以 `template-lock.json`、`80-template-boundary.md`、`90-project-custom.md` 作為模板治理基線 | `TEMPLATE-FILES.md` |
 | 2026-03-22 | handoff 與當日 runlog 在 init 後改由本專案自行維護 | `current-task`、`blockers`、當日 runlog 屬短期證據，不適合繼續由模板 seed | 後續模板升級不再補入這些檔案；本 repo 必須自行維護 handoff 與 runlog，並以第二個 commit 收錄這類治理更新 | `docs/handoff/current-task.md` |
 | 2026-03-23 | OpenSpec CLI 採 npm 套件 `@fission-ai/openspec` 作為本專案可引用的安裝入口 | 需要在不擴大前置依賴的前提下，為未來本機 strict validate 補出可驗證的安裝與檢查方式；實機驗證顯示 `openspec` shim 也指向此套件 | `docs/agents/commands.md` 新增 OpenSpec CLI 段落；後續若需要本機 validate，可使用 `npm install -g @fission-ai/openspec` 或先以 `npx @fission-ai/openspec --version` 驗證 | `docs/agents/commands.md` |

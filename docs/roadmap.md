@@ -17,10 +17,11 @@
 
 ## 目前狀態
 - Current：S1 → S2（2026-03-25）
-- Next：啟動 S2（Phase 2 半自動提取 MVP）規劃
+- Next：執行並驗證 S2 active change `phase2-semi-auto-memory-extraction-mvp`
 - Blockers：無
 
 ## 階段轉換記錄
+- 2026-03-25：已建立 S2 active change `phase2-semi-auto-memory-extraction-mvp`，進入 artifacts 補齊與 strict validate 階段
 - 2026-03-25：重寫 roadmap 雙檔為表格+checkbox 追蹤格式，S 階段對齊產品路線語意
 - 2026-03-24：完成 Phase 1 收斂 review；兩次 archived pilot 已達最小完成線
 - 2026-03-24：`phase1-entrypoint-guidance-pilot` 完成 commit / push、main spec sync 與 archive
