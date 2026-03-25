@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-25 | `phase2-semi-auto-memory-extraction-mvp` 比照既有收尾路徑採「先手動 sync main spec，再 `openspec archive -y --skip-specs`」 | 目前 OpenSpec CLI 雖為 verb-first 命令介面，但仍無獨立 sync 子命令；若已先同步 main spec，再 archive 不跳過 specs，會有重複套用風險 | S2 change 已穩定沉澱到 main spec 並成功 archive，後續同型 docs-first change 可沿用此最小安全收尾流程 | `openspec/specs/semi-auto-memory-extraction-mvp/spec.md` |
 | 2026-03-25 | S2 `phase2-semi-auto-memory-extraction-mvp` 採單一 change 一次性同步 artifacts 與治理證據 | 本次 acceptance 需要同時滿足 active artifacts、strict validate、閉環證據與 handoff/runlog/roadmap 追溯；最小可行修改已超過 5 檔 | 本次維持 docs-first 與最小安全修改，但允許跨多檔同步，範圍仍限於 S2 MVP，不擴大到 UI、多工具整合與全自動回寫 | `docs/decisions/2026-03-25_phase2-semi-auto-memory-extraction-mvp-evidence-span.md` |
 | 2026-03-22 | 導入 `copilot-workspace-template` v1.3.0 的模板邊界模型 | 需要讓本專案能分辨 managed / protected / init-only 檔案，避免之後升級再把模板檔與專案檔混在一起 | 根目錄新增 `TEMPLATE-FILES.md`，並以 `template-lock.json`、`80-template-boundary.md`、`90-project-custom.md` 作為模板治理基線 | `TEMPLATE-FILES.md` |
 | 2026-03-22 | handoff 與當日 runlog 在 init 後改由本專案自行維護 | `current-task`、`blockers`、當日 runlog 屬短期證據，不適合繼續由模板 seed | 後續模板升級不再補入這些檔案；本 repo 必須自行維護 handoff 與 runlog，並以第二個 commit 收錄這類治理更新 | `docs/handoff/current-task.md` |

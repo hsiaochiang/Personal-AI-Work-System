@@ -3,7 +3,7 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: S2 change 啟動與落地：phase2-semi-auto-memory-extraction-mvp
+- Name: S2 change 收尾完成：phase2-semi-auto-memory-extraction-mvp（已 sync/archive）
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-25
 - Last updated on: 2026-03-25
@@ -11,8 +11,8 @@
 - Branch / worktree: `main`
 
 ## Goal
-- 完成 S2 active change 建立與 artifacts 補齊，並以 strict validate 驗證可執行性。
-- 打通至少 1 次真實閉環：對話紀錄輸入 -> 候選沉澱 -> 人工確認 -> 回寫留痕。
+- 完成 S2 change 的收尾流程：main spec sync + archive + 治理留痕同步。
+- 確保可追溯到 strict validate、archive 結果與交接下一步。
 
 ## Scope
 - In scope: 對話紀錄輸入格式定義、候選 schema 與記憶檔映射、人工確認後回寫流程、validate 與治理留痕同步
@@ -26,26 +26,33 @@
 - Step 1: 建立 `phase2-semi-auto-memory-extraction-mvp` active change 目錄與基礎檔
 - Step 2: 補齊 proposal / design / tasks / delta spec，明確對齊 scope 與驗收條件
 - Step 3: 執行 strict validate，同步 handoff / runlog / roadmap 證據
+- Step 4: 執行 `opsx-sync`（手動同步 main spec）與 `opsx-archive`
 
 ## Done
 - 已執行 `openspec new change phase2-semi-auto-memory-extraction-mvp`，建立 active change 目錄
 - 已補齊 `proposal.md`、`design.md`、`tasks.md`、`specs/semi-auto-memory-extraction-mvp/spec.md`
 - 已定義輸入格式、候選 schema、人工確認閘門與治理同步要求
 - 已執行 `openspec change validate phase2-semi-auto-memory-extraction-mvp --strict`，結果 PASS
+- 已執行 `#opsx-sync`：同步 main spec 至 `openspec/specs/semi-auto-memory-extraction-mvp/spec.md`
+- 已執行 verb-first 驗證：
+	- `openspec validate phase2-semi-auto-memory-extraction-mvp --type change --strict`（PASS）
+	- `openspec validate semi-auto-memory-extraction-mvp --type spec --strict`（PASS）
+- 已執行 `openspec archive phase2-semi-auto-memory-extraction-mvp -y --skip-specs`，歸檔為 `2026-03-25-phase2-semi-auto-memory-extraction-mvp`
 
 ## In Progress
 - 無
 
 ## Next Step
-- 進入 `opsx-verify` 與品質門檻（UI/UX review）檢視，確認 S2 change 可進入提交階段
-- 視人工決策執行 commit/push 與後續 sync/archive
+- 啟動 S3（V1 Phase 3 真實專案驗證）change 規劃與驗收定義
+- 依下一個 change 範圍執行 validate/apply/verify 與治理留痕
 
 ## Files Touched
-- `openspec/changes/phase2-semi-auto-memory-extraction-mvp/.openspec.yaml`
-- `openspec/changes/phase2-semi-auto-memory-extraction-mvp/proposal.md`
-- `openspec/changes/phase2-semi-auto-memory-extraction-mvp/design.md`
-- `openspec/changes/phase2-semi-auto-memory-extraction-mvp/tasks.md`
-- `openspec/changes/phase2-semi-auto-memory-extraction-mvp/specs/semi-auto-memory-extraction-mvp/spec.md`
+- `openspec/specs/semi-auto-memory-extraction-mvp/spec.md`
+- `openspec/changes/archive/2026-03-25-phase2-semi-auto-memory-extraction-mvp/.openspec.yaml`
+- `openspec/changes/archive/2026-03-25-phase2-semi-auto-memory-extraction-mvp/proposal.md`
+- `openspec/changes/archive/2026-03-25-phase2-semi-auto-memory-extraction-mvp/design.md`
+- `openspec/changes/archive/2026-03-25-phase2-semi-auto-memory-extraction-mvp/tasks.md`
+- `openspec/changes/archive/2026-03-25-phase2-semi-auto-memory-extraction-mvp/specs/semi-auto-memory-extraction-mvp/spec.md`
 
 ## Key Symbols / Entry Points
 - `phase2-semi-auto-memory-extraction-mvp`
@@ -67,9 +74,9 @@
 - 治理文件更新不同步造成交接斷點
 
 ## Validation Status
-- Commands run: `openspec new change phase2-semi-auto-memory-extraction-mvp`；`openspec instructions proposal/specs/design/tasks --change phase2-semi-auto-memory-extraction-mvp`；`openspec change validate phase2-semi-auto-memory-extraction-mvp --strict`
-- Result: PASS；active change artifacts 完整且 strict validate 已通過
-- Not run yet: `opsx-verify`、`ui-review`、`ux-review`
+- Commands run: `openspec new change phase2-semi-auto-memory-extraction-mvp`；`openspec instructions proposal/specs/design/tasks --change phase2-semi-auto-memory-extraction-mvp`；`openspec change validate phase2-semi-auto-memory-extraction-mvp --strict`；`openspec validate phase2-semi-auto-memory-extraction-mvp --type change --strict`；`openspec validate semi-auto-memory-extraction-mvp --type spec --strict`；`openspec archive phase2-semi-auto-memory-extraction-mvp -y --skip-specs`
+- Result: PASS；S2 change 已完成 sync/archive，治理證據已同步
+- Not run yet: S3 change 尚未啟動
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回本次新增的 active change 與同步治理檔案；不得影響已 archived 的 Phase 1 證據
@@ -78,5 +85,5 @@
 - 是否在 S2 後續次階段新增候選 confidence 閾值規範
 
 ## Notes for Next Agent
-- 本次 change 已明確鎖定「半自動提取 MVP」，非 UI 或多工具整合
-- 下一步優先完成 strict validate 與 runlog 閉環證據補齊
+- S2 change 已完成歸檔，後續以 archive 內容作為基線
+- 下一步應聚焦 S3 真實專案驗證，不要回頭擴改 S2 scope

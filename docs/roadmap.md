@@ -9,18 +9,19 @@
 |:-:|--------|:----:|
 | S0 | 規劃與骨架建立 | ✅ |
 | S1 | V1 Phase 1 手動流程跑通 | ✅ 收尾 |
-| S2 | V1 Phase 2 半自動提取 MVP | ⬜ 下一步 |
+| S2 | V1 Phase 2 半自動提取 MVP | ✅ 已完成（已 sync/archive） |
 | S3 | V1 Phase 3 真實專案驗證 | ⬜ |
 | S4 | V1 Phase 4 收斂定版 | ⬜ |
 | S5 | V2 輕量 UI 工作台 | ⬜ |
 | S6 | V3 多工具接入 | ⬜ |
 
 ## 目前狀態
-- Current：S1 → S2（2026-03-25）
-- Next：執行並驗證 S2 active change `phase2-semi-auto-memory-extraction-mvp`
+- Current：S2（2026-03-25 已完成 `phase2-semi-auto-memory-extraction-mvp` 的 sync/archive）
+- Next：準備 S3（V1 Phase 3 真實專案驗證）change 規劃與驗證策略
 - Blockers：無
 
 ## 階段轉換記錄
+- 2026-03-25：`phase2-semi-auto-memory-extraction-mvp` 已完成 main spec sync 與 archive（`2026-03-25-phase2-semi-auto-memory-extraction-mvp`）
 - 2026-03-25：已建立 S2 active change `phase2-semi-auto-memory-extraction-mvp`，進入 artifacts 補齊與 strict validate 階段
 - 2026-03-25：重寫 roadmap 雙檔為表格+checkbox 追蹤格式，S 階段對齊產品路線語意
 - 2026-03-24：完成 Phase 1 收斂 review；兩次 archived pilot 已達最小完成線
