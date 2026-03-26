@@ -4,6 +4,10 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | S6 採 `phase6-v3-multi-tool-integration-framework-mvp` 作為 V3 多工具接入唯一 active change | S1-S5 已完成封存，下一步需以最小接入框架驗證多來源可被統一審核與治理，而非直接產品化擴張 | S6 聚焦 2-tools 最小演示、人工審核閘門與治理同步，為後續擴充提供可驗證基線 | `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/proposal.md` |
+| 2026-03-26 | `phase5-v2-lightweight-ui-workbench-mvp` 採「先 sync main spec，再 `openspec archive -y --skip-specs`」完成收尾 | S5 已達 Gate=GO，且 main spec 已先同步；為避免 archive 階段重複套用 specs，沿用既有最小安全路徑 | S5 已成功 archive，V2 輕量 UI 工作台 MVP 完成；可轉入 S6 規劃 | `openspec/changes/archive/2026-03-26-phase5-v2-lightweight-ui-workbench-mvp/` |
+| 2026-03-26 | S5 sync 若直接覆蓋 delta 到 main spec，需立即補 `Purpose/Requirements` 主規格結構後再 strict validate | 本次執行中發生 main spec 結構不符 strict 驗證要求；經最小修補後 PASS | 固化 S5/S6 後續 sync 慣例：同步後先驗主規格結構，避免 archive 前誤判 | `openspec/specs/lightweight-ui-workbench/spec.md` |
+| 2026-03-26 | S5 採 `phase5-v2-lightweight-ui-workbench-mvp` 作為 V2 輕量 UI 工作台唯一 active change | S1-S4 已完成封存，需先以最小可用工作台驗證 UI 操作閉環，避免一次擴張成完整產品化 | S5 工作聚焦於 MVP 流程與治理同步，可在不破壞既有基線下建立 S6 前置能力 | `openspec/changes/phase5-v2-lightweight-ui-workbench-mvp/proposal.md` |
 | 2026-03-26 | `phase4-v1-convergence-finalization` 採「main spec 已同步前提下，`openspec archive -y --skip-specs`」完成收尾 | S4 main spec 與 strict validate 已完成，為避免 archive 階段重複套用 specs 造成衝突，沿用既有最小安全收尾路徑 | S4 已成功 archive，V1 Phase 4 收斂定版完成，後續可進入 S5 規劃 | `openspec/changes/archive/2026-03-25-phase4-v1-convergence-finalization/` |
 | 2026-03-26 | S4 `phase4-v1-convergence-finalization` 完成 sync 與 strict validate 後，先做最終 Gate 一致性複核再判定 archive | 已完成主規格同步與 change/spec 驗證，但治理文件需保持同時序一致，避免帶著敘述落差進 archive | 將 S4 收尾流程固定為「sync -> validate -> gate consistency check -> archive」，降低交接誤判風險 | `openspec/specs/v1-convergence-finalization/spec.md` |
 | 2026-03-25 | S4 採 `phase4-v1-convergence-finalization` 作為 V1 收斂定版唯一 active change | S1-S3 已完成並 archive，下一步需先建立可量測的 release gate 與回滾策略，避免直接跳入 S5 功能擴張 | 將本輪工作聚焦在 baseline 收斂與治理一致性，不新增 UI/功能；為後續是否進入 S5 提供可驗證判斷點 | `openspec/changes/phase4-v1-convergence-finalization/proposal.md` |

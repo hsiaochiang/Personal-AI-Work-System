@@ -12,15 +12,18 @@
 | S2 | V1 Phase 2 半自動提取 MVP | ✅ 已完成（已 sync/archive） |
 | S3 | V1 Phase 3 真實專案驗證 | ✅ 已完成（已 sync/archive） |
 | S4 | V1 Phase 4 收斂定版 | ✅ 已完成（已 sync/archive） |
-| S5 | V2 輕量 UI 工作台 | ⬜ |
-| S6 | V3 多工具接入 | ⬜ |
+| S5 | V2 輕量 UI 工作台 | ✅ 已完成（已 sync/archive） |
+| S6 | V3 多工具接入 | 🟨 規劃中（active change 已建立） |
 
 ## 目前狀態
-- Current：S4 已完成收尾（`phase4-v1-convergence-finalization` 已 sync/archive）
-- Next：啟動 S5（V2 輕量 UI 工作台）規劃
+- Current：S6 規劃中（`phase6-v3-multi-tool-integration-framework-mvp` active）
+- Next：完成 S6 change strict validate 與 2-tools 最小演示路徑定義
 - Blockers：無
 
 ## 階段轉換記錄
+- 2026-03-26：已建立 S6 active change `phase6-v3-multi-tool-integration-framework-mvp`（proposal/design/tasks/spec 初稿完成）
+- 2026-03-26：`phase5-v2-lightweight-ui-workbench-mvp` 已完成 archive（`2026-03-26-phase5-v2-lightweight-ui-workbench-mvp`）
+- 2026-03-26：已建立 S5 active change `phase5-v2-lightweight-ui-workbench-mvp`（proposal/design/tasks/spec 初稿完成）
 - 2026-03-26：`phase4-v1-convergence-finalization` 已完成 archive（`2026-03-25-phase4-v1-convergence-finalization`）
 - 2026-03-26：S4 已完成 `#opsx-sync` 與 strict validate（change/spec 皆 PASS），進入 archive 前最終 Gate 判定
 - 2026-03-25：已建立 S4 active change `phase4-v1-convergence-finalization`（proposal/design/tasks/spec 草案完成）
