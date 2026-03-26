@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | S6 task 4.x 採「先完成 2-tools 演示與 change strict validate，主 spec 未 sync 則列 blocker 收斂」策略 | S6 本輪目標是 MVP 框架驗證與治理留痕，change strict validate 已可通過；spec strict validate 因主 spec 未落地而 ENOENT，不應擴 scope 強行補產品層改動 | 2.x/3.x/4.x 可在不擴 scope 下完成並可交接；同時把 spec sync 缺口顯性化為 blocker，避免誤宣告 Done | `docs/handoff/blockers.md` |
 | 2026-03-26 | S6 採 `phase6-v3-multi-tool-integration-framework-mvp` 作為 V3 多工具接入唯一 active change | S1-S5 已完成封存，下一步需以最小接入框架驗證多來源可被統一審核與治理，而非直接產品化擴張 | S6 聚焦 2-tools 最小演示、人工審核閘門與治理同步，為後續擴充提供可驗證基線 | `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/proposal.md` |
 | 2026-03-26 | `phase5-v2-lightweight-ui-workbench-mvp` 採「先 sync main spec，再 `openspec archive -y --skip-specs`」完成收尾 | S5 已達 Gate=GO，且 main spec 已先同步；為避免 archive 階段重複套用 specs，沿用既有最小安全路徑 | S5 已成功 archive，V2 輕量 UI 工作台 MVP 完成；可轉入 S6 規劃 | `openspec/changes/archive/2026-03-26-phase5-v2-lightweight-ui-workbench-mvp/` |
 | 2026-03-26 | S5 sync 若直接覆蓋 delta 到 main spec，需立即補 `Purpose/Requirements` 主規格結構後再 strict validate | 本次執行中發生 main spec 結構不符 strict 驗證要求；經最小修補後 PASS | 固化 S5/S6 後續 sync 慣例：同步後先驗主規格結構，避免 archive 前誤判 | `openspec/specs/lightweight-ui-workbench/spec.md` |

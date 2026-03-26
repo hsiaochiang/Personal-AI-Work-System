@@ -11,8 +11,8 @@
 - Branch / worktree: `main`
 
 ## Goal
-- 建立 S6 多工具接入 MVP 的 active change 與最小驗收邊界。
-- 在不改寫 S1-S5 封存成果前提下，打通 2-tools 最小接入演示規劃。
+- 完成 S6 多工具接入 MVP 的 tasks 2.x/3.x/4.x，並留下可重播驗證證據。
+- 在不改寫 S1-S5 封存成果前提下，完成 2-tools 最小演示與治理同步。
 
 ## Scope
 - In scope: S6 多工具接入框架 MVP、2-tools 最小演示、治理同步規範
@@ -23,21 +23,26 @@
 - Product / UX constraints: 本次不新增 UI，不做多工具接入，不改既有產品互動層
 
 ## Implementation Plan
-- Step 1: 建立 S6 active change artifacts（proposal/design/tasks/spec）
-- Step 2: 執行 `openspec validate phase6-v3-multi-tool-integration-framework-mvp --type change --strict`
-- Step 3: 定義 2-tools 最小演示與人工審核閘門 evidence 欄位
-- Step 4: 同步 roadmap/decision-log/runlog/handoff/qa 證據
+- Step 1: 建立與補齊 S6 active change artifacts（proposal/design/tasks/spec）
+- Step 2: 完成 tasks 2.x/3.x 契約與審核寫回規則
+- Step 3: 完成 tasks 4.1/4.2/4.3（2-tools 演示、strict validate、治理同步）
+- Step 4: 進入 tasks 5.x 收尾與交棒
 
 ## Done
 - 已建立 S6 active change：`phase6-v3-multi-tool-integration-framework-mvp`
 - 已完成 S6 artifacts 初稿（proposal/design/tasks/spec）
+- 已完成 tasks 2.1/2.2/2.3（adapter interface / normalized schema / dedupe 規則）
+- 已完成 tasks 3.1/3.2（human review gate / draft-only writeback）
+- 已完成 tasks 4.1/4.2/4.3（2-tools 演示、change strict validate、治理同步）
+- 已完成 tasks 5.1/5.2（MVP 結果摘要、S6.1 擴充建議）
 
 ## In Progress
-- 執行 S6 strict validate 與 2-tools 演示路徑細化
+- 主 spec sync 與 spec strict validate 收尾
 
 ## Next Step
-- 完成 `openspec validate phase6-v3-multi-tool-integration-framework-mvp --type change --strict`
-- 啟動 S6 最小演示驗收（input -> ingest(2 tools) -> normalize -> review -> draft writeback）
+- 同步 `openspec/specs/multi-tool-integration-framework/spec.md`
+- 重跑 `openspec validate multi-tool-integration-framework --type spec --strict`
+- 進入 Review Gate 進行 S6 最終收尾判定
 
 ## Files Touched
 - `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/.openspec.yaml`
@@ -63,15 +68,19 @@
 - 工具可用性波動（timeout/rate limit）造成演示不穩定
 
 ## Validation Status
-- Commands run: 尚未執行 S6 strict validate
-- Result: S6 active change artifacts 已建立，待 strict validate
-- Not run yet: `openspec validate phase6-v3-multi-tool-integration-framework-mvp --type change --strict`
+- Commands run:
+	- `openspec validate phase6-v3-multi-tool-integration-framework-mvp --type change --strict`
+	- `openspec validate multi-tool-integration-framework --type spec --strict`
+- Result:
+	- change strict validate: PASS
+	- spec strict validate: FAIL（ENOENT，缺 `openspec/specs/multi-tool-integration-framework/spec.md`）
+- Not run yet: 主 spec sync 後的 spec strict validate 重跑
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回 S6 active change 與治理草稿更新；不得影響 S1-S5 已 archived 證據
 
 ## Pending Decisions
-- S6 第二來源先採 mock adapter 或直接接外部真實工具
+- S6 主 spec sync 時機（在 5.x 收尾前先 sync，或於 S6 收尾時統一 sync）
 
 ## Notes for Next Agent
 - S1-S5 均已完成 archive。

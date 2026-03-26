@@ -3,7 +3,10 @@
 > 只記錄會影響接手或需要人工決策的阻塞，避免流水帳。
 
 ## Active Blockers
-- 目前無 active blockers
+- S6 主 spec 尚未 sync，導致 `openspec validate multi-tool-integration-framework --type spec --strict` 回報 ENOENT（缺 `openspec/specs/multi-tool-integration-framework/spec.md`）
+	- 影響：S6 無法完成 spec strict validate 收尾
+	- 已排查：change strict validate 可 PASS，問題侷限於主 spec 檔未存在
+	- 建議解除條件：完成主 spec sync 後，重跑 spec strict validate 並 PASS
 - 2026-03-25：完成 `phase2-semi-auto-memory-extraction-mvp` 的 sync/archive 後複核，仍無 blocker
 - 2026-03-25：完成 `phase3-real-project-validation` 的 sync/archive 後複核，仍無 blocker
 - 2026-03-25：啟動 `phase4-v1-convergence-finalization` 後複核，仍無 blocker
