@@ -2,9 +2,9 @@
 
 ## 1. 邊界與契約
 
-- [ ] 1.1 確認 S6 scope / non-scope 與 S5 邊界
+- [x] 1.1 確認 S6 scope / non-scope 與 S5 邊界
   - 驗收條件：明確列出「只做框架+最小演示」與「不改寫 S1-S5 archive」
-- [ ] 1.2 建立 S6 delta spec 初稿（ADDED Requirements + Scenarios）
+- [x] 1.2 建立 S6 delta spec 初稿（ADDED Requirements + Scenarios）
   - 驗收條件：每個 Requirement 至少 2 個 Scenarios（含失敗情境）
 
 ## 2. 多工具接入框架（MVP）
@@ -63,7 +63,7 @@
   - tasks 3.x：統一人工審核閘門、draft-only writeback
   - tasks 4.x：2-tools 最小演示、change strict validate PASS、治理同步
 - 未完成
-  - 主 spec sync 與 spec strict validate PASS（目前 ENOENT）
+  - S6 archive 最終執行
 - 主要風險
   - 若未先同步主 spec 即進行最終收尾，將造成驗證訊號不完整
   - 若後續擴充超出 S6 邊界，會引發 scope 膨脹

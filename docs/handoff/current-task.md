@@ -3,7 +3,7 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: S6 change 啟動：phase6-v3-multi-tool-integration-framework-mvp（active）
+- Name: S6 收尾完成：phase6-v3-multi-tool-integration-framework-mvp（archived）
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-26
 - Last updated on: 2026-03-26
@@ -37,12 +37,10 @@
 - 已完成 tasks 5.1/5.2（MVP 結果摘要、S6.1 擴充建議）
 
 ## In Progress
-- 主 spec sync 與 spec strict validate 收尾
+- 無（S6 已完成）
 
 ## Next Step
-- 同步 `openspec/specs/multi-tool-integration-framework/spec.md`
-- 重跑 `openspec validate multi-tool-integration-framework --type spec --strict`
-- 進入 Review Gate 進行 S6 最終收尾判定
+- 啟動 S7 規劃（先由 OpenSpec Planner 產出 proposal/design/tasks/spec 草案）
 
 ## Files Touched
 - `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/.openspec.yaml`
@@ -73,15 +71,15 @@
 	- `openspec validate multi-tool-integration-framework --type spec --strict`
 - Result:
 	- change strict validate: PASS
-	- spec strict validate: FAIL（ENOENT，缺 `openspec/specs/multi-tool-integration-framework/spec.md`）
-- Not run yet: 主 spec sync 後的 spec strict validate 重跑
+	- spec strict validate: PASS
+- Not run yet: 無
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回 S6 active change 與治理草稿更新；不得影響 S1-S5 已 archived 證據
 
 ## Pending Decisions
-- S6 主 spec sync 時機（在 5.x 收尾前先 sync，或於 S6 收尾時統一 sync）
+- S7 範圍與優先順序（是否先做擴來源 adapter 或治理自動化）
 
 ## Notes for Next Agent
 - S1-S5 均已完成 archive。
-- 目前焦點為 S6 strict validate 與 2-tools 最小演示定義，暫不擴張到完整產品化。
+- S6 已完成 archive：`openspec/changes/archive/2026-03-26-phase6-v3-multi-tool-integration-framework-mvp/`。
