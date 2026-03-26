@@ -11,8 +11,8 @@
 - Branch / worktree: `main`
 
 ## Goal
-- 完成 S7 one-shot 實作型驗收 cycle。
-- 以最小可重播證據完成 Review Gate 最終收斂。
+- 完成 S7 one-shot 實作型驗收 cycle（已達成）。
+- 在 Review Gate GO 後，啟動 S7 Cycle-03 最小實作驗收。
 
 ## Scope
 - In scope: S7 one-shot cycle、治理同步、固定五段報告驗收
@@ -29,14 +29,15 @@
 - 已完成 Review Gate 必修修補（current-task/roadmap/tasks/qa）
 - 已完成 S7 one-shot Cycle-01（固定五段報告）
 - 已完成 S7 one-shot Cycle-02（verb-first validate + fallback 驗證）
+- 已完成 S7 最終 Review Gate（治理 MVP：GO）
 
 ## In Progress
 - 安全續作（不 commit / 不 push / 不 reset）
-- S7 one-shot 實作型驗收
+- S7 Cycle-03（非規格層最小實作驗收）
 
 ## Next Step
-- 進 Review Gate 最終 GO/NO-GO 判定
-- 若 GO，規劃 S7 下一輪最小實作步驟（非規格層）
+- 依 one-shot contract 執行 S7 Cycle-03（非規格層最小實作）
+- 完成 Cycle-03 的固定五段報告與 smoke 證據
 
 ## Validation Status
 - S7 tasks 1.x-5.x：PASS
@@ -44,6 +45,7 @@
 - 治理同步（roadmap/runlog/handoff/qa）：PASS
 - S7 one-shot Cycle-01：PASS
 - S7 one-shot Cycle-02：PASS
+- S7 Final Review Gate（治理 MVP）：GO
 
 ## Safe Continuation Guardrails
 - 僅允許 docs-first 最小必要調整（`docs/` 與 `openspec/changes/phase7...`）
