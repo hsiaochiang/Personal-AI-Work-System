@@ -111,7 +111,7 @@
 ### S7 進行中細節
 
 - Active change：`phase7-v4-autonomous-continuation-governance-automation-mvp`
-- Cycle-01 到 Cycle-05 已完成；Cycle-06 為候選
+- Cycle-01 到 Cycle-06 已完成；Cycle-07 為候選
 - 任務明細：`openspec/changes/phase7-v4-.../tasks.md`
 
 ---
@@ -126,6 +126,7 @@
 
 ## 異動記錄
 
+- 2026-03-26：完成 S7 Cycle-06（roadmap 單一真源防回退檢核，腳本化可重播）
 - 2026-03-26：合併 project-roadmap.md 為單一 roadmap，正規化 S-stage 命名（移除錯誤版本標籤）
 - 2026-03-26：V1 roadmap 歸檔至 `archive/`
 - 2026-03-26：S7 Cycle-01 到 Cycle-05 完成，治理 MVP Review Gate GO

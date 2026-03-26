@@ -12,7 +12,7 @@
 
 ## Goal
 - 完成 S7 one-shot 實作型驗收 cycle（已達成）。
-- 在 Review Gate GO 後，啟動 S7 Cycle-03 最小實作驗收。
+- 在 Review Gate GO 後，持續 S7 單一增量 cycle 驗收（目前至 Cycle-06）。
 
 ## Scope
 - In scope: S7 one-shot cycle、治理同步、固定五段報告驗收
@@ -35,14 +35,15 @@
 - 已完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
 - 已完成 roadmap 文件治理重盤查（V1 roadmap 歸檔 + 對應矩陣）
 - 已完成 roadmap 合併與命名正規化（刪除三層架構，合併為唯一 `docs/roadmap.md`）
+- 已完成 S7 Cycle-06 最小實作（roadmap 單一真源防回退檢核）
 
 ## In Progress
 - 安全續作（不 commit / 不 push / 不 reset）
-- S7 Cycle-06 候選（維持單一增量擴充）
+- S7 Cycle-07 候選（維持單一增量擴充）
 
 ## Next Step
-- 啟動 Cycle-06 並維持單一增量擴充（不擴 scope）
-- 完成 Cycle-06 固定五段報告與 smoke 證據
+- 啟動 Cycle-07 並維持單一增量擴充（不擴 scope）
+- 完成 Cycle-07 固定五段報告與 smoke 證據
 
 ## Validation Status
 - S7 tasks 1.x-5.x：PASS
@@ -54,6 +55,7 @@
 - S7 Cycle-03 script implementation：PASS
 - S7 Cycle-04 script implementation：PASS
 - S7 Cycle-05 script implementation：PASS
+- S7 Cycle-06 script implementation：PASS
 - Roadmap 文件治理重盤查：PASS
 
 ## Safe Continuation Guardrails
@@ -80,3 +82,4 @@
 - `scripts/s7-cycle03-governance-check.ps1`
 - `scripts/s7-cycle04-governance-check.ps1`
 - `scripts/s7-cycle05-governance-check.ps1`
+- `scripts/s7-cycle06-governance-check.ps1`

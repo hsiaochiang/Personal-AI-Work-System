@@ -43,6 +43,8 @@
   - 驗收條件：在同一腳本中納入 template verify-only 並 PASS
 - [x] 6.3 完成 Cycle-05 編碼穩定檢核
   - 驗收條件：template verify-only 無 `UnicodeEncodeError` 訊號
+- [x] 6.4 完成 Cycle-06 單一真源防回退檢核
+  - 驗收條件：roadmap 單一真源約束（merge redirect + 唯一路線圖宣告）可一鍵重播驗證
 
 ## Day Plan (One-Day Acceptable Steps)
 
@@ -56,6 +58,8 @@
   - 5.1、5.2 + checklist 關閉
 - D5（已完成）
   - 6.1、6.2、6.3
+- D6（已完成）
+  - 6.4
 
 ## Checklist
 
