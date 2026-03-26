@@ -51,9 +51,9 @@
 - `docs/product/ui-and-product-vision.md`: UI 與產品願景
 - `docs/product/ui-information-architecture.md`: UI 資訊架構與低保真畫面草圖
 - `docs/product/immediate-value-and-usage-scenarios.md`: 完成後可立即使用的價值與使用情境
-- `docs/roadmap/v1-roadmap.md`: 第一版 roadmap、工作項目與時間估算
-- `docs/roadmap/project-roadmap.md`: 整個專案的版本演進 roadmap
-- `docs/roadmap.md`: 給 template / Copilot workflow 使用的目前階段摘要
+- `docs/roadmap/v1-roadmap.md`: V1 歷史入口（已歸檔）
+- `docs/roadmap/project-roadmap.md`: 已合併至 `docs/roadmap.md`
+- `docs/roadmap.md`: 唯一路線圖（產品路線＋執行狀態＋OpenSpec 記錄）
 - `docs/decision-log.md`: 給 template / Copilot workflow 使用的決策索引
 
 ## 使用方式

@@ -1,67 +1,135 @@
 # Roadmap
 
-> 用來回答：「目前在哪個階段？下一步是什麼？」  
-> 完整路線：[`project-roadmap.md`](roadmap/project-roadmap.md) ｜ V1 歷史：[`v1-roadmap.md`](roadmap/v1-roadmap.md)
+> 唯一路線圖。回答：「這個專案要做什麼？做到哪？下一步？」
+> V1 歷史細節：[`archive/2026-03-26_v1-roadmap.md`](roadmap/archive/2026-03-26_v1-roadmap.md)
 
-## Roadmap 對應矩陣
+## 願景
 
-| 需求 | 主要文件 | 用途 | 更新頻率 |
-|---|---|---|---|
-| 看長程產品路線（版本/Phase） | `docs/roadmap/project-roadmap.md` | 產品層規劃與里程碑邊界 | 低頻（階段切換時） |
-| 看當前執行進度（Current/Next） | `docs/roadmap.md` | 單一真源（執行層） | 高頻（每輪續作） |
-| 查 S7 變更任務與驗收 | `openspec/changes/phase7-v4-autonomous-continuation-governance-automation-mvp/tasks.md` | change 層任務清單與勾選狀態 | 中高頻（task 完成時） |
-| 查 V1 完整歷史內容 | `docs/roadmap/archive/2026-03-26_v1-roadmap.md` | 歷史封存，不再更新 | 凍結 |
+從 markdown 驅動的工作流，成長為跨工具的「個人 AI 工作台」——具備專案記憶、對話交接、知識沉澱、輕量 UI、多工具接入能力。
 
-## Cycle 說明（S7）
+## 產品路線
 
-- `phase7-v4-autonomous-continuation-governance-automation-mvp` 是單一 active change。
-- `Cycle` 是這個 change 內部的迭代驗收批次，不是新的 change。
-- 目前統計：Cycle-01 到 Cycle-05 已完成；Cycle-06 為下一輪候選。
-
-## 階段（對齊 project-roadmap / v1-roadmap）
-
-| S | 里程碑 | 狀態 |
-|:-:|--------|:----:|
-| S0 | 規劃與骨架建立 | ✅ |
-| S1 | V1 Phase 1 手動流程跑通 | ✅ 收尾 |
-| S2 | V1 Phase 2 半自動提取 MVP | ✅ 已完成（已 sync/archive） |
-| S3 | V1 Phase 3 真實專案驗證 | ✅ 已完成（已 sync/archive） |
-| S4 | V1 Phase 4 收斂定版 | ✅ 已完成（已 sync/archive） |
-| S5 | V2 輕量 UI 工作台 | ✅ 已完成（已 sync/archive） |
-| S6 | V3 多工具接入 | ✅ 已完成（已 sync/archive） |
-| S7 | V4 一次到位續作與治理自動化 | 🚧 治理 MVP 已 GO |
+| Done | Phase | 版本 | 目標 | 狀態 |
+|:----:|-------|------|------|:----:|
+| [x] | Phase 0 | — | 規劃與骨架 | ✅ |
+| [x] | Phase 1 | V1 | 可用工作流（手動→半自動→驗證→定版） | ✅ |
+| [ ] | Phase 2 | V1.5 | 穩定化與產品化前準備 | 未開始 |
+| [ ] | Phase 3 | V2 | 輕量 UI 工作台 | 未開始 |
+| [ ] | Phase 4 | V2.5 | 多專案與共享能力 | 未開始 |
+| [ ] | Phase 5 | V3 | 多工具接入 | 未開始 |
 
 ## 目前狀態
-- Current：S7 active（`phase7-v4-autonomous-continuation-governance-automation-mvp`），治理 MVP Review Gate：GO，Cycle-05 已完成
-- Next：啟動 S7 Cycle-06 候選（維持單一增量擴充策略）
-- Blockers：無阻斷 S7 的 active blockers（僅監控未追蹤 phase4 目錄）
 
-## 階段轉換記錄
-- 2026-03-26：完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
-- 2026-03-26：完成 S7 Cycle-04 最小實作（新增 template verify-only 的一鍵檢核腳本）
-- 2026-03-26：完成 S7 Cycle-03 最小實作（新增 governance 一鍵檢核腳本）
-- 2026-03-26：S7 完成最終 Review Gate（治理 MVP：GO），狀態由「規劃啟動」推進為「治理 MVP 已 GO」
-- 2026-03-26：S7 Executor 完成 tasks 2.x/3.x/4.x/5.x（一次到位續作契約、治理同步規則、報告模板、smoke 與交接同步）
-- 2026-03-26：啟動 S7 active change `phase7-v4-autonomous-continuation-governance-automation-mvp`，已建立 proposal/design/tasks/spec 草案
-- 2026-03-26：完成 S7 可執行提示詞包（WOS/Planner/Executor/Review Gate），降低啟動成本並支援一次到位續作
-- 2026-03-26：S6 完成 Review Gate 最終 GO，並完成 archive（`2026-03-26-phase6-v3-multi-tool-integration-framework-mvp`）
-- 2026-03-26：S6 主 spec 完成 sync，`strict validate(spec)` 已 PASS，原 ENOENT blocker 已解除
-- 2026-03-26：S6 進入 Review Gate，判定為 CONDITIONAL GO（待治理文件一致性修補）
-- 2026-03-26：S6 tasks 5.1/5.2 已完成；下一步為主 spec sync 與 Review Gate 收尾判定
-- 2026-03-26：S6 tasks 2.x/3.x/4.x 已完成；`strict validate(change)` PASS，`strict validate(spec)` 因主 spec 未 sync 出現 ENOENT，已列為可追蹤 blocker
-- 2026-03-26：已建立 S6 active change `phase6-v3-multi-tool-integration-framework-mvp`（proposal/design/tasks/spec 初稿完成）
-- 2026-03-26：`phase5-v2-lightweight-ui-workbench-mvp` 已完成 archive（`2026-03-26-phase5-v2-lightweight-ui-workbench-mvp`）
-- 2026-03-26：已建立 S5 active change `phase5-v2-lightweight-ui-workbench-mvp`（proposal/design/tasks/spec 初稿完成）
-- 2026-03-26：`phase4-v1-convergence-finalization` 已完成 archive（`2026-03-25-phase4-v1-convergence-finalization`）
-- 2026-03-26：S4 已完成 `#opsx-sync` 與 strict validate（change/spec 皆 PASS），進入 archive 前最終 Gate 判定
-- 2026-03-25：已建立 S4 active change `phase4-v1-convergence-finalization`（proposal/design/tasks/spec 草案完成）
-- 2026-03-25：`phase3-real-project-validation` 已完成 main spec sync 與 archive（`2026-03-25-phase3-real-project-validation`）
-- 2026-03-25：已建立 S3 active change `phase3-real-project-validation`（proposal/design/tasks/spec 草案完成）
-- 2026-03-25：`phase2-semi-auto-memory-extraction-mvp` 已完成 main spec sync 與 archive（`2026-03-25-phase2-semi-auto-memory-extraction-mvp`）
-- 2026-03-25：已建立 S2 active change `phase2-semi-auto-memory-extraction-mvp`，進入 artifacts 補齊與 strict validate 階段
-- 2026-03-25：重寫 roadmap 雙檔為表格+checkbox 追蹤格式，S 階段對齊產品路線語意
-- 2026-03-24：完成 Phase 1 收斂 review；兩次 archived pilot 已達最小完成線
-- 2026-03-24：`phase1-entrypoint-guidance-pilot` 完成 commit / push、main spec sync 與 archive
-- 2026-03-24：`phase1-entrypoint-guidance-pilot` 完成第 2 次比較型 pilot、strict validate 與 workspace smoke
+- **產品進度**：Phase 1 (V1) ✅ 已完成 → **Phase 2 (V1.5) 尚未啟動**
+- **進行中活動**：治理自動化 MVP（OpenSpec change S7，非產品功能交付）
+- **Next**：決定 Phase 2 啟動時機
+- **Blockers**：無
+
+---
+
+## Phase 詳情
+
+### Phase 0：規劃與骨架 ✅
+
+| Done | 交付物 |
+|:----:|--------|
+| [x] | 規劃文件（目標、原則、策略、運作方式） |
+| [x] | 專案記憶檔案結構 |
+| [x] | handoff 模板 |
+| [x] | 更新流程 |
+| [x] | UI 願景與資訊架構 |
+
+### Phase 1：V1 可用工作流 ✅
+
+| Done | 交付物 |
+|:----:|--------|
+| [x] | 手動流程跑通（至少 2 次 pilot） |
+| [x] | 半自動提取 MVP（對話紀錄 → 候選沉澱） |
+| [x] | 真實專案驗證（至少 1 個專案完整跑過） |
+| [x] | V1 收斂定版（檔案結構、規則、使用說明） |
+
+> V1 完整歷史：[`archive/2026-03-26_v1-roadmap.md`](roadmap/archive/2026-03-26_v1-roadmap.md)
+
+### Phase 2：V1.5 穩定化 ← 下一個產品階段
+
+| Done | 工作項目 |
+|:----:|---------|
+| [ ] | 提取流程重構與規則穩定化 |
+| [ ] | 模板欄位收斂 |
+| [ ] | 真實案例回顧 |
+| [ ] | 新專案初始化流程 |
+| [ ] | 專案層與個人層邊界定義 |
+| [ ] | 第一版使用說明 |
+
+### Phase 3：V2 輕量 UI
+
+| Done | 工作項目 |
+|:----:|---------|
+| [ ] | UI MVP 設計（以現有 markdown 為資料來源） |
+| [ ] | 專案總覽與專案頁 |
+| [ ] | handoff builder |
+| [ ] | 候選審核介面 |
+| [ ] | Memory Review 介面 |
+
+### Phase 4：V2.5 多專案與共享
+
+| Done | 工作項目 |
+|:----:|---------|
+| [ ] | 個人偏好與專案偏好正式分層 |
+| [ ] | shared workflow 整理 |
+| [ ] | 跨專案模板 |
+| [ ] | 技能候選升級流程 |
+
+### Phase 5：V3 多工具接入
+
+| Done | 工作項目 |
+|:----:|---------|
+| [ ] | 多工具輸入格式整合 |
+| [ ] | 統一提取與沉澱層 |
+| [ ] | 審核與回寫流程擴充 |
+| [ ] | UI 擴充（多來源檢視） |
+
+---
+
+## OpenSpec 執行記錄
+
+> 以下為 OpenSpec change lifecycle 的治理/流程作業，**不等於產品功能交付**。
+> S1-S4 是 Phase 1 的子任務；S5/S6 是未來 Phase 的規格草案（概念驗證，未交付產品）；S7 是治理自動化。
+> 完整 change 記錄：`openspec/changes/archive/`
+
+| # | OpenSpec Change | 對應 Phase | 性質 | 狀態 |
+|:-:|----------------|:----------:|------|:----:|
+| S0 | — | Phase 0 | 規劃與骨架 | ✅ |
+| S1 | phase1-entrypoint-guidance-pilot | Phase 1 | 手動流程 pilot | ✅ |
+| S2 | phase2-semi-auto-memory-extraction-mvp | Phase 1 | 半自動提取 | ✅ |
+| S3 | phase3-real-project-validation | Phase 1 | 真實專案驗證 | ✅ |
+| S4 | phase4-v1-convergence-finalization | Phase 1 | 收斂定版 | ✅ |
+| S5 | phase5-v2-lightweight-ui-workbench-mvp | ~~Phase 3~~ | 規格草案（概念驗證，未交付產品） | ✅ |
+| S6 | phase6-v3-multi-tool-integration-framework-mvp | ~~Phase 5~~ | 規格草案（概念驗證，未交付產品） | ✅ |
+| S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | 🚧 |
+
+### S7 進行中細節
+
+- Active change：`phase7-v4-autonomous-continuation-governance-automation-mvp`
+- Cycle-01 到 Cycle-05 已完成；Cycle-06 為候選
+- 任務明細：`openspec/changes/phase7-v4-.../tasks.md`
+
+---
+
+## 推進原則
+
+- **先完成 Phase 2 穩定化**，再做 UI 或多工具整合
+- 若 V1 沒有真的穩定可重複，後面都建立在不穩的基礎上
+- markdown / handoff / 工作流不是過渡品，是未來產品的核心骨架
+
+---
+
+## 異動記錄
+
+- 2026-03-26：合併 project-roadmap.md 為單一 roadmap，正規化 S-stage 命名（移除錯誤版本標籤）
+- 2026-03-26：V1 roadmap 歸檔至 `archive/`
+- 2026-03-26：S7 Cycle-01 到 Cycle-05 完成，治理 MVP Review Gate GO
+- 2026-03-25：Phase 1 (V1) 四項交付物全部完成
+- 2026-03-24：完成 Phase 1 首次 pilot 與 strict validate
 
 

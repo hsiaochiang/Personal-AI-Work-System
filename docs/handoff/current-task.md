@@ -3,11 +3,11 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: S7 執行驗收：phase7-v4-autonomous-continuation-governance-automation-mvp（active）
+- Name: S7 治理自動化 MVP：phase7-v4-autonomous-continuation-governance-automation-mvp（active）
 - Owner agent: GitHub Copilot
 - Started on: 2026-03-26
 - Last updated on: 2026-03-26
-- Related issue / spec: V4 一次到位續作與治理自動化（S7）
+- Related issue / spec: 治理自動化 MVP（S7，非產品版本交付）
 - Branch / worktree: `main`
 
 ## Goal
@@ -34,6 +34,7 @@
 - 已完成 S7 Cycle-04 最小實作（template verify-only 一鍵檢核）
 - 已完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
 - 已完成 roadmap 文件治理重盤查（V1 roadmap 歸檔 + 對應矩陣）
+- 已完成 roadmap 合併與命名正規化（刪除三層架構，合併為唯一 `docs/roadmap.md`）
 
 ## In Progress
 - 安全續作（不 commit / 不 push / 不 reset）
@@ -70,8 +71,8 @@
 - `docs/workflows/s7-one-shot-execution-contract.md`
 - `docs/workflows/s7-governance-sync-rules.md`
 - `docs/templates/s7-execution-report-template.md`
-- `docs/roadmap.md`
-- `docs/roadmap/project-roadmap.md`
+- `docs/roadmap.md`（唯一路線圖）
+- `docs/roadmap/project-roadmap.md`（已合併，redirect stub）
 - `docs/roadmap/archive/2026-03-26_v1-roadmap.md`
 - `docs/runlog/2026-03-26_README.md`
 - `docs/handoff/current-task.md`

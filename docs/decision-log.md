@@ -4,7 +4,8 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
-| 2026-03-26 | V1 roadmap 正式歸檔，並建立 roadmap 三層對應規則（project-roadmap / roadmap / change tasks） | `v1-roadmap.md` 內容已全部完成，若持續當作當前衝刺檔會增加維運摩擦並造成來源混淆 | 以 `docs/roadmap.md` 作為執行真源、`project-roadmap` 作為長程規劃、`v1-roadmap` 作為歷史入口，降低狀態漂移 | `docs/roadmap.md` |
+| 2026-03-26 | 合併 roadmap 為單一檔案 + S-stage 命名正規化 | 兩份 roadmap 命名不一致（S5=V2✅ vs Phase 3 全未勾選），三層架構增加認知負擔而非降低 | `docs/roadmap.md` 為唯一路線圖（產品路線＋執行狀態＋OpenSpec 記錄）；`project-roadmap.md` 改為 redirect；S5/S6 明確標註「規格草案，非產品交付」 | `docs/roadmap.md` |
+| 2026-03-26 | V1 roadmap 正式歸檔 | `v1-roadmap.md` 內容已全部完成，不應繼續當作當前衝刺檔 | 歸檔至 `archive/`，入口檔保留為歷史指標 | `docs/roadmap/archive/2026-03-26_v1-roadmap.md` |
 | 2026-03-26 | S7 Executor 採 docs-first 多檔同步落地 tasks 2.x-5.x（契約、模板、治理、smoke） | 需逐 task 落地且每段完成同步 runlog/handoff；本輪檔案數超過 5，需要決策留痕避免 scope 失控 | S7 具備可驗收執行契約與最小 smoke 證據，下一輪可進入實作型驗收 cycle | `docs/decisions/2026-03-26_s7-executor-evidence-span.md` |
 | 2026-03-26 | 啟動 S7 active change `phase7-v4-autonomous-continuation-governance-automation-mvp`，並以 docs-first 一次同步 OpenSpec artifacts 與治理證據 | 使用者要求直接執行 S7 規劃啟動且避免反覆催促；同時需滿足 runlog/handoff 最低留痕與 >5 檔變更決策留痕規範 | S7 已建立可續作基線（proposal/design/tasks/spec），下一步可直接進 tasks 1.x/2.x；治理狀態可追溯 | `docs/decisions/2026-03-26_phase7-planning-startup-evidence-span.md` |
 | 2026-03-26 | 採「不 commit 安全續作」策略：禁止 commit/push/reset，先完成風險盤點與護欄再進 clean-room replay | 使用者明確要求保留 working tree 並持續推進；同時存在未追蹤 `phase4-v1-convergence-finalization` 目錄需先控管風險 | 在不破壞現有工作樹前提下維持可交接節奏；以 docs-first 留痕確保可審計、可換手 | `docs/runlog/2026-03-26_README.md` |

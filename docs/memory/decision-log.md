@@ -70,8 +70,8 @@
 - 決策理由：在進入 Phase 1 前先把資訊結構整理好，方便後續在 VS Code 另開 session 時快速找到正確文件
 - 影響範圍：專案檔案結構、文件導覽方式與後續維護
 
-### 決策：除 V1 外，另建立全專案 roadmap 作為長期演進視圖
+### 決策：Roadmap 合併為單一檔案
 
-- 決策內容：以 `roadmap/project-roadmap.md` 追蹤 Phase 0 到 V3 的整體演進，而 `roadmap/v1-roadmap.md` 專注第一版
-- 決策理由：V1 已不足以承接整個專案願景，需要有更長期的版本視角來對齊後續投資方向
-- 影響範圍：專案規劃層級、版本管理與後續決策討論
+- 決策內容：原 `roadmap/project-roadmap.md` 已合併至 `docs/roadmap.md`，後者為唯一路線圖
+- 決策理由：兩份 roadmap 命名不一致（S5=V2✅ vs Phase 3 全未勾選），三層架構增加認知負擔
+- 影響範圍：所有 roadmap 查詢統一查 `docs/roadmap.md`

@@ -10,5 +10,4 @@
 ## 讀取方式
 
 - V1 完整歷史內容：`archive/2026-03-26_v1-roadmap.md`
-- 目前執行進度（S7 + Cycle）：`../roadmap.md`
-- 長程產品路線（Phase/版本）：`project-roadmap.md`
+- 唯一路線圖（產品路線＋執行狀態）：`../roadmap.md`
