@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | 建立階段狀態真源優先序：`docs/roadmap.md` > `docs/handoff/current-task.md` > `docs/roadmap/*.md` | S6 收尾後發生執行面與規劃面狀態漂移，導致 Phase 1 完成判定不一致 | 後續每次 archive 後可依固定優先序做狀態回寫，降低 roadmap 漂移與交接誤判 | `docs/roadmap.md` |
 | 2026-03-26 | S6 `phase6-v3-multi-tool-integration-framework-mvp` 經 Review Gate 最終 GO 後執行 archive（`--skip-specs`） | 主 spec 已先完成 sync 且 change/spec strict validate 雙 PASS；沿用既有最小安全收尾路徑避免重複套用 specs | S6 正式封存完成，V3 多工具接入 MVP 形成可追溯基線，後續可進入 S7 規劃 | `openspec/changes/archive/2026-03-26-phase6-v3-multi-tool-integration-framework-mvp/` |
 | 2026-03-26 | S6 主 spec 已同步並完成 change/spec strict validate 雙 PASS，收尾策略改為先做治理一致性修補再進 archive 判定 | 先前 ENOENT blocker 已解除，但治理文件仍有舊狀態描述；若直接收尾會造成證據與事實不一致 | S6 已具備技術驗證完成基線，剩餘工作收斂為治理一致性與 Gate 最終判定，不擴大實作範圍 | `openspec/specs/multi-tool-integration-framework/spec.md` |
 | 2026-03-26 | S6 task 4.x 採「先完成 2-tools 演示與 change strict validate，主 spec 未 sync 則列 blocker 收斂」策略 | S6 本輪目標是 MVP 框架驗證與治理留痕，change strict validate 已可通過；spec strict validate 因主 spec 未落地而 ENOENT，不應擴 scope 強行補產品層改動 | 2.x/3.x/4.x 可在不擴 scope 下完成並可交接；同時把 spec sync 缺口顯性化為 blocker，避免誤宣告 Done | `docs/handoff/blockers.md` |
