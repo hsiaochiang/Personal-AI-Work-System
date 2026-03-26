@@ -27,3 +27,17 @@ coverage/
 
 Thumbs.db
 .DS_Store
+
+# Stitch / build cache and temporary files
+.stitch-mcp/
+.stitch-mcp/cache/
+
+# Vite deps cache
+.vite/deps/
+
+# Local stitch artifacts and snapshots
+design/stitch/snapshots/
+.tmp-stitch*
+
+# Roo / local MCP overrides (may contain secrets)
+.roo/
