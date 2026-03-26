@@ -1,0 +1,4 @@
+{
+  "projectId": "9755679534974217108",
+  "prompt": "請建立「專案總覽（繁中）」畫面，project 內容對應既有 Projects Overview 的資訊層級與區塊。\n嚴格要求：\n1) 全部可見文字必須使用台灣常用正體中文（繁中）。\n2) 禁止出現簡體中文，禁止任何亂碼或不可讀字元。\n3) 必須保留以下術語原文，不可翻譯：S6/S7、Replay v2、R2/R3/R4、GO/NO-GO、Project Alpha。\n4) 請包含完整狀態文案：Loading、Empty、Error，且文案使用正體中文。\n5) 版面結構、資訊層級、群組關係要對齊既有 Projects Overview。\n6) 請輸出可直接用於設計檢視的完整畫面。"
+}

@@ -4,6 +4,8 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | 採「不 commit 安全續作」策略：禁止 commit/push/reset，先完成風險盤點與護欄再進 clean-room replay | 使用者明確要求保留 working tree 並持續推進；同時存在未追蹤 `phase4-v1-convergence-finalization` 目錄需先控管風險 | 在不破壞現有工作樹前提下維持可交接節奏；以 docs-first 留痕確保可審計、可換手 | `docs/runlog/2026-03-26_README.md` |
+| 2026-03-26 | 建立「S7 前風險雷達」並採高衝擊低可見風險優先處理（先 replay/回歸，後 S7） | V1 已完成與 S6 已 archive，但 clean-room replay 與風險回歸仍屬未執行；若直接進 S7，可能把隱性風險帶入下一階段 | S7 啟動前先完成可重播與回歸證據，並用統一欄位（機率/衝擊/緩解/觸發/退出機制）做風險治理，降低跨階段誤判 | `docs/handoff/blockers.md` |
 | 2026-03-26 | 狀態詞彙與優先序正規化：`Completed（已完成）` / `Archived（已 sync/archive）`，並以 `docs/roadmap.md` 為第一真源 | `project-roadmap`、`v1-roadmap` 與執行紀錄在收尾階段曾出現描述不一致（完成、收尾、進行中混用），易造成接手誤判 | 後續狀態回寫可用統一詞彙快速比對；只要與 `docs/roadmap.md` 衝突即視為待修補項，降低治理漂移 | `docs/roadmap.md` |
 | 2026-03-26 | 建立階段狀態真源優先序：`docs/roadmap.md` > `docs/handoff/current-task.md` > `docs/roadmap/*.md` | S6 收尾後發生執行面與規劃面狀態漂移，導致 Phase 1 完成判定不一致 | 後續每次 archive 後可依固定優先序做狀態回寫，降低 roadmap 漂移與交接誤判 | `docs/roadmap.md` |
 | 2026-03-26 | S6 `phase6-v3-multi-tool-integration-framework-mvp` 經 Review Gate 最終 GO 後執行 archive（`--skip-specs`） | 主 spec 已先完成 sync 且 change/spec strict validate 雙 PASS；沿用既有最小安全收尾路徑避免重複套用 specs | S6 正式封存完成，V3 多工具接入 MVP 形成可追溯基線，後續可進入 S7 規劃 | `openspec/changes/archive/2026-03-26-phase6-v3-multi-tool-integration-framework-mvp/` |

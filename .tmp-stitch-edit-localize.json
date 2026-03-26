@@ -1,0 +1,8 @@
+{
+  "projectId": "9755679534974217108",
+  "selectedScreenIds": [
+    "cb6825ef809c48a0b2d17a1c3943da8c",
+    "cb6f7a115b6b479eaf4cfb5127bef67f"
+  ],
+  "prompt": "請將選定畫面的所有可見文字完整改為「台灣常用正體中文（繁體中文）」。\n\n硬性規則：\n- 嚴禁簡體中文。\n- 嚴禁亂碼或替代符號（例如：蝜葉、?∟???、鞈?頛憭望?、甈?銝雲）。\n- 保留現有版面結構、元件層級、資訊架構與資料語意，不改動視覺風格。\n- KPI、表格欄位、按鈕、badge、tooltip、篩選器、分頁/導覽、狀態訊息（Loading/Empty/Error/No Permission）全部中文化。\n\n用語規範（請一致）：\n- Projects Overview → 專案總覽\n- Project Detail → 專案詳情\n- Current Stage → 目前階段\n- Gate → 關卡\n- Active Blockers → 進行中阻塞項\n- Last Validation → 最近驗證\n- Next Step → 下一步\n- Last Updated → 最後更新\n- Loading → 載入中\n- Empty → 目前沒有資料\n- Error → 發生錯誤，請稍後再試\n- No Permission → 你沒有權限檢視此內容\n\n專有名詞維持英文：S6/S7、Replay v2、R2/R3/R4、GO/NO-GO、Project Alpha。\n\n請確保所有文字最終都能正確顯示為正體中文。\r\n"
+}

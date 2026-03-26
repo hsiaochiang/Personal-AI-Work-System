@@ -37,11 +37,12 @@
 - 已完成 tasks 5.1/5.2（MVP 結果摘要、S6.1 擴充建議）
 
 ## In Progress
-- 無（S6 已完成）
+- 安全續作（不 commit / 不 push / 不重置工作樹）
+- S7 啟動前置完成（R2/R3/R4 已 PASS，S7 條件式 GO）
 
 ## Next Step
-- 先執行 V1 clean-room replay 與最小風險回歸演練，補齊 `docs/qa/` 驗證證據
-- 驗證通過後再啟動 S7 規劃（由 OpenSpec Planner 產出 proposal/design/tasks/spec 草案）
+- 啟動 S7 規劃（OpenSpec Planner）：先產出 proposal/design/tasks/spec 草案
+- 持續監控未追蹤 `phase4-v1-convergence-finalization` 目錄（凍結不處理）
 
 ## Files Touched
 - `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/.openspec.yaml`
@@ -65,6 +66,7 @@
 - S6 接入範圍膨脹為完整平台化
 - 不同工具輸出格式差異造成 normalize/dedupe 不穩
 - 工具可用性波動（timeout/rate limit）造成演示不穩定
+- working tree 存在未提交治理變更與未追蹤 `phase4-v1-convergence-finalization` 目錄，需避免誤納入或遺漏
 
 ## Validation Status
 - Commands run:
@@ -74,6 +76,20 @@
 	- change strict validate: PASS
 	- spec strict validate: PASS
 - Not run yet: clean-room replay、風險回歸演練
+- Not run yet: 無（S7 前置驗證已完成）
+
+## Safe Continuation Guardrails
+
+- 邊界
+	- 僅允許 docs-first 最小必要調整（`docs/` 與交接檔）
+	- 暫不處理 `openspec/changes/phase4-v1-convergence-finalization/` 未追蹤目錄（待人工決策）
+- 每日驗證清單
+	- `git status --short` 盤點變更是否仍在預期範圍
+	- 治理一致性比對：`docs/roadmap.md`、`docs/handoff/current-task.md`、`docs/handoff/blockers.md`、`docs/runlog`
+	- 風險雷達狀態更新：至少標記 1 項風險為「已驗證/待驗證」
+- 回退策略（非破壞性）
+	- 不使用 `reset --hard`、`checkout --` 類破壞性指令
+	- 以新增 runlog/handoff 留痕方式撤銷敘述，必要時由人工決策是否另開修補 commit
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回 S6 active change 與治理草稿更新；不得影響 S1-S5 已 archived 證據

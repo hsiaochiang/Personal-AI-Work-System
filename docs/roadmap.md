@@ -17,8 +17,8 @@
 
 ## 目前狀態
 - Current：S6 已完成（`phase6-v3-multi-tool-integration-framework-mvp` 已 archive）
-- Next：啟動下一階段規劃（S7 候選）
-- Blockers：無 active blockers
+- Next：R2/R3/R4 回歸演練已完成，啟動 S7 規劃（條件式 GO）
+- Blockers：無阻斷 S7 的 active blockers（僅監控未追蹤 phase4 目錄）
 
 ## 階段轉換記錄
 - 2026-03-26：S6 完成 Review Gate 最終 GO，並完成 archive（`2026-03-26-phase6-v3-multi-tool-integration-framework-mvp`）
