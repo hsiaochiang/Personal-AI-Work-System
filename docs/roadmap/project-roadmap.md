@@ -1,11 +1,17 @@
 # Project Roadmap
 
 > 本檔案是整個專案的完整路線圖。回答：「從現在到最終願景，要經過哪些里程碑？」  
-> 當前衝刺目標的細項追蹤請看 [`v1-roadmap.md`](v1-roadmap.md)。
+> 當前執行進度請看 [`../roadmap.md`](../roadmap.md)；V1 歷史請看 [`archive/2026-03-26_v1-roadmap.md`](archive/2026-03-26_v1-roadmap.md)。
 
 ## 願景
 
 從 markdown 驅動的工作流，成長為跨工具的「個人 AI 工作台」——具備專案記憶、對話交接、知識沉澱、輕量 UI、多工具接入能力。
+
+## 閱讀指引
+
+- 本檔追蹤的是長程 Phase/版本路線，不追蹤每日執行 cycle。
+- S7 的 Cycle-01 之後迭代，請看 [`../roadmap.md`](../roadmap.md) 的 Current/Next 與階段轉換記錄。
+- V1 roadmap 已歸檔為歷史基線，入口檔保留在 [`v1-roadmap.md`](v1-roadmap.md)。
 
 ## 里程碑總覽
 

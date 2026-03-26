@@ -1,7 +1,22 @@
 # Roadmap
 
 > 用來回答：「目前在哪個階段？下一步是什麼？」  
-> 完整路線：[`project-roadmap.md`](roadmap/project-roadmap.md) ｜ 當前衝刺：[`v1-roadmap.md`](roadmap/v1-roadmap.md)
+> 完整路線：[`project-roadmap.md`](roadmap/project-roadmap.md) ｜ V1 歷史：[`v1-roadmap.md`](roadmap/v1-roadmap.md)
+
+## Roadmap 對應矩陣
+
+| 需求 | 主要文件 | 用途 | 更新頻率 |
+|---|---|---|---|
+| 看長程產品路線（版本/Phase） | `docs/roadmap/project-roadmap.md` | 產品層規劃與里程碑邊界 | 低頻（階段切換時） |
+| 看當前執行進度（Current/Next） | `docs/roadmap.md` | 單一真源（執行層） | 高頻（每輪續作） |
+| 查 S7 變更任務與驗收 | `openspec/changes/phase7-v4-autonomous-continuation-governance-automation-mvp/tasks.md` | change 層任務清單與勾選狀態 | 中高頻（task 完成時） |
+| 查 V1 完整歷史內容 | `docs/roadmap/archive/2026-03-26_v1-roadmap.md` | 歷史封存，不再更新 | 凍結 |
+
+## Cycle 說明（S7）
+
+- `phase7-v4-autonomous-continuation-governance-automation-mvp` 是單一 active change。
+- `Cycle` 是這個 change 內部的迭代驗收批次，不是新的 change。
+- 目前統計：Cycle-01 到 Cycle-05 已完成；Cycle-06 為下一輪候選。
 
 ## 階段（對齊 project-roadmap / v1-roadmap）
 

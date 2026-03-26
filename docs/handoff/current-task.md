@@ -33,14 +33,15 @@
 - 已完成 S7 Cycle-03 最小實作（governance 一鍵檢核腳本）
 - 已完成 S7 Cycle-04 最小實作（template verify-only 一鍵檢核）
 - 已完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
+- 已完成 roadmap 文件治理重盤查（V1 roadmap 歸檔 + 對應矩陣）
 
 ## In Progress
 - 安全續作（不 commit / 不 push / 不 reset）
 - S7 Cycle-06 候選（維持單一增量擴充）
 
 ## Next Step
-- 執行 Cycle-05 一鍵檢核腳本並補固定五段報告
-- 定義 Cycle-06 的最小增量（僅新增一項可重播檢核）
+- 啟動 Cycle-06 並維持單一增量擴充（不擴 scope）
+- 完成 Cycle-06 固定五段報告與 smoke 證據
 
 ## Validation Status
 - S7 tasks 1.x-5.x：PASS
@@ -52,6 +53,7 @@
 - S7 Cycle-03 script implementation：PASS
 - S7 Cycle-04 script implementation：PASS
 - S7 Cycle-05 script implementation：PASS
+- Roadmap 文件治理重盤查：PASS
 
 ## Safe Continuation Guardrails
 - 僅允許 docs-first 最小必要調整（`docs/` 與 `openspec/changes/phase7...`）
@@ -69,6 +71,8 @@
 - `docs/workflows/s7-governance-sync-rules.md`
 - `docs/templates/s7-execution-report-template.md`
 - `docs/roadmap.md`
+- `docs/roadmap/project-roadmap.md`
+- `docs/roadmap/archive/2026-03-26_v1-roadmap.md`
 - `docs/runlog/2026-03-26_README.md`
 - `docs/handoff/current-task.md`
 - `docs/qa/2026-03-26_smoke.md`
