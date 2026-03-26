@@ -4,6 +4,8 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | S7 Executor 採 docs-first 多檔同步落地 tasks 2.x-5.x（契約、模板、治理、smoke） | 需逐 task 落地且每段完成同步 runlog/handoff；本輪檔案數超過 5，需要決策留痕避免 scope 失控 | S7 具備可驗收執行契約與最小 smoke 證據，下一輪可進入實作型驗收 cycle | `docs/decisions/2026-03-26_s7-executor-evidence-span.md` |
+| 2026-03-26 | 啟動 S7 active change `phase7-v4-autonomous-continuation-governance-automation-mvp`，並以 docs-first 一次同步 OpenSpec artifacts 與治理證據 | 使用者要求直接執行 S7 規劃啟動且避免反覆催促；同時需滿足 runlog/handoff 最低留痕與 >5 檔變更決策留痕規範 | S7 已建立可續作基線（proposal/design/tasks/spec），下一步可直接進 tasks 1.x/2.x；治理狀態可追溯 | `docs/decisions/2026-03-26_phase7-planning-startup-evidence-span.md` |
 | 2026-03-26 | 採「不 commit 安全續作」策略：禁止 commit/push/reset，先完成風險盤點與護欄再進 clean-room replay | 使用者明確要求保留 working tree 並持續推進；同時存在未追蹤 `phase4-v1-convergence-finalization` 目錄需先控管風險 | 在不破壞現有工作樹前提下維持可交接節奏；以 docs-first 留痕確保可審計、可換手 | `docs/runlog/2026-03-26_README.md` |
 | 2026-03-26 | 建立「S7 前風險雷達」並採高衝擊低可見風險優先處理（先 replay/回歸，後 S7） | V1 已完成與 S6 已 archive，但 clean-room replay 與風險回歸仍屬未執行；若直接進 S7，可能把隱性風險帶入下一階段 | S7 啟動前先完成可重播與回歸證據，並用統一欄位（機率/衝擊/緩解/觸發/退出機制）做風險治理，降低跨階段誤判 | `docs/handoff/blockers.md` |
 | 2026-03-26 | 狀態詞彙與優先序正規化：`Completed（已完成）` / `Archived（已 sync/archive）`，並以 `docs/roadmap.md` 為第一真源 | `project-roadmap`、`v1-roadmap` 與執行紀錄在收尾階段曾出現描述不一致（完成、收尾、進行中混用），易造成接手誤判 | 後續狀態回寫可用統一詞彙快速比對；只要與 `docs/roadmap.md` 衝突即視為待修補項，降低治理漂移 | `docs/roadmap.md` |

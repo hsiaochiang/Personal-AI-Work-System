@@ -19,7 +19,8 @@
 - Install specific latest tested version: `npm install -g @fission-ai/openspec@1.2.0`
 - One-off usage: `npx @fission-ai/openspec --version`
 - Verify install: `openspec --version`
-- Strict validate example: `openspec change validate "<change-name>" --strict`
+- Strict validate example (preferred): `openspec validate --changes "<change-name>" --strict`
+- Strict validate fallback (legacy): `openspec change validate "<change-name>" --strict`
 - Official source: `https://www.npmjs.com/package/@fission-ai/openspec`
 - Upstream repository: `https://github.com/Fission-AI/OpenSpec`
 
@@ -67,7 +68,7 @@
 - Medium change: 檢查 roadmap / decision-log / current-task 一致性，再跑 targeted verify
 - High-risk change: 補充人工 walkthrough，確認模板邊界、handoff 可接手性與主要記憶入口未被破壞
 - 若本次 change 需要在本機執行 OpenSpec strict validate，先確認 `openspec --version` 可用；若未安裝，可先用 `npx @fission-ai/openspec --version` 驗證是否能執行，再決定是否全域安裝
-- active change 的 strict validate 以 `openspec change validate "<change-name>" --strict` 為準，不使用 `openspec validate` 縮寫形式
+- active change 的 strict validate 優先使用 `openspec validate --changes "<change-name>" --strict`，若因 CLI 版本差異不相容再退回 `openspec change validate "<change-name>" --strict`
 
 ## Notes
 - 新增或變更命令時，同步更新本檔

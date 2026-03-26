@@ -4,6 +4,8 @@
 
 ## Active Blockers
 - 目前無阻斷 S7 的 active blockers（僅保留監控風險）
+- 2026-03-26：完成 S7 one-shot cycle（Cycle-01）後複核，仍無 blocker
+- 2026-03-26：完成 S7 tasks 2.x-5.x（executor）後複核，仍無 blocker
 - 2026-03-25：完成 `phase2-semi-auto-memory-extraction-mvp` 的 sync/archive 後複核，仍無 blocker
 - 2026-03-25：完成 `phase3-real-project-validation` 的 sync/archive 後複核，仍無 blocker
 - 2026-03-25：啟動 `phase4-v1-convergence-finalization` 後複核，仍無 blocker
