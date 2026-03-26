@@ -35,6 +35,15 @@
 - [x] 5.2 交接檔更新（current-task/blockers）
   - 驗收條件：下一位 agent 可直接續作
 
+## 6. 迭代式續作驗收（Cycle 03-05）
+
+- [x] 6.1 完成 Cycle-03 一鍵檢核腳本化
+  - 驗收條件：可單指令重播 strict validate + 治理一致性
+- [x] 6.2 完成 Cycle-04 納入 template verify-only
+  - 驗收條件：在同一腳本中納入 template verify-only 並 PASS
+- [x] 6.3 完成 Cycle-05 編碼穩定檢核
+  - 驗收條件：template verify-only 無 `UnicodeEncodeError` 訊號
+
 ## Day Plan (One-Day Acceptable Steps)
 
 - D1（已完成）
@@ -45,6 +54,8 @@
   - 3.1、3.2、4.2
 - D4（已完成）
   - 5.1、5.2 + checklist 關閉
+- D5（已完成）
+  - 6.1、6.2、6.3
 
 ## Checklist
 

@@ -32,14 +32,15 @@
 - 已完成 S7 最終 Review Gate（治理 MVP：GO）
 - 已完成 S7 Cycle-03 最小實作（governance 一鍵檢核腳本）
 - 已完成 S7 Cycle-04 最小實作（template verify-only 一鍵檢核）
+- 已完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
 
 ## In Progress
 - 安全續作（不 commit / 不 push / 不 reset）
-- S7 Cycle-05 候選（維持單一增量擴充）
+- S7 Cycle-06 候選（維持單一增量擴充）
 
 ## Next Step
-- 執行 Cycle-04 一鍵檢核腳本並補固定五段報告
-- 定義 Cycle-05 的最小增量（僅新增一項可重播檢核）
+- 執行 Cycle-05 一鍵檢核腳本並補固定五段報告
+- 定義 Cycle-06 的最小增量（僅新增一項可重播檢核）
 
 ## Validation Status
 - S7 tasks 1.x-5.x：PASS
@@ -50,6 +51,7 @@
 - S7 Final Review Gate（治理 MVP）：GO
 - S7 Cycle-03 script implementation：PASS
 - S7 Cycle-04 script implementation：PASS
+- S7 Cycle-05 script implementation：PASS
 
 ## Safe Continuation Guardrails
 - 僅允許 docs-first 最小必要調整（`docs/` 與 `openspec/changes/phase7...`）
@@ -72,3 +74,4 @@
 - `docs/qa/2026-03-26_smoke.md`
 - `scripts/s7-cycle03-governance-check.ps1`
 - `scripts/s7-cycle04-governance-check.ps1`
+- `scripts/s7-cycle05-governance-check.ps1`
