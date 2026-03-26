@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | 狀態詞彙與優先序正規化：`Completed（已完成）` / `Archived（已 sync/archive）`，並以 `docs/roadmap.md` 為第一真源 | `project-roadmap`、`v1-roadmap` 與執行紀錄在收尾階段曾出現描述不一致（完成、收尾、進行中混用），易造成接手誤判 | 後續狀態回寫可用統一詞彙快速比對；只要與 `docs/roadmap.md` 衝突即視為待修補項，降低治理漂移 | `docs/roadmap.md` |
 | 2026-03-26 | 建立階段狀態真源優先序：`docs/roadmap.md` > `docs/handoff/current-task.md` > `docs/roadmap/*.md` | S6 收尾後發生執行面與規劃面狀態漂移，導致 Phase 1 完成判定不一致 | 後續每次 archive 後可依固定優先序做狀態回寫，降低 roadmap 漂移與交接誤判 | `docs/roadmap.md` |
 | 2026-03-26 | S6 `phase6-v3-multi-tool-integration-framework-mvp` 經 Review Gate 最終 GO 後執行 archive（`--skip-specs`） | 主 spec 已先完成 sync 且 change/spec strict validate 雙 PASS；沿用既有最小安全收尾路徑避免重複套用 specs | S6 正式封存完成，V3 多工具接入 MVP 形成可追溯基線，後續可進入 S7 規劃 | `openspec/changes/archive/2026-03-26-phase6-v3-multi-tool-integration-framework-mvp/` |
 | 2026-03-26 | S6 主 spec 已同步並完成 change/spec strict validate 雙 PASS，收尾策略改為先做治理一致性修補再進 archive 判定 | 先前 ENOENT blocker 已解除，但治理文件仍有舊狀態描述；若直接收尾會造成證據與事實不一致 | S6 已具備技術驗證完成基線，剩餘工作收斂為治理一致性與 Gate 最終判定，不擴大實作範圍 | `openspec/specs/multi-tool-integration-framework/spec.md` |
