@@ -40,7 +40,8 @@
 - 無（S6 已完成）
 
 ## Next Step
-- 啟動 S7 規劃（先由 OpenSpec Planner 產出 proposal/design/tasks/spec 草案）
+- 先執行 V1 clean-room replay 與最小風險回歸演練，補齊 `docs/qa/` 驗證證據
+- 驗證通過後再啟動 S7 規劃（由 OpenSpec Planner 產出 proposal/design/tasks/spec 草案）
 
 ## Files Touched
 - `openspec/changes/phase6-v3-multi-tool-integration-framework-mvp/.openspec.yaml`
@@ -72,7 +73,7 @@
 - Result:
 	- change strict validate: PASS
 	- spec strict validate: PASS
-- Not run yet: 無
+- Not run yet: clean-room replay、風險回歸演練
 
 ## Rollback / Recovery Notes
 - 若需回退，僅撤回 S6 active change 與治理草稿更新；不得影響 S1-S5 已 archived 證據
