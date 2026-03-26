@@ -21,8 +21,8 @@
 ## 目前狀態
 
 - **產品進度**：Phase 1 (V1) ✅ 已完成 → **Phase 2 (V1.5) 尚未啟動**
-- **進行中活動**：治理自動化 MVP（OpenSpec change S7，非產品功能交付）
-- **Next**：決定 Phase 2 啟動時機
+- **進行中活動**：無（S7 治理自動化 MVP 已關閉）
+- **Next**：由人確認是否啟動 Phase 2（V1.5 穩定化）
 - **Blockers**：無
 
 ---
@@ -106,13 +106,9 @@
 | S4 | phase4-v1-convergence-finalization | Phase 1 | 收斂定版 | ✅ |
 | S5 | phase5-v2-lightweight-ui-workbench-mvp | ~~Phase 3~~ | 規格草案（概念驗證，未交付產品） | ✅ |
 | S6 | phase6-v3-multi-tool-integration-framework-mvp | ~~Phase 5~~ | 規格草案（概念驗證，未交付產品） | ✅ |
-| S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | 🚧 |
+| S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | ✅ |
 
-### S7 進行中細節
-
-- Active change：`phase7-v4-autonomous-continuation-governance-automation-mvp`
-- Cycle-01 到 Cycle-06 已完成；Cycle-07 為候選
-- 任務明細：`openspec/changes/phase7-v4-.../tasks.md`
+> S7 已於 2026-03-26 關閉（Cycle-06 為最終 cycle，不再新增）。完整記錄：`openspec/changes/phase7-v4-.../tasks.md`
 
 ---
 
@@ -126,6 +122,7 @@
 
 ## 異動記錄
 
+- 2026-03-26：S7 正式關閉（Cycle-06 為最終 cycle；原始目標治理自動化 MVP 已達成）
 - 2026-03-26：完成 S7 Cycle-06（roadmap 單一真源防回退檢核，腳本化可重播）
 - 2026-03-26：合併 project-roadmap.md 為單一 roadmap，正規化 S-stage 命名（移除錯誤版本標籤）
 - 2026-03-26：V1 roadmap 歸檔至 `archive/`

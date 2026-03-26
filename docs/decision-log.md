@@ -4,6 +4,7 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-03-26 | S7 正式關閉：Cycle-06 為最終 cycle，不再新增 | 原始目標（治理自動化 MVP）於 Cycle-02 Review Gate GO 後已達成；Cycle-03-06 為增量優化，但沒有定義終止條件，形成開放性債務 | 後續治理腳本改善若有需要，開新 S8 change 追蹤，不在 S7 內無限 cycle | `docs/roadmap.md` |
 | 2026-03-26 | S7 Cycle-06 新增 roadmap 單一真源防回退檢核（腳本化） | roadmap 已完成單檔合併，需避免後續續作把雙檔分工誤帶回來 | 一鍵檢核可在每輪續作自動驗證「merge redirect + 唯一路線圖宣告」，降低命名/來源漂移風險 | `scripts/s7-cycle06-governance-check.ps1` |
 | 2026-03-26 | 合併 roadmap 為單一檔案 + S-stage 命名正規化 | 兩份 roadmap 命名不一致（S5=V2✅ vs Phase 3 全未勾選），三層架構增加認知負擔而非降低 | `docs/roadmap.md` 為唯一路線圖（產品路線＋執行狀態＋OpenSpec 記錄）；`project-roadmap.md` 改為 redirect；S5/S6 明確標註「規格草案，非產品交付」 | `docs/roadmap.md` |
 | 2026-03-26 | V1 roadmap 正式歸檔 | `v1-roadmap.md` 內容已全部完成，不應繼續當作當前衝刺檔 | 歸檔至 `archive/`，入口檔保留為歷史指標 | `docs/roadmap/archive/2026-03-26_v1-roadmap.md` |

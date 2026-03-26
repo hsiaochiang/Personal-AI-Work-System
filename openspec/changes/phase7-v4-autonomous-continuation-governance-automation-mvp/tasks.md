@@ -35,7 +35,9 @@
 - [x] 5.2 交接檔更新（current-task/blockers）
   - 驗收條件：下一位 agent 可直接續作
 
-## 6. 迭代式續作驗收（Cycle 03-05）
+## 6. 迭代式續作驗收（Cycle 03–06，已關閉）
+
+> Cycle-06 為最終 cycle。後續如需新增檢核陠面，開新 S8 change 追蹤，不在此 change 內繼續新增 cycle。
 
 - [x] 6.1 完成 Cycle-03 一鍵檢核腳本化
   - 驗收條件：可單指令重播 strict validate + 治理一致性
@@ -68,3 +70,4 @@
 - [x] 不使用破壞性 git 指令
 - [x] 至少一次可重播驗證
 - [x] 治理文件一致
+- [x] S7 正式關閉（Cycle-06 為最終；与 roadmap 狀態同步）
