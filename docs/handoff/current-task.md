@@ -3,60 +3,43 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: S7 治理自動化 MVP：phase7-v4-autonomous-continuation-governance-automation-mvp（**已關閉**）
+- Name: Phase 4（V2.5）多專案與共享能力規劃（待啟動）
 - Owner agent: GitHub Copilot
-- Started on: 2026-03-26
+- Started on: —
 - Last updated on: 2026-03-26
-- Related issue / spec: 治理自動化 MVP（S7，非產品版本交付）
+- Related issue / spec: Phase 4（V2.5）多專案與共享能力
 - Branch / worktree: `main`
 
 ## Goal
-- S7 治理自動化 MVP 已完成並關閉（Cycle-06 為最終）。
-- 下一個行動選項：献給人確認是否啟動 Phase 2（V1.5 穩定化）。
+- 依 `docs/roadmap.md` 啟動 Phase 4（V2.5）定義，以 OpenSpec Planner 建立 active change。
 
 ## Scope
-- In scope: S7 one-shot cycle、治理同步、固定五段報告驗收
-- Out of scope: 架構重寫、重大 dependency、破壞性 git 操作、S1-S6 archive 改寫
+- In scope: Phase 4 change 定義、proposal、tasks、spec
+- Out of scope: 任何實作（待 change PASS 後再 Executor）
 
 ## Constraints
 - Technical constraints: docs-first、smallest safe change、strict validate 必須 PASS
-- Product / UX constraints: 本輪不新增 UI 功能，只做流程與治理驗證
+- Product / UX constraints: 不引入後端 API；不破壞既有 Phase 1–3 產出
 
 ## Done
-- 已建立並補強 S7 active change artifacts（proposal/design/tasks/spec）
-- 已完成 S7 tasks 1.x-5.x（契約、治理規則、模板、smoke、交接同步）
-- 已完成 S7 strict validate（PASS）
-- 已完成 Review Gate 必修修補（current-task/roadmap/tasks/qa）
-- 已完成 S7 one-shot Cycle-01（固定五段報告）
-- 已完成 S7 one-shot Cycle-02（verb-first validate + fallback 驗證）
-- 已完成 S7 最終 Review Gate（治理 MVP：GO）
-- 已完成 S7 Cycle-03 最小實作（governance 一鍵檢核腳本）
-- 已完成 S7 Cycle-04 最小實作（template verify-only 一鍵檢核）
-- 已完成 S7 Cycle-05 最小實作（template verify-only 編碼穩定檢核）
-- 已完成 roadmap 文件治理重盤查（V1 roadmap 歸檔 + 對應矩陣）
-- 已完成 roadmap 合併與命名正規化（刪除三層架構，合併為唯一 `docs/roadmap.md`）
-- 已完成 S7 Cycle-06 最小實作（roadmap 單一真源防回退檢核）
+- Phase 2（`phase8-v1.5-stabilization-mvp`）：全部完成並 archive
+- Phase 3（`phase9-v2-lightweight-ui-workbench-mvp`）：全部完成並 archive（`openspec/changes/archive/2026-03-26-phase9-v2-lightweight-ui-workbench-mvp/`）
+  - Tasks 1.x–6.x 全部 [x]
+  - smoke PASS：`docs/qa/2026-03-26_phase3-smoke.md`
+  - strict validate PASS → Review Gate GO → archive PASS
 
 ## In Progress
-- 無。由人確認 Phase 2 啟動時機。
+- 無（Phase 3 已完成並 archive）
 
 ## Next Step
-- **人工決策**：是否現在就開始 Phase 2（V1.5 穩定化）？
-- 若 YES：開開開 OpenSpec Planner 對 Phase 2 進行 change 定義。
-- 若 NO：無待辦項目；專案處於穩定就緒狀態。
+- 呼叫 `OpenSpec Planner` 為 Phase 4（V2.5 多專案與共享能力）定義 change
 
 ## Validation Status
-- S7 tasks 1.x-5.x：PASS
-- S7 strict validate：PASS
-- 治理同步（roadmap/runlog/handoff/qa）：PASS
-- S7 one-shot Cycle-01：PASS
-- S7 one-shot Cycle-02：PASS
-- S7 Final Review Gate（治理 MVP）：GO
-- S7 Cycle-03 script implementation：PASS
-- S7 Cycle-04 script implementation：PASS
-- S7 Cycle-05 script implementation：PASS
-- S7 Cycle-06 script implementation：PASS
-- Roadmap 文件治理重盤查：PASS
+- Phase 3 strict validate：PASS（2026-03-26，exit 0）
+- Phase 3 archive：PASS（2026-03-26）
+- Phase 3 smoke：PASS（`docs/qa/2026-03-26_phase3-smoke.md`）
+- Phase 4 change：尚未建立
+- Review Gate：待執行
 
 ## Safe Continuation Guardrails
 - 僅允許 docs-first 最小必要調整（`docs/` 與 `openspec/changes/phase7...`）
@@ -69,8 +52,18 @@
 - S6 strict validate（change/spec）：PASS
 
 ## Evidence Paths
-- `openspec/changes/phase7-v4-autonomous-continuation-governance-automation-mvp/`
-- `docs/workflows/s7-one-shot-execution-contract.md`
+- `openspec/changes/phase8-v1.5-stabilization-mvp/.openspec.yaml`
+- `openspec/changes/phase8-v1.5-stabilization-mvp/proposal.md`
+- `openspec/changes/phase8-v1.5-stabilization-mvp/tasks.md`（所有 [x] 已勾選）
+- `docs/workflows/extraction-flow-v1.md`
+- `docs/workflows/extraction-rules-v1.md`
+- `docs/templates/field-matrix-v1.md`
+- `docs/workflows/case-review-v1.md`
+- `docs/workflows/new-project-init-v1.md`
+- `docs/workflows/project-personal-boundary-v1.md`
+- `docs/guides/usage-guide-v1.5.md`
+- `docs/roadmap.md`（Phase 2 六項全部 [x]）
+- `docs/runlog/2026-03-26_README.md`（Phase 2 執行摘要）
 - `docs/workflows/s7-governance-sync-rules.md`
 - `docs/templates/s7-execution-report-template.md`
 - `docs/roadmap.md`（唯一路線圖）

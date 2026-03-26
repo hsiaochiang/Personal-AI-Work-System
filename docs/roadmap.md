@@ -13,16 +13,16 @@
 |:----:|-------|------|------|:----:|
 | [x] | Phase 0 | — | 規劃與骨架 | ✅ |
 | [x] | Phase 1 | V1 | 可用工作流（手動→半自動→驗證→定版） | ✅ |
-| [ ] | Phase 2 | V1.5 | 穩定化與產品化前準備 | 未開始 |
-| [ ] | Phase 3 | V2 | 輕量 UI 工作台 | 未開始 |
+| [x] | Phase 2 | V1.5 | 穩定化與產品化前準備 | ✅ |
+| [x] | Phase 3 | V2 | 輕量 UI 工作台 | ✅ |
 | [ ] | Phase 4 | V2.5 | 多專案與共享能力 | 未開始 |
 | [ ] | Phase 5 | V3 | 多工具接入 | 未開始 |
 
 ## 目前狀態
 
-- **產品進度**：Phase 1 (V1) ✅ 已完成 → **Phase 2 (V1.5) 尚未啟動**
-- **進行中活動**：無（S7 治理自動化 MVP 已關閉）
-- **Next**：由人確認是否啟動 Phase 2（V1.5 穩定化）
+- **產品進度**：Phase 3 (V2) 輕量 UI 工作台 **已完成並 archive**（`openspec/changes/archive/2026-03-26-phase9-v2-lightweight-ui-workbench-mvp/`）
+- **進行中活動**：Phase 3 archived，下一步啟動 Phase 4 規劃
+- **Next**：呼叫 `OpenSpec Planner` 為 Phase 4（V2.5 多專案與共享能力）定義 change
 - **Blockers**：無
 
 ---
@@ -50,26 +50,26 @@
 
 > V1 完整歷史：[`archive/2026-03-26_v1-roadmap.md`](roadmap/archive/2026-03-26_v1-roadmap.md)
 
-### Phase 2：V1.5 穩定化 ← 下一個產品階段
+### Phase 2：V1.5 穩定化 ✅
 
 | Done | 工作項目 |
-|:----:|---------|
-| [ ] | 提取流程重構與規則穩定化 |
-| [ ] | 模板欄位收斂 |
-| [ ] | 真實案例回顧 |
-| [ ] | 新專案初始化流程 |
-| [ ] | 專案層與個人層邊界定義 |
-| [ ] | 第一版使用說明 |
+|:----:|----------|
+| [x] | 提取流程重構與規則穩定化 |
+| [x] | 模板欄位收斂 |
+| [x] | 真實案例回顧 |
+| [x] | 新專案初始化流程 |
+| [x] | 專案層與個人層邊界定義 |
+| [x] | 第一版使用說明 |
 
 ### Phase 3：V2 輕量 UI
 
 | Done | 工作項目 |
 |:----:|---------|
-| [ ] | UI MVP 設計（以現有 markdown 為資料來源） |
-| [ ] | 專案總覽與專案頁 |
-| [ ] | handoff builder |
-| [ ] | 候選審核介面 |
-| [ ] | Memory Review 介面 |
+| [x] | UI MVP 設計（以現有 markdown 為資料來源） |
+| [x] | 專案總覽與專案頁 |
+| [x] | handoff builder |
+| [x] | 候選審核介面 |
+| [x] | Memory Review 介面 |
 
 ### Phase 4：V2.5 多專案與共享
 
@@ -107,6 +107,8 @@
 | S5 | phase5-v2-lightweight-ui-workbench-mvp | ~~Phase 3~~ | 規格草案（概念驗證，未交付產品） | ✅ |
 | S6 | phase6-v3-multi-tool-integration-framework-mvp | ~~Phase 5~~ | 規格草案（概念驗證，未交付產品） | ✅ |
 | S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | ✅ |
+| S8 | phase8-v1.5-stabilization-mvp | Phase 2 | V1.5 穩定化 | ✅ |
+| S9 | phase9-v2-lightweight-ui-workbench-mvp | Phase 3 | V2 輕量 UI 工作台 MVP | ✅ |
 
 > S7 已於 2026-03-26 關閉（Cycle-06 為最終 cycle，不再新增）。完整記錄：`openspec/changes/phase7-v4-.../tasks.md`
 
@@ -122,6 +124,10 @@
 
 ## 異動記錄
 
+- 2026-03-26：Phase 3 (V2) 規劃啟動（建立 active change：`phase9-v2-lightweight-ui-workbench-mvp`）
+- 2026-03-26：Phase 2 (V1.5) 六項工作項目全部完成（`phase8-v1.5-stabilization-mvp` 待 archive）
+- 2026-03-26：Phase 2 (V1.5) 正式完成（`phase8-v1.5-stabilization-mvp` archive 完成）
+- 2026-03-26：啟動 Phase 2 規劃（建立 active change：`phase8-v1.5-stabilization-mvp`）
 - 2026-03-26：S7 正式關閉（Cycle-06 為最終 cycle；原始目標治理自動化 MVP 已達成）
 - 2026-03-26：完成 S7 Cycle-06（roadmap 單一真源防回退檢核，腳本化可重播）
 - 2026-03-26：合併 project-roadmap.md 為單一 roadmap，正規化 S-stage 命名（移除錯誤版本標籤）

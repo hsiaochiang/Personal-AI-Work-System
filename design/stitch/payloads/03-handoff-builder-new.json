@@ -1,0 +1,4 @@
+{
+  "projectId": "9755679534974217108",
+  "prompt": "請設計「交接文件建構器（Handoff Builder）」新畫面，沿用既有 Slate Nexus 設計風格。\n\n版面規則：\n1) 全部可見文字使用台灣常用正體中文（繁中）。\n2) 禁止簡體中文；禁止亂碼。\n3) 保留英文不翻譯：handoff、current-task.md、markdown、change、scope、docs。\n4) 頂部：頁面標題「交接文件建構器」+ Badge（目前任務名稱：phase9-v2-lightweight-ui-workbench-mvp）+ 右上角「匯出草稿」按鈕（必填欄位空白時 disabled）。\n5) 左側（60%）：可編輯表單，分 8 段折疊：\n   ① 任務資訊（名稱必填、負責 Agent、開始/更新日期、相關規格、分支）\n   ② 目標（多行文字，必填）\n   ③ 範圍（In Scope 逐行清單必填、Out of Scope 逐行清單必填）\n   ④ 已完成（可勾選清單，可新增/刪除）\n   ⑤ 進行中（文字欄位）\n   ⑥ 下一步（文字欄位，必填）\n   ⑦ 驗證狀態（逐行清單）\n   ⑧ 證據路徑（逐行清單，monospace 字體）\n6) 右側（40%）：即時 markdown 預覽（與左側同步）。\n7) Mock Data（任務名稱：phase9、目標：依 roadmap 推進 Phase 3 UI MVP、下一步：確認設計稿後執行 Task 1.1）。\n8) 四種狀態頁：\n   載入中：欄位 Skeleton\n   目前沒有資料：「尚無進行中任務，請先建立 change」+ 按鈕\n   發生錯誤：讀取 current-task.md 失敗 + 重試按鈕\n   草稿已匯出：頂部綠色 Banner「草稿已儲存至 design/stitch/drafts/handoff-draft.md」\n9) 請輸出可直接用於設計檢視的完整畫面。"
+}

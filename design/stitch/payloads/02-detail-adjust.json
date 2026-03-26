@@ -1,0 +1,4 @@
+{
+  "projectId": "9755679534974217108",
+  "prompt": "請調整「專案詳情」畫面，改為顯示 OpenSpec Change 工作流程資訊（而非技術效能指標）。\n\n調整規則：\n1) 全部可見文字使用台灣常用正體中文（繁中）。\n2) 禁止簡體中文；禁止亂碼。\n3) 保留英文不翻譯：S9、Phase 3、V2、GO/NO-GO、strict validate、archive、runlog、handoff、markdown。\n4) 頁面標題改為「S9：V2 輕量 UI 工作台 (phase9-v2-lightweight-ui-workbench-mvp)」。\n5) 移除 R2/R3/R4 技術指標，改為「驗收準則進度」（5 條 AC）：\n   AC1 UI MVP 設計與資料來源契約：未開始\n   AC2 專案總覽與專案頁：進行中\n   AC3 Handoff Builder：未開始\n   AC4 候選審核介面：未開始\n   AC5 Memory Review 介面：未開始\n6) Blockers 表格：1 筆待處理（草稿輸出路徑未確認，影響低，由人確認）。\n7) Runlog Timeline（最近 5 筆）：\n   2026-03-26 Phase 3 規劃啟動 → PASS\n   2026-03-26 S8 archive → PASS\n   2026-03-26 Phase 2 Review Gate → GO\n   2026-03-26 S7 Cycle-06 → PASS\n   2026-03-26 Phase 2 strict validate → PASS\n8) 決策日誌（最近 3 筆）：靜態 HTML 優先 / docs-first 原則 / draft-only 輸出邊界。\n9) 四種狀態頁（載入中 / 目前沒有資料 / 發生錯誤 / 沒有權限）全部保留且文案為繁中。\n10) 請輸出可直接用於設計檢視的完整畫面。"
+}
