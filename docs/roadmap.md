@@ -15,14 +15,14 @@
 | [x] | Phase 1 | V1 | 可用工作流（手動→半自動→驗證→定版） | ✅ |
 | [x] | Phase 2 | V1.5 | 穩定化與產品化前準備 | ✅ |
 | [x] | Phase 3 | V2 | 輕量 UI 工作台 | ✅ |
-| [ ] | Phase 4 | V2.5 | 多專案與共享能力 | 未開始 |
+| [x] | Phase 4 | V2.5 | 多專案與共享能力 | ✅ |
 | [ ] | Phase 5 | V3 | 多工具接入 | 未開始 |
 
 ## 目前狀態
 
-- **產品進度**：Phase 3 (V2) 輕量 UI 工作台 **已完成並 archive**（`openspec/changes/archive/2026-03-26-phase9-v2-lightweight-ui-workbench-mvp/`）
-- **進行中活動**：Phase 3 archived，下一步啟動 Phase 4 規劃
-- **Next**：呼叫 `OpenSpec Planner` 為 Phase 4（V2.5 多專案與共享能力）定義 change
+- **產品進度**：Phase 4 (V2.5) 多專案與共享能力 **已完成並 archive**（`openspec/changes/archive/2026-03-27-phase10-v2.5-multi-project-shared-capability-mvp/`）
+- **進行中活動**：Phase 4 archived，下一步啟動 Phase 5 規劃
+- **Next**：呼叫 `OpenSpec Planner` 為 Phase 5（V3 多工具接入）定義 change
 - **Blockers**：無
 
 ---
@@ -75,10 +75,11 @@
 
 | Done | 工作項目 |
 |:----:|---------|
-| [ ] | 個人偏好與專案偏好正式分層 |
-| [ ] | shared workflow 整理 |
-| [ ] | 跨專案模板 |
-| [ ] | 技能候選升級流程 |
+| [x] | 個人偏好與專案偏好正式分層 |
+| [x] | shared workflow 整理 |
+| [x] | 跨專案模板 |
+| [x] | 技能候選升級流程 |
+| [x] | 輕量跨專案儀表板規格（docs-only） |
 
 ### Phase 5：V3 多工具接入
 
@@ -109,6 +110,7 @@
 | S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | ✅ |
 | S8 | phase8-v1.5-stabilization-mvp | Phase 2 | V1.5 穩定化 | ✅ |
 | S9 | phase9-v2-lightweight-ui-workbench-mvp | Phase 3 | V2 輕量 UI 工作台 MVP | ✅ |
+| S10 | phase10-v2.5-multi-project-shared-capability-mvp | Phase 4 | V2.5 多專案與共享能力 MVP | 🔄 規劃中 |
 
 > S7 已於 2026-03-26 關閉（Cycle-06 為最終 cycle，不再新增）。完整記錄：`openspec/changes/phase7-v4-.../tasks.md`
 
@@ -124,6 +126,7 @@
 
 ## 異動記錄
 
+- 2026-03-27：Phase 4 (V2.5) 規劃啟動（建立 active change：`phase10-v2.5-multi-project-shared-capability-mvp`；strict validate PASS）
 - 2026-03-26：Phase 3 (V2) 規劃啟動（建立 active change：`phase9-v2-lightweight-ui-workbench-mvp`）
 - 2026-03-26：Phase 2 (V1.5) 六項工作項目全部完成（`phase8-v1.5-stabilization-mvp` 待 archive）
 - 2026-03-26：Phase 2 (V1.5) 正式完成（`phase8-v1.5-stabilization-mvp` archive 完成）
