@@ -1,0 +1,9 @@
+{
+  "name": "personal-ai-work-system-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "個人 AI 工作系統儀表板",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>專案總覽 — 個人 AI 工作系統</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>AI 工作系統</h1>
+          <span class="subtitle">Personal Dashboard</span>
+        </div>
+      </div>
+      <a href="/" class="nav-link">
+        <span class="material-symbols-outlined">dashboard</span>
+        專案總覽
+      </a>
+      <a href="/task" class="nav-link">
+        <span class="material-symbols-outlined">assignment</span>
+        當前任務
+      </a>
+      <a href="/memory" class="nav-link">
+        <span class="material-symbols-outlined">psychology</span>
+        專案記憶
+      </a>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="page-header">
+        <h2>專案總覽</h2>
+        <p class="description">從 roadmap.md 讀取的即時進度</p>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">總 Phase 數</div>
+          <div class="kpi-value" id="kpi-total">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">已完成</div>
+          <div class="kpi-value" id="kpi-done">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">下一步</div>
+          <div class="kpi-value" id="kpi-next" style="font-size:1.25rem">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">整體進度</div>
+          <div class="kpi-value" id="kpi-progress">—</div>
+        </div>
+      </div>
+
+      <!-- Phase Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Phase 進度表</span>
+        </div>
+        <div id="phase-content"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/overview.js"></script>
+</body>
+</html>

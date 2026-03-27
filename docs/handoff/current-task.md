@@ -22,16 +22,17 @@
 ## Done
 - Spec Phase 全部完成（12 個 OpenSpec archives）
 - 2026-03-27：roadmap 重建為可操作功能導向
+- 2026-03-27：Phase 1 實作完成（web/server.js + 3 個頁面）
 
 ## In Progress
-- 無（Phase 1 尚未開始）
+- 無
 
 ## Next Step
-- 開始 Phase 1 實作（dev server + 三個頁面）
+- Phase 2 規劃（Handoff Builder 編輯功能）
 
 ## Validation Status
 - Spec Phase：全部 PASS
-- Phase 1 實作：尚未開始
+- Phase 1：已可操作（`cd web && npm start` → http://localhost:3000）
 - `docs/templates/s7-execution-report-template.md`
 - `docs/roadmap.md`（唯一路線圖）
 - `docs/roadmap/project-roadmap.md`（已合併，redirect stub）
