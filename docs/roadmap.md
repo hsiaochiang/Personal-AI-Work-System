@@ -16,13 +16,13 @@
 | [x] | Phase 2 | V1.5 | 穩定化與產品化前準備 | ✅ |
 | [x] | Phase 3 | V2 | 輕量 UI 工作台 | ✅ |
 | [x] | Phase 4 | V2.5 | 多專案與共享能力 | ✅ |
-| [ ] | Phase 5 | V3 | 多工具接入 | 未開始 |
+| [x] | Phase 5 | V3 | 多工具接入 | ✅ |
 
 ## 目前狀態
 
-- **產品進度**：Phase 4 (V2.5) 多專案與共享能力 **已完成並 archive**（`openspec/changes/archive/2026-03-27-phase10-v2.5-multi-project-shared-capability-mvp/`）
-- **進行中活動**：Phase 4 archived，下一步啟動 Phase 5 規劃
-- **Next**：呼叫 `OpenSpec Planner` 為 Phase 5（V3 多工具接入）定義 change
+- **產品進度**：Phase 5 (V3) 多工具接入 **已完成並 archive**（`openspec/changes/archive/2026-03-27-phase11-v3-multi-tool-integration-mvp/`）
+- **進行中活動**：Phase 0–5 全部完成，無 active change
+- **Next**：由使用者决定是否建立新 Phase，或進行產品化交付準備
 - **Blockers**：無
 
 ---
@@ -85,14 +85,10 @@
 
 | Done | 工作項目 |
 |:----:|---------|
-| [ ] | 多工具輸入格式整合 |
-| [ ] | 統一提取與沉澱層 |
-| [ ] | 審核與回寫流程擴充 |
-| [ ] | UI 擴充（多來源檢視） |
-
----
-
-## OpenSpec 執行記錄
+| [x] | 多工具輸入格式整合（adapter spec + normalized schema） |
+| [x] | 統一提取與沉澱層（normalized schema + dedupe 策略） |
+| [x] | 審核與回寫流程擴充（confidence scoring）|
+| [x] | 跨工具比較視圖規格（docs-only，UI 延後至 Phase 6） |
 
 > 以下為 OpenSpec change lifecycle 的治理/流程作業，**不等於產品功能交付**。
 > S1-S4 是 Phase 1 的子任務；S5/S6 是未來 Phase 的規格草案（概念驗證，未交付產品）；S7 是治理自動化。
@@ -110,7 +106,8 @@
 | S7 | phase7-v4-autonomous-continuation-governance-automation-mvp | — | 治理自動化 MVP | ✅ |
 | S8 | phase8-v1.5-stabilization-mvp | Phase 2 | V1.5 穩定化 | ✅ |
 | S9 | phase9-v2-lightweight-ui-workbench-mvp | Phase 3 | V2 輕量 UI 工作台 MVP | ✅ |
-| S10 | phase10-v2.5-multi-project-shared-capability-mvp | Phase 4 | V2.5 多專案與共享能力 MVP | 🔄 規劃中 |
+| S10 | phase10-v2.5-multi-project-shared-capability-mvp | Phase 4 | V2.5 多專案與共享能力 MVP | ✅ |
+| S11 | phase11-v3-multi-tool-integration-mvp | Phase 5 | V3 多工具接入 MVP | ✅ |
 
 > S7 已於 2026-03-26 關閉（Cycle-06 為最終 cycle，不再新增）。完整記錄：`openspec/changes/phase7-v4-.../tasks.md`
 
@@ -126,6 +123,9 @@
 
 ## 異動記錄
 
+- 2026-03-27：Phase 5 (V3) 全部完成（tasks 1.x–6.x；strict validate PASS；待 archive）
+- 2026-03-27：Phase 5 (V3) 規劃啟動（建立 active change：`phase11-v3-multi-tool-integration-mvp`；strict validate PASS）
+- 2026-03-27：Phase 4 (V2.5) 全部完成並 archive（`phase10-v2.5-multi-project-shared-capability-mvp`）
 - 2026-03-27：Phase 4 (V2.5) 規劃啟動（建立 active change：`phase10-v2.5-multi-project-shared-capability-mvp`；strict validate PASS）
 - 2026-03-26：Phase 3 (V2) 規劃啟動（建立 active change：`phase9-v2-lightweight-ui-workbench-mvp`）
 - 2026-03-26：Phase 2 (V1.5) 六項工作項目全部完成（`phase8-v1.5-stabilization-mvp` 待 archive）

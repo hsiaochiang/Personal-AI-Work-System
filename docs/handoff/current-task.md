@@ -3,66 +3,36 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: Phase 5（V3）多工具接入規劃（待啟動）
+- Name: 全 Phase 完成（Phase 0–5），等待使用者決策下一方向
 - Owner agent: GitHub Copilot
-- Started on: —
 - Last updated on: 2026-03-27
-- Related issue / spec: Phase 5（V3）多工具接入
-- Branch / worktree: `main`
 
 ## Goal
-- 依 `docs/roadmap.md` 啟動 Phase 5（V3）定義，以 OpenSpec Planner 建立 active change。
+- 無 active tasks。Phase 0–5 全部完成並 archive。
 
 ## Scope
-- In scope: Phase 5 change 定義、proposal、tasks、spec
-- Out of scope: 任何實作（待 change PASS 後再 Executor）
+- In scope: 由使用者決定下一方向
+- Out of scope: 無正在進行的 scope
 
 ## Constraints
-- Technical constraints: docs-first、smallest safe change、strict validate 必須 PASS
-- Product / UX constraints: 不引入後端 API；不破壞既有 Phase 1–3 產出
+- Technical constraints: docs-first、smallest safe change
 
 ## Done
-- Phase 2（`phase8-v1.5-stabilization-mvp`）：全部完成並 archive
-- Phase 3（`phase9-v2-lightweight-ui-workbench-mvp`）：全部完成並 archive（`openspec/changes/archive/2026-03-26-phase9-v2-lightweight-ui-workbench-mvp/`）
-  - Tasks 1.x–6.x 全部 [x]
-  - smoke PASS：`docs/qa/2026-03-26_phase3-smoke.md`
-  - strict validate PASS → Review Gate GO → archive PASS
-- Phase 4 change 定義（`phase10-v2.5-multi-project-shared-capability-mvp`）：OpenSpec Planner 完成
-  - `.openspec.yaml`、`proposal.md`、`tasks.md`、`specs/v2-5-multi-project/spec.md` 已建立
-  - strict validate PASS（2026-03-27，exit 0）
-- **Phase 4 tasks 1.x–6.x 全部完成（2026-03-27，OpenSpec Executor）**
-  - Task 1.x：`docs/workflows/v2-5-personal-project-boundary-v1.md` ✅
-  - Task 2.x：`docs/workflows/v2-5-shared-workflows-index-v1.md` ✅
-  - Task 3.x：`docs/templates/handoff-init.md`、`runlog-init.md`、`roadmap-init.md`、`decision-log-init.md` ✅
-  - Task 4.x：`docs/workflows/v2-5-skill-candidate-promotion-v1.md` ✅
-  - Task 5.x：`docs/product/v2-5-multi-project-dashboard-spec-v1.md` ✅
-  - Task 6.1：strict validate PASS（exit 0）
-  - Task 6.2：roadmap / handoff / runlog 已同步
-  - Task 6.3：`docs/qa/2026-03-27_phase4-smoke.md` ✅
+- Phase 0–5 全部完成並 archive（2026-03-24 ~ 2026-03-27）
+  - Phase 3（`phase9`）archive：2026-03-26；smoke PASS：`docs/qa/2026-03-26_phase3-smoke.md`
+  - Phase 4（`phase10`）archive：2026-03-27；smoke PASS：`docs/qa/2026-03-27_phase4-smoke.md`
+  - Phase 5（`phase11`）archive：2026-03-27；smoke PASS：`docs/qa/2026-03-27_phase5-smoke.md`
 
 ## In Progress
-- 無（Phase 4 已完成並 archive）
+- 無
 
 ## Next Step
-- 呼叫 **`OpenSpec Planner`** 為 Phase 5（V3 多工具接入）定義 change
+- 由使用者決定：啟動新 Phase / 補強現有功能 / 產品化交付準備
 
 ## Validation Status
-- Phase 3 strict validate：PASS（2026-03-26，exit 0）
-- Phase 3 archive：PASS（2026-03-26）
-- Phase 4 strict validate：PASS（2026-03-27，exit 0）
-- Phase 4 archive：PASS（2026-03-27）
-- Phase 4 smoke：PASS（`docs/qa/2026-03-27_phase4-smoke.md`）
-- Phase 5 change：尚未建立
-
-## Safe Continuation Guardrails
-- 僅允許 docs-first 最小必要調整（`docs/` 與 `openspec/changes/phase7...`）
-- 禁止 commit / push / reset / checkout 還原
-- `openspec/changes/phase4-v1-convergence-finalization/` 維持凍結不處理
-
-## S6 歷史摘要
-- S6 active change：`phase6-v3-multi-tool-integration-framework-mvp`
-- S6 已 archive：`openspec/changes/archive/2026-03-26-phase6-v3-multi-tool-integration-framework-mvp/`
-- S6 strict validate（change/spec）：PASS
+- Phase 5 strict validate：PASS（2026-03-27，exit 0）
+- Phase 5 archive：PASS（2026-03-27）
+- Phase 5 smoke：PASS（`docs/qa/2026-03-27_phase5-smoke.md`）
 
 ## Evidence Paths
 - `openspec/changes/phase8-v1.5-stabilization-mvp/.openspec.yaml`
