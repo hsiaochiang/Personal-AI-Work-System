@@ -3,51 +3,35 @@
 > 工程化交接主檔。只保留下一個 agent 接手必需的內容。
 
 ## Task
-- Name: 全 Phase 完成（Phase 0–5），等待使用者決策下一方向
+- Name: Phase 1 — 看到自己的專案（可操作的儀表板）
 - Owner agent: GitHub Copilot
 - Last updated on: 2026-03-27
 
 ## Goal
-- 無 active tasks。Phase 0–5 全部完成並 archive。
+- 建立一個在瀏覽器可用的本地儀表板，讀取本地 markdown 顯示真實資料。
 
 ## Scope
-- In scope: 由使用者決定下一方向
-- Out of scope: 無正在進行的 scope
+- In scope: dev server、專案總覽頁、當前任務頁、記憶清單頁（全部讀取本地 markdown）
+- Out of scope: 編輯/寫入功能（Phase 2）、提取自動化（Phase 3）
 
 ## Constraints
-- Technical constraints: docs-first、smallest safe change
+- 純靜態 HTML + vanilla JS（無框架、無 build）
+- Markdown 解析使用輕量 library（marked.js）
+- 設計稿基線：`design/stitch/snapshots/` 的 HTML/CSS
 
 ## Done
-- Phase 0–5 全部完成並 archive（2026-03-24 ~ 2026-03-27）
-  - Phase 3（`phase9`）archive：2026-03-26；smoke PASS：`docs/qa/2026-03-26_phase3-smoke.md`
-  - Phase 4（`phase10`）archive：2026-03-27；smoke PASS：`docs/qa/2026-03-27_phase4-smoke.md`
-  - Phase 5（`phase11`）archive：2026-03-27；smoke PASS：`docs/qa/2026-03-27_phase5-smoke.md`
+- Spec Phase 全部完成（12 個 OpenSpec archives）
+- 2026-03-27：roadmap 重建為可操作功能導向
 
 ## In Progress
-- 無
+- 無（Phase 1 尚未開始）
 
 ## Next Step
-- 由使用者決定：啟動新 Phase / 補強現有功能 / 產品化交付準備
+- 開始 Phase 1 實作（dev server + 三個頁面）
 
 ## Validation Status
-- Phase 5 strict validate：PASS（2026-03-27，exit 0）
-- Phase 5 archive：PASS（2026-03-27）
-- Phase 5 smoke：PASS（`docs/qa/2026-03-27_phase5-smoke.md`）
-
-## Evidence Paths
-- `openspec/changes/phase8-v1.5-stabilization-mvp/.openspec.yaml`
-- `openspec/changes/phase8-v1.5-stabilization-mvp/proposal.md`
-- `openspec/changes/phase8-v1.5-stabilization-mvp/tasks.md`（所有 [x] 已勾選）
-- `docs/workflows/extraction-flow-v1.md`
-- `docs/workflows/extraction-rules-v1.md`
-- `docs/templates/field-matrix-v1.md`
-- `docs/workflows/case-review-v1.md`
-- `docs/workflows/new-project-init-v1.md`
-- `docs/workflows/project-personal-boundary-v1.md`
-- `docs/guides/usage-guide-v1.5.md`
-- `docs/roadmap.md`（Phase 2 六項全部 [x]）
-- `docs/runlog/2026-03-26_README.md`（Phase 2 執行摘要）
-- `docs/workflows/s7-governance-sync-rules.md`
+- Spec Phase：全部 PASS
+- Phase 1 實作：尚未開始
 - `docs/templates/s7-execution-report-template.md`
 - `docs/roadmap.md`（唯一路線圖）
 - `docs/roadmap/project-roadmap.md`（已合併，redirect stub）
