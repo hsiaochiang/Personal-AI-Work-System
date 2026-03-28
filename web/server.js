@@ -172,6 +172,48 @@ function handleAPI(req, res) {
     return true;
   }
 
+  // Decisions endpoint (decision-log.md + memory/decision-log.md)
+  if (url.pathname === '/api/decisions') {
+    const sources = [
+      { key: 'operational', relPath: 'docs/decision-log.md' },
+      { key: 'memory', relPath: 'docs/memory/decision-log.md' },
+    ];
+    const results = {};
+    let pending = sources.length;
+    sources.forEach(({ key, relPath }) => {
+      fs.readFile(path.join(PROJECT_ROOT, relPath), 'utf-8', (err, content) => {
+        results[key] = err ? '' : content;
+        pending--;
+        if (pending === 0) {
+          sendJSON(res, 200, results);
+        }
+      });
+    });
+    return true;
+  }
+
+  // Rules endpoint (preference-rules + output-patterns + task-patterns)
+  if (url.pathname === '/api/rules') {
+    const ruleFiles = [
+      'preference-rules.md',
+      'output-patterns.md',
+      'task-patterns.md',
+    ];
+    const results = [];
+    let pending = ruleFiles.length;
+    ruleFiles.forEach(file => {
+      fs.readFile(path.join(MEMORY_DIR, file), 'utf-8', (err, content) => {
+        results.push({ filename: file, content: err ? '' : content });
+        pending--;
+        if (pending === 0) {
+          results.sort((a, b) => a.filename.localeCompare(b.filename));
+          sendJSON(res, 200, { files: results });
+        }
+      });
+    });
+    return true;
+  }
+
   return false;
 }
 

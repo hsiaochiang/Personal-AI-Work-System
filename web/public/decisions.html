@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Handoff 產生器 — 個人 AI 工作系統</title>
+  <title>決策與規則 — 個人 AI 工作系統</title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -49,59 +49,51 @@
     <!-- Main -->
     <main class="main-content">
       <div class="page-header">
-        <h2>Handoff 產生器</h2>
-        <p class="description">選擇範本類型 → 填寫欄位 → 複製完整 handoff 文件</p>
+        <h2>決策與規則</h2>
+        <p class="description">集中檢視所有已定案決策與偏好規則</p>
       </div>
 
-      <!-- Template Selector -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">範本類型</span>
-        </div>
-        <div class="template-selector" id="template-selector">
-          <button class="template-btn active" data-type="planning">
-            <span class="material-symbols-outlined">lightbulb</span>
-            規劃型
-          </button>
-          <button class="template-btn" data-type="implementation">
-            <span class="material-symbols-outlined">build</span>
-            實作型
-          </button>
-          <button class="template-btn" data-type="integration">
-            <span class="material-symbols-outlined">merge</span>
-            整合型
+      <!-- Search + Stats -->
+      <div class="decisions-toolbar">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" class="search-input" id="search-input" placeholder="搜尋決策或規則…">
+          <button class="search-clear hidden" id="search-clear" title="清除">
+            <span class="material-symbols-outlined">close</span>
           </button>
         </div>
+        <div class="decisions-stats" id="decisions-stats"></div>
       </div>
 
-      <!-- Form -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">填寫內容</span>
-          <button class="btn btn-secondary" id="btn-clear">
-            <span class="material-symbols-outlined">delete_sweep</span>
-            清空
-          </button>
-        </div>
-        <div id="handoff-form"></div>
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="decisions">
+          <span class="material-symbols-outlined">gavel</span>
+          決策記錄
+          <span class="tab-count" id="tab-count-decisions">—</span>
+        </button>
+        <button class="tab-btn" data-tab="rules">
+          <span class="material-symbols-outlined">tune</span>
+          規則
+          <span class="tab-count" id="tab-count-rules">—</span>
+        </button>
       </div>
 
-      <!-- Preview & Copy -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">預覽</span>
-          <button class="btn btn-primary" id="btn-copy">
-            <span class="material-symbols-outlined">content_copy</span>
-            複製到剪貼簿
-          </button>
-        </div>
-        <div class="copy-toast" id="copy-toast">已複製！</div>
-        <pre class="handoff-preview" id="handoff-preview"></pre>
+      <!-- Decisions Tab -->
+      <div class="tab-panel" id="panel-decisions">
+        <div id="decisions-list"></div>
+      </div>
+
+      <!-- Rules Tab -->
+      <div class="tab-panel hidden" id="panel-rules">
+        <!-- Rule Category Tabs -->
+        <div class="rule-cats" id="rule-cats"></div>
+        <div id="rules-list"></div>
       </div>
     </main>
   </div>
 
   <script src="/js/app.js"></script>
-  <script src="/js/handoff.js"></script>
+  <script src="/js/decisions.js"></script>
 </body>
 </html>

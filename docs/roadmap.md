@@ -18,8 +18,8 @@
 | [x] | 1 | 在瀏覽器看到 roadmap 進度和當前任務 | 基礎檢視 | ✅ |
 | [x] | 2 | 在 UI 產生 handoff 草稿，複製貼到新 AI 對話 | 降低啟動摩擦 | ✅ |
 | [x] | 3 | 貼上對話 → 產生候選 → 審核 → 寫回記憶 | 知識閉環 | ✅ |
-| [ ] | 4 | 集中檢視決策與規則，搜尋篩選 | 決策追蹤 | **← 下一步** |
-| [ ] | 5 | 多專案切換 + 完整 UI polish | 規模化 | 未開始 |
+| [x] | 4 | 集中檢視決策與規則，搜尋篩選 | 決策追蹤 | ✅ |
+| [ ] | 5 | 多專案切換 + 完整 UI polish | 規模化 | **← 下一步** |
 
 > **這就是全部。沒有隱藏的 Phase。** Phase 1–5 完成即為 V1 完整產品。
 >
@@ -28,8 +28,8 @@
 
 ## 目前狀態
 
-- **可用程度**：Phase 1–3 全部可用（`cd web && npm start` → http://localhost:3000）
-- **下一步**：Phase 4 — 決策與規則集中檢視
+- **可用程度**：Phase 1–4 全部可用（`cd web && npm start` → http://localhost:3000）
+- **下一步**：Phase 5 — 多專案 + UI 完整化
 - **Blockers**：無
 
 ---
@@ -174,6 +174,7 @@
 
 ## 異動記錄
 
+- 2026-03-28：**Phase 4 實作完成** — 決策與規則集中檢視頁面上線（决策記錄 tab + 規則 tab + 搜尋 + 衝突偵測）
 - 2026-03-28：**Phase 2+3 實作完成** — Handoff Builder MVP + 知識閉環 MVP 實作上線；新增 5 個檔案（handoff.html/js、extract.html/js、API 端點）；全部 6 項驗收標準通過
 - 2026-03-28：**優先順序校準** — 核心閉環（handoff + extraction + review + writeback）提前至 Phase 2-3；UI polish 與多專案延後至 Phase 5；依據 `docs/planning/2026-03-28_project-assessment-and-recommendations.md`
 - 2026-03-27：**roadmap 重建** — 重新定位之前所有工作為 Spec Phase；新建以可操作功能為導向的 Phase 1–5；每 Phase 定義使用者驗收標準
