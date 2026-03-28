@@ -58,3 +58,17 @@ New → FF → Apply → Verify → Smoke Test → Commit-Push → Archive
 - Apply 前必須有 Validate 通過
 - Commit-Push 前必須有 Code Review
 - Archive 前必須有 Verify 通過
+
+## 版本收尾檢查（Archive 後）
+
+Archive 完成後，必須檢查當前版本 brief（`docs/planning/v{{N}}-brief.md`）：
+
+1. **若版本 brief 裡所有 Changes 都已 archive → 觸發版本收尾流程：**
+   - 勾選 brief 的 Acceptance Criteria
+   - 更新 brief 的版本狀態為「已完成」
+   - 填寫 brief 的「跨版本影響」區段
+   - 更新 `docs/roadmap.md` 的目前狀態
+   - 若 change 影響使用者可見功能 → 更新 `docs/system-manual.md`
+   - （可選）建立下一版 brief 骨架
+
+2. **若版本 brief 裡仍有未完成的 Changes → 只更新 brief 的 Changes 表狀態**

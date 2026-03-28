@@ -30,11 +30,13 @@ tools: [read, search, agent, todo]
 1. docs/handoff/current-task.md → 目前任務、已完成、下一步
 2. docs/handoff/blockers.md → 是否有阻塞或待決策
 3. docs/roadmap.md → 目前大階段（S0~S6）與 Next
-4. docs/agents/project-context.md → 專案為何存在、邊界、風險
-5. docs/agents/commands.md → 現在能跑什麼命令、怎麼驗證
-6. docs/runlog/<最近日期>_README.md → 最近一次工作做了什麼
-7. docs/decision-log.md → 重要取捨與目前已確立方向
-8. 若上述文件不足，再讀 openspec/changes/ 或其他必要文件
+4. docs/planning/v{N}-brief.md → 當前版本的 scope、完成條件、changes 進度
+5. docs/system-manual.md → 系統目前能做什麼
+6. docs/agents/project-context.md → 專案為何存在、邊界、風險
+7. docs/agents/commands.md → 現在能跑什麼命令、怎麼驗證
+8. docs/runlog/<最近日期>_README.md → 最近一次工作做了什麼
+9. docs/decision-log.md → 重要取捨與目前已確立方向
+10. 若上述文件不足，再讀 openspec/changes/ 或其他必要文件
 ```
 
 ### 2. 回答策略
@@ -101,6 +103,7 @@ tools: [read, search, agent, todo]
 
 ### 目前進度
 - Roadmap：{S? 階段名稱}
+- Version Brief：{V? 版本名稱} — {scope 完成度 / 剩餘 changes 數}
 - Current task：{任務名稱或目前主題}
 - Done：{已完成重點，最多 3 點}
 - In progress / blockers：{若無則明說無}
@@ -138,6 +141,8 @@ tools: [read, search, agent, todo]
 - `commands.md` 沒有真實命令，導致下一步無法落地
 - `roadmap.md` 與 `current-task.md` 的 Next 不一致
 - `runlog` 過久未更新，無法快速知道最近一次工作內容
+- 當前版本 brief 不存在或過空，導致無法判斷這一版的 scope
+- `system-manual.md` 不存在或過空，導致無法快速了解系統目前能力
 
 若這些問題存在，請用「最低摩擦修補順序」提出建議，而不是一次要求補所有文件。
 

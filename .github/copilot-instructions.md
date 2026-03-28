@@ -50,10 +50,11 @@
 1. 呼叫 `@WOS`、`OpenSpec Planner`、`OpenSpec Executor` 或執行 `#session-start`
 2. 閱讀 `.github/copilot/rules/` 下所有規範
 3. 確認目前階段（`docs/roadmap.md`）
-4. 初始化當日 runlog（`docs/runlog/<date>_README.md`）
-5. 檢查 Style Guide 狀態（PENDING/FROZEN）
-6. 若是接手中的任務，先同步檢查 `docs/handoff/current-task.md` / `docs/handoff/blockers.md`
-7. 回報啟用證據：已讀規範清單、本次使用的角色、產出的證據位置
+4. 確認當前版本 brief（`docs/planning/v{N}-brief.md`），掌握這一版的 scope 與完成條件
+5. 初始化當日 runlog（`docs/runlog/<date>_README.md`）
+6. 檢查 Style Guide 狀態（PENDING/FROZEN）
+7. 若是接手中的任務，先同步檢查 `docs/handoff/current-task.md` / `docs/handoff/blockers.md`
+8. 回報啟用證據：已讀規範清單、本次使用的角色、產出的證據位置
 
 ## 任務觸發（依任務類型讀取對應文件）
 | 任務 | Prompt 觸發 | 必讀規範 | 使用角色 | 產出 |
@@ -79,8 +80,10 @@
 ```
 docs/
 ├─ roadmap.md              # 階段追蹤
+├─ system-manual.md        # 系統操作手冊（面向使用者）
 ├─ decision-log.md         # 決策留痕
 ├─ decisions/<date>_*.md   # 決策詳情
+├─ planning/v{N}-brief.md  # 版本確認書（含需求確認）
 ├─ agents/*.md             # 跨 agent 共用背景與命令
 ├─ handoff/*.md            # 任務交接（current-task / blockers）
 ├─ runlog/<date>_*.md      # 每日進度

@@ -1,0 +1,71 @@
+# System Manual — Personal AI Work System
+
+## 系統概述
+
+Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session 之間保持上下文連續性的個人工作台。透過 markdown 驅動的文件結構與輕量 web UI，支援 handoff 產生、對話知識提取、審核寫回、決策檢視與多專案管理。
+
+## 目前版本
+
+V1 — 單專案知識閉環工作台（已完成）
+
+## 功能總覽
+
+### 專案總覽（Overview）
+- 能力描述：顯示 roadmap 進度與當前任務狀態
+- 操作方式：瀏覽器開啟 http://localhost:3000/
+- 限制：僅讀取，不可在 UI 編輯
+
+### Handoff Builder（/handoff）
+- 能力描述：選擇 handoff 類型（規劃/實作/整合），編輯欄位，產生 markdown，一鍵複製
+- 操作方式：選模板 → 填寫欄位 → 預覽 → 複製
+- 限制：範本結構硬編碼在前端 JS，不支援自訂範本
+
+### 知識提取與寫回（/extract）
+- 能力描述：貼上 AI 對話 → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
+- 操作方式：貼文字 → 審核候選 → 點「寫回」
+- 限制：啟發式 regex 提取，誤判率仍高；寫回無 backup 機制（V2 改善目標）
+
+### 決策與規則檢視（/decisions）
+- 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
+- 操作方式：輸入關鍵字搜尋，切換 tab 查看不同分類
+- 限制：衝突偵測僅基於否定詞前綴比對
+
+### 多專案管理（/projects）
+- 能力描述：多專案卡片、選中狀態、sidebar 顯示目前專案
+- 操作方式：在 `web/projects.json` 設定專案，UI 點選切換
+- 限制：目前僅 UI 切換，資料源未真正隔離（V2 改善目標）
+
+### 全域搜尋（/search）
+- 能力描述：跨所有資料來源的全文搜尋
+- 操作方式：輸入關鍵字，結果按來源分組
+- 限制：前端字串比對，資料量大時效能未最佳化
+
+## 快速上手（Getting Started）
+
+```bash
+# 1. 確認 Node.js 已安裝（>= 18.x）
+node --version
+
+# 2. 啟動 dev server
+cd web
+node server.js
+
+# 3. 開啟瀏覽器
+# http://localhost:3000
+```
+
+## 已知限制
+- writeback 無 backup 機制，寫回即覆寫
+- 多專案切換僅 UI 層面，API 資料源未隔離
+- 對話格式僅支援貼上純文字
+- 無自動化治理
+
+## 版本歷史摘要
+| 版本 | 日期 | 主要變更 |
+|------|------|---------|
+| V1   | 2026-03-28 | 單專案知識閉環工作台（Phase 1–5 全部完成）|
+
+## 參考連結
+- Version Brief（V1）：`docs/planning/v1-brief.md`
+- Version Brief（V2）：`docs/planning/v2-brief.md`
+- Roadmap：`docs/roadmap.md`

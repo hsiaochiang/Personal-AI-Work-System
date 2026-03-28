@@ -68,7 +68,7 @@
 - docs/uiux/README.md
 - openspec/config.yaml
 
-## Protected Files (7)
+## Protected Files (8)
 - .github/copilot/rules/50-tech-stack.md
 - .github/copilot/rules/60-testing.md
 - .github/copilot/rules/90-project-custom.md
@@ -76,10 +76,12 @@
 - docs/agents/project-context.md
 - docs/decision-log.md
 - docs/roadmap.md
+- docs/system-manual.md
 
-## Init-Only Files (2)
+## Init-Only Files (3)
 - docs/handoff/blockers.md
 - docs/handoff/current-task.md
+- docs/planning/README.md
 
 ## Project-Owned Files In Template Set (0)
 - 目前模板沒有主動生成 unmanaged 檔案；此區段主要用於偵錯分類。

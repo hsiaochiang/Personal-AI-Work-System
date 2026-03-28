@@ -6,10 +6,12 @@
 1. `docs/handoff/current-task.md`
 2. `docs/handoff/blockers.md`
 3. `docs/roadmap.md`
-4. `docs/agents/project-context.md`
-5. `docs/agents/commands.md`
-6. `docs/agents/agent-entrypoints.md`
-7. 需要時再讀 `.github/copilot/rules/` 與 `.github/copilot/skills/`
+4. `docs/planning/v{N}-brief.md`（當前版本的 Version Brief）
+5. `docs/system-manual.md`
+6. `docs/agents/project-context.md`
+7. `docs/agents/commands.md`
+8. `docs/agents/agent-entrypoints.md`
+9. 需要時再讀 `.github/copilot/rules/` 與 `.github/copilot/skills/`
 
 ## 協作模式
 - 長期證據層：沿用 `docs/roadmap.md`、`docs/decision-log.md`、`docs/runlog/`
