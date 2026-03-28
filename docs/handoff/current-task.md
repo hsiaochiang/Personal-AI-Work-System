@@ -4,12 +4,12 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V2 第一批 Change 規劃與實作
+- Name: V2 第二批 Change（提取候選品質 + 多專案資料源）
 - Owner agent: (none)
-- Last updated on: 2026-03-28
+- Last updated on: 2026-03-29
 
 ## Goal
-- 啟動 V2，依序完成第一批 Change：npm start 一鍵啟動 → writeback backup 機制
+- 繼續 V2：完成提取候選品質改善，推進多專案資料源真正切換
 
 ## Scope
 - In scope: V2 Change 1（npm start） + V2 Change 2（writeback backup）
@@ -27,30 +27,25 @@
 - docs/system-manual.md 新建並補填 ✅
 - docs/planning/v1-brief.md 新建 ✅
 - docs/planning/README.md 建立 ✅
+- V2 Change 1 (npm start)：`package.json` 已有 script，確認無需修改 ✅
+- V2 Change 2 (writeback backup)：`POST /api/memory/write` 寫回前自動備份到 `docs/memory/.backup/` ✅ `5658def`
 
 ## In Progress
-- V2 規劃：已確認第一批 scope（見 Next Step）
+- （無）
 
 ## Next Step
 
-| 優先 | Change | 操作 |
+| 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `npm start` 一鍵啟動 | `web/package.json` 加 `"start": "node server.js"` |
-| 🔴 2 | writeback backup 機制 | 寫回前備份到 `docs/memory/.backup/` |
-| 🟡 3 | 提取候選品質改善 | regex pattern 調整 + threshold 調整 |
-
-建議下一 session 先呼叫 `OpenSpec Planner` 確認 change 定義，再交 `OpenSpec Executor` 執行。
+| 🟡 1 | 提取候選品質改善 | regex pattern 調整 + threshold 調整 |
+| 🟡 2 | 多專案資料源切換 | projects.json + server 支援多專案 API |
 
 ## Files Touched（本 session）
-- docs/system-manual.md（新建）
-- docs/planning/v1-brief.md（新建）
-- docs/planning/README.md（新建）
-- AGENTS.md、.github/copilot-instructions.md、.github/agents/WOS.agent.md（managed 更新）
-- .github/copilot/rules/35-quality-gate.md（managed 更新）
-- .github/copilot/rules/40-roadmap-governance.md（managed 更新）
-- .github/copilot/rules/70-openspec-workflow.md（managed 更新）
+- web/server.js（writeback backup 邏輯）
+- docs/memory/.backup/.gitkeep（新建 backup 目錄）
+- docs/roadmap.md（V2 狀態更新）
+- docs/handoff/current-task.md（本檔）
 
 ## Validation Status
-- V1 routes：✅ http://localhost:3000/ 等 5 routes
-- Template verify：✅ PASSED（managed 53/53、protected 8/8）
-- Git：✅ pushed to origin/main（`4ec895e`、`a9c15bb`）
+- V2 Change 2 smoke test：✅ PASS（backedUp: true、.backup/ 自動建立）
+- Git：✅ pushed to origin/main（`5658def`）
