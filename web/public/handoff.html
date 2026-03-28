@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>專案總覽 — 個人 AI 工作系統</title>
+  <title>Handoff 產生器 — 個人 AI 工作系統</title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -45,41 +45,59 @@
     <!-- Main -->
     <main class="main-content">
       <div class="page-header">
-        <h2>專案總覽</h2>
-        <p class="description">從 roadmap.md 讀取的即時進度</p>
+        <h2>Handoff 產生器</h2>
+        <p class="description">選擇範本類型 → 填寫欄位 → 複製完整 handoff 文件</p>
       </div>
 
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">總 Phase 數</div>
-          <div class="kpi-value" id="kpi-total">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">已完成</div>
-          <div class="kpi-value" id="kpi-done">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">下一步</div>
-          <div class="kpi-value" id="kpi-next" style="font-size:1.25rem">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">整體進度</div>
-          <div class="kpi-value" id="kpi-progress">—</div>
-        </div>
-      </div>
-
-      <!-- Phase Table -->
+      <!-- Template Selector -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Phase 進度表</span>
+          <span class="card-title">範本類型</span>
         </div>
-        <div id="phase-content"></div>
+        <div class="template-selector" id="template-selector">
+          <button class="template-btn active" data-type="planning">
+            <span class="material-symbols-outlined">lightbulb</span>
+            規劃型
+          </button>
+          <button class="template-btn" data-type="implementation">
+            <span class="material-symbols-outlined">build</span>
+            實作型
+          </button>
+          <button class="template-btn" data-type="integration">
+            <span class="material-symbols-outlined">merge</span>
+            整合型
+          </button>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">填寫內容</span>
+          <button class="btn btn-secondary" id="btn-clear">
+            <span class="material-symbols-outlined">delete_sweep</span>
+            清空
+          </button>
+        </div>
+        <div id="handoff-form"></div>
+      </div>
+
+      <!-- Preview & Copy -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">預覽</span>
+          <button class="btn btn-primary" id="btn-copy">
+            <span class="material-symbols-outlined">content_copy</span>
+            複製到剪貼簿
+          </button>
+        </div>
+        <div class="copy-toast" id="copy-toast">已複製！</div>
+        <pre class="handoff-preview" id="handoff-preview"></pre>
       </div>
     </main>
   </div>
 
   <script src="/js/app.js"></script>
-  <script src="/js/overview.js"></script>
+  <script src="/js/handoff.js"></script>
 </body>
 </html>

@@ -22,8 +22,19 @@ const ALLOWED_PATHS = {
   '/api/current-task': 'docs/handoff/current-task.md',
 };
 
-// Allowed directory for memory listing
+// Allowed directories
 const MEMORY_DIR = path.join(PROJECT_ROOT, 'docs', 'memory');
+const TEMPLATES_DIR = path.join(PROJECT_ROOT, 'docs', 'templates');
+
+// Allowed memory files for writeback (whitelist)
+const WRITABLE_MEMORY_FILES = [
+  'decision-log.md',
+  'output-patterns.md',
+  'preference-rules.md',
+  'project-context.md',
+  'skill-candidates.md',
+  'task-patterns.md',
+];
 
 function sendJSON(res, statusCode, data) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -88,6 +99,75 @@ function handleAPI(req, res) {
           }
         });
       });
+    });
+    return true;
+  }
+
+  // Handoff templates listing
+  if (url.pathname === '/api/handoff-templates') {
+    const templateFiles = [
+      'planning-handoff-template.md',
+      'implementation-handoff-template.md',
+      'integration-handoff-template.md',
+    ];
+    const results = [];
+    let pending = templateFiles.length;
+    templateFiles.forEach(file => {
+      fs.readFile(path.join(TEMPLATES_DIR, file), 'utf-8', (err, content) => {
+        results.push({
+          filename: file,
+          type: file.replace('-handoff-template.md', ''),
+          content: err ? '' : content,
+        });
+        pending--;
+        if (pending === 0) {
+          results.sort((a, b) => a.type.localeCompare(b.type));
+          sendJSON(res, 200, { templates: results });
+        }
+      });
+    });
+    return true;
+  }
+
+  // Memory writeback endpoint (POST)
+  if (url.pathname === '/api/memory/write' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const { filename, content } = JSON.parse(body);
+
+        // Validate filename is in whitelist
+        if (!WRITABLE_MEMORY_FILES.includes(filename)) {
+          sendJSON(res, 403, { error: 'File not in writable whitelist: ' + filename });
+          return;
+        }
+
+        // Validate content is a string and not empty
+        if (typeof content !== 'string' || content.trim().length === 0) {
+          sendJSON(res, 400, { error: 'Content must be a non-empty string' });
+          return;
+        }
+
+        const filePath = path.join(MEMORY_DIR, filename);
+        const resolved = path.resolve(filePath);
+
+        // Double-check path is within MEMORY_DIR
+        if (!resolved.startsWith(path.resolve(MEMORY_DIR))) {
+          sendJSON(res, 403, { error: 'Path traversal denied' });
+          return;
+        }
+
+        fs.writeFile(resolved, content, 'utf-8', (err) => {
+          if (err) {
+            sendJSON(res, 500, { error: 'Write failed: ' + err.message });
+            return;
+          }
+          sendJSON(res, 200, { success: true, filename });
+        });
+      } catch (e) {
+        sendJSON(res, 400, { error: 'Invalid JSON body' });
+      }
     });
     return true;
   }

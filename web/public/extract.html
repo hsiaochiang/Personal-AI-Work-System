@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知識提取 — 個人 AI 工作系統</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>AI 工作系統</h1>
+          <span class="subtitle">Personal Dashboard</span>
+        </div>
+      </div>
+      <a href="/" class="nav-link">
+        <span class="material-symbols-outlined">dashboard</span>
+        專案總覽
+      </a>
+      <a href="/task" class="nav-link">
+        <span class="material-symbols-outlined">assignment</span>
+        當前任務
+      </a>
+      <a href="/memory" class="nav-link">
+        <span class="material-symbols-outlined">psychology</span>
+        專案記憶
+      </a>
+      <div class="nav-divider"></div>
+      <a href="/handoff" class="nav-link">
+        <span class="material-symbols-outlined">swap_horiz</span>
+        Handoff 產生器
+      </a>
+      <a href="/extract" class="nav-link">
+        <span class="material-symbols-outlined">auto_awesome</span>
+        知識提取
+      </a>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="page-header">
+        <h2>知識提取</h2>
+        <p class="description">貼上對話內容 → 自動提取候選知識 → 審核後寫回記憶</p>
+      </div>
+
+      <!-- Step 1: Input -->
+      <div class="card" id="step-input">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="step-badge">1</span>
+            貼上對話文字
+          </span>
+        </div>
+        <textarea class="extract-textarea" id="input-text" placeholder="將 AI 對話內容貼在這裡…&#10;&#10;提取引擎會自動識別：&#10;• 專案背景資訊 → project-context.md&#10;• 偏好與規則 → preference-rules.md&#10;• 任務模式 → task-patterns.md&#10;• 決策記錄 → decision-log.md&#10;• 輸出模式 → output-patterns.md&#10;• 技能候選 → skill-candidates.md" rows="10"></textarea>
+        <div class="extract-actions">
+          <button class="btn btn-primary" id="btn-extract">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            提取候選知識
+          </button>
+          <span class="extract-hint" id="char-count">0 字</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Review Candidates -->
+      <div class="card hidden" id="step-review">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="step-badge">2</span>
+            審核候選項目
+          </span>
+          <div class="review-summary" id="review-summary"></div>
+        </div>
+        <div id="candidates-list"></div>
+        <div class="extract-actions">
+          <button class="btn btn-primary" id="btn-writeback">
+            <span class="material-symbols-outlined">save</span>
+            寫回已採用的項目
+          </button>
+          <button class="btn btn-secondary" id="btn-back">
+            <span class="material-symbols-outlined">arrow_back</span>
+            返回修改
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Result -->
+      <div class="card hidden" id="step-result">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="step-badge">3</span>
+            寫回結果
+          </span>
+        </div>
+        <div id="writeback-result"></div>
+        <div class="extract-actions">
+          <a href="/memory" class="btn btn-primary">
+            <span class="material-symbols-outlined">psychology</span>
+            前往專案記憶查看
+          </a>
+          <button class="btn btn-secondary" id="btn-restart">
+            <span class="material-symbols-outlined">refresh</span>
+            提取更多
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/extract.js"></script>
+</body>
+</html>
