@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>專案總覽 — 個人 AI 工作系統</title>
+  <title>全域搜尋 — 個人 AI 工作系統</title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -62,41 +62,30 @@
     <!-- Main -->
     <main class="main-content">
       <div class="page-header">
-        <h2>專案總覽</h2>
-        <p class="description">從 roadmap.md 讀取的即時進度</p>
+        <h2>全域搜尋</h2>
+        <p class="description">跨記憶、決策、規則、Roadmap 的全文搜尋</p>
       </div>
 
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">總 Phase 數</div>
-          <div class="kpi-value" id="kpi-total">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">已完成</div>
-          <div class="kpi-value" id="kpi-done">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">下一步</div>
-          <div class="kpi-value" id="kpi-next" style="font-size:1.25rem">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">整體進度</div>
-          <div class="kpi-value" id="kpi-progress">—</div>
+      <!-- Search Bar -->
+      <div class="card" style="margin-bottom:1rem">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" class="search-input" id="global-search-input" placeholder="輸入關鍵字搜尋…" autofocus>
+          <button class="search-clear hidden" id="global-search-clear" title="清除">
+            <span class="material-symbols-outlined">close</span>
+          </button>
         </div>
       </div>
 
-      <!-- Phase Table -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Phase 進度表</span>
-        </div>
-        <div id="phase-content"></div>
-      </div>
+      <!-- Status -->
+      <div id="search-status" style="display:none;margin-bottom:1rem;font-size:0.8125rem;color:var(--on-surface-variant)"></div>
+
+      <!-- Results -->
+      <div id="search-results"></div>
     </main>
   </div>
 
   <script src="/js/app.js"></script>
-  <script src="/js/overview.js"></script>
+  <script src="/js/search.js"></script>
 </body>
 </html>

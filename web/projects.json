@@ -1,0 +1,10 @@
+{
+  "projects": [
+    {
+      "id": "personal-ai",
+      "name": "個人 AI 工作系統",
+      "path": "D:\\program\\Personal-AI-Work-System",
+      "description": "個人 AI 工作流程與知識管理系統"
+    }
+  ]
+}

@@ -85,4 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.add('active');
     }
   });
+
+  // Sidebar project name
+  const projectEl = document.getElementById('sidebar-project-name');
+  if (projectEl) {
+    try {
+      const saved = localStorage.getItem('selectedProject');
+      if (saved) {
+        const p = JSON.parse(saved);
+        projectEl.textContent = p.name || '個人 AI 工作系統';
+      }
+    } catch { /* ignore */ }
+  }
 });

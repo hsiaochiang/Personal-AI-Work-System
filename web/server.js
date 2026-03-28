@@ -214,6 +214,24 @@ function handleAPI(req, res) {
     return true;
   }
 
+  // Projects endpoint
+  if (url.pathname === '/api/projects') {
+    const projectsFile = path.join(__dirname, 'projects.json');
+    fs.readFile(projectsFile, 'utf-8', (err, content) => {
+      if (err) {
+        sendJSON(res, 500, { error: 'Cannot read projects.json' });
+        return;
+      }
+      try {
+        const data = JSON.parse(content);
+        sendJSON(res, 200, data);
+      } catch (e) {
+        sendJSON(res, 500, { error: 'Invalid JSON in projects.json' });
+      }
+    });
+    return true;
+  }
+
   return false;
 }
 

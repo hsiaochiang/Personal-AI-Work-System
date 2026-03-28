@@ -16,8 +16,14 @@ let searchQuery = '';
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
   initSearch();
-  await loadData();
-  renderAll();
+  const container = document.getElementById('decisions-list');
+  showLoading(container);
+  try {
+    await loadData();
+    renderAll();
+  } catch (err) {
+    showError(container, '無法載入資料: ' + err.message);
+  }
 });
 
 /* ─── Data Loading ─── */
