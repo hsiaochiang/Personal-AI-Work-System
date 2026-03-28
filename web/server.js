@@ -24,6 +24,7 @@ const ALLOWED_PATHS = {
 
 // Allowed directories
 const MEMORY_DIR = path.join(PROJECT_ROOT, 'docs', 'memory');
+const BACKUP_DIR = path.join(MEMORY_DIR, '.backup');
 const TEMPLATES_DIR = path.join(PROJECT_ROOT, 'docs', 'templates');
 
 // Allowed memory files for writeback (whitelist)
@@ -158,12 +159,38 @@ function handleAPI(req, res) {
           return;
         }
 
-        fs.writeFile(resolved, content, 'utf-8', (err) => {
-          if (err) {
-            sendJSON(res, 500, { error: 'Write failed: ' + err.message });
+        // Backup existing file before overwriting
+        const doWrite = (backedUp) => {
+          fs.writeFile(resolved, content, 'utf-8', (err) => {
+            if (err) {
+              sendJSON(res, 500, { error: 'Write failed: ' + err.message });
+              return;
+            }
+            sendJSON(res, 200, { success: true, filename, backedUp });
+          });
+        };
+
+        fs.mkdir(BACKUP_DIR, { recursive: true }, (mkdirErr) => {
+          if (mkdirErr) {
+            sendJSON(res, 500, { error: 'Cannot create backup directory: ' + mkdirErr.message });
             return;
           }
-          sendJSON(res, 200, { success: true, filename });
+          // Read existing file for backup (skip if not found)
+          fs.readFile(resolved, 'utf-8', (readErr, existing) => {
+            if (readErr) {
+              // File doesn't exist yet — first write, no backup needed
+              doWrite(false);
+              return;
+            }
+            const backupPath = path.join(BACKUP_DIR, filename);
+            fs.writeFile(backupPath, existing, 'utf-8', (backupErr) => {
+              if (backupErr) {
+                sendJSON(res, 500, { error: 'Backup failed: ' + backupErr.message });
+                return;
+              }
+              doWrite(true);
+            });
+          });
         });
       } catch (e) {
         sendJSON(res, 400, { error: 'Invalid JSON body' });
