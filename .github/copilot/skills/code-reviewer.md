@@ -3,11 +3,23 @@
 ## 任務目標
 在提交前做結構化的程式碼審查，擋掉安全性、效能、一致性問題。
 
+## 前置條件
+- 有可供審查的 diff 或 PR 資訊（git diff / commit hash / PR URL 擇一）
+- 確認本次變更範圍（修改了哪些檔案）
+- `rules/50-tech-stack.md` 已有內容（能協助審查技術標準一致性）
+
 ## 依據
 - `.github/copilot/rules/50-tech-stack.md`（技術棧約定）
 - `.github/copilot/rules/60-testing.md`（測試策略）
 - `.github/copilot/rules/10-style-guide.md`（UI 規範，若涉及前端）
 - 本次變更的 diff
+
+## 工作流程
+1) 確認本次 diff 範圍與變更檔案清單
+2) 逐項執行審查 checklist（安全性 → 效能 → 一致性 → 可維護性 → 測試）
+3) 技術选型與 `50-tech-stack.md` 全面對照
+4) 安全性問題列為 `🔴 必修`（安全 OWASP Top 10 各項必檢對）
+5) 產出結構化審查報告（必修 / 建議 / 良好）
 
 ## 審查 Checklist
 
@@ -53,6 +65,11 @@
 ### 🟢 良好（Good）
 - 值得肯定的做法
 ```
+
+## 禁止事項
+- 沒有 diff 就空泛審查（必須對應具體變更）
+- 對安全性問題（Must Fix 紅燈）跳過不報告
+- 主觀假設「看起來沒問題」（未能確認的關鍵邏輯必須積極追蹤）
 
 ## 使用方式
 - 告訴 Copilot：「請以 code-reviewer 角色審查這次變更」

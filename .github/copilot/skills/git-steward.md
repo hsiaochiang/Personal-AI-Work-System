@@ -3,6 +3,19 @@
 ## 任務目標
 把每次變更都變成可追溯證據，降低「做了但找不到改哪」的風險。
 
+## 前置條件
+- 已完成所有要提交的修改（不要在中途debug/半成品狀態下 commit）
+- 若有測試要求，相關測試已通過（至少 smoke test pass）
+- 潔楚本次變更屬於哪一個 change / task
+
+## 工作流程
+1) `git status` 確認就緒狀態（未跟蹤檔 / 修改中檔）
+2) 變更屬於新功能時建立 feature 分支；狗類修復用 bugfix 分支
+3) `git add`（追蹤相關檔案，避免 `git add .` 包入無關檔）
+4) 依照 Commit Template 撰寫 commit message（What / Why / Impact / Evidence）
+5) `git push`，句若有 PR 模式則建立 PR
+6) 檢查 Template File Guard：若本次包含 managed files 剆述風险
+
 ## 分支策略
 - 分支命名慣例：
   - `feature/<slug>` — 新功能
@@ -35,6 +48,12 @@
 - 若本次變更包含 managed files，先明確提醒：這些檔案下次 template upgrade 可能被覆蓋
 - 若 managed files 的修改其實屬於模板缺陷，優先回到上游 template repo 修正
 - protected files 可正常提交，但盡量維持模板提供的欄位與結構
+
+## 禁止事項
+- 使用 `git add .` 包入無關檔案（必須明確追蹤檔案）
+- 使用 `--no-verify` 跳過 lint/test hooks（有明確理由時需先向使用者說明）
+- 將 managed files 的變更直接 commit 而不提醒使用者
+- force push 到已分享的分支
 
 ## Outputs
 - 建議的 git 指令序列

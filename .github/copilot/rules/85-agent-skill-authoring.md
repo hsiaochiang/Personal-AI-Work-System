@@ -84,7 +84,7 @@ tools: [read, search, agent, todo]   # 選用：限制可用工具
 Skill 不需要 YAML frontmatter，直接以 Markdown 撰寫：
 
 ```markdown
-# Skill: <name>（<中文名>）
+# <Skill 名稱>
 
 > 角色定位與使用情境
 
@@ -100,15 +100,6 @@ Skill 不需要 YAML frontmatter，直接以 Markdown 撰寫：
 ## 禁止事項
 [列出不可違反的限制]
 ```
-
-> **可接受的替代命名（既有 Skill 相容）**：
-> - `# Skill: <name>（<中文名>）` 或 `# <Skill 名稱>` 均可
-> - `## 任務目標` — 替代 blockquote 角色定位
-> - `## 依據` 或 `## 依據（Evidence）` — 替代 `## 前置條件`
-> - `## 輸出（必交付）` — 替代 `## 輸出規格`
-> - `## 執行步驟` — 替代 `## 工作流程`
->
-> 新建 Skill 應優先使用正式結構；既有 Skill 的替代命名不視為違規。
 
 ## Rule 撰寫規範
 

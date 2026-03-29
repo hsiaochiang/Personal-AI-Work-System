@@ -3,6 +3,11 @@
 ## 任務目標
 用 OpenSpec 把需求→規格→任務→實作走完；每一步都可驗收、可留證據。
 
+## 前置條件
+- `openspec/config.yaml` 存在（未初始化至少要先跟使用者確認處理方式）
+- `docs/roadmap.md` 存在且養目前階段已填寫
+- `docs/planning/v{N}-brief.md` 存在且「使用者確認」欄位已填寫（確認日期非空）
+
 ## 依據
 - OpenSpec 專案內 `openspec/`（changes / specs / config.yaml）
 - `docs/roadmap.md`（目前階段）
@@ -31,6 +36,11 @@
 | `tasks/*.md` | docs/runlog/（每日進度） |
 | 規格變更 | docs/decisions/（決策留痕） |
 | 實作完成 | docs/qa/（smoke test） |
+
+## 禁止事項
+- brief 使用者確認為空就開新 change（必須先確認再開始）
+- 跳過 validate 階段直接進入 apply（各階段順序不得跟級）
+- 一個 change 承載整個版本的所有 scope（必須拆分）
 
 ## 輸出（必交付）
 - 下一步該做什麼（包含要下的指令/動作）
