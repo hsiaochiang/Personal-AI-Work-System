@@ -69,7 +69,9 @@ tools: [read, search, agent, todo]
 | 偵測到的狀態 | 判定階段 | 建議動作 |
 |---|---|---|
 | 無 runlog 或今日目標為空 | 未開工 | → `#session-start` |
-| 無進行中 Change | 規劃階段 | → `#opsx-explore` 或 `#opsx-new` |
+| **brief 的使用者確認為空** | **未確認** | → **先確認 Version Brief 的 scope 與完成條件** |
+| **brief 的 Changes 表有 change 缺少狀態** | **治理缺口** | → **補齊 brief Changes 表的狀態欄位** |
+| 無進行中 Change | 規劃階段 | → `OpenSpec Planner` |
 | Change 有 proposal，無 spec/tasks | 需要 FF | → `#opsx-ff` |
 | Change 有 tasks，無實作 | 需要驗證後實作 | → `#opsx-validate` → `#opsx-apply` |
 | Change tasks 部分完成 | 實作中 | → 繼續 `#opsx-apply` |
@@ -127,6 +129,8 @@ tools: [read, search, agent, todo]
 
 ### 7. 提示詞產生規則
 
+- **若當前版本 brief 的使用者確認為空** → 最優先提示詞為「請先確認 Version Brief」
+- **若 brief 的 Changes 表有 change 缺少狀態** → 提示需要補狀態
 - 若目前是剛回來、還沒進入實作：優先給 `@WOS`、`#session-start`、`OpenSpec Planner`
 - 若已有明確 current-task 且缺執行：優先給 `OpenSpec Executor` 或對應 `#opsx-*`
 - 若目前是文件治理或交接整理：優先給能更新 handoff / roadmap / decision-log 的提示詞

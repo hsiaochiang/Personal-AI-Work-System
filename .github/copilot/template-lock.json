@@ -2,7 +2,7 @@
   "schema_version": 1,
   "template_version": "0.0.0",
   "project_name": "Personal-AI-Work-System",
-  "last_applied_at": "2026-03-28T23:54:58",
+  "last_applied_at": "2026-03-29T11:35:32",
   "bootstrap_mode": "upgrade",
   "managed_files": [
     ".github/agents/WOS.agent.md",
@@ -35,6 +35,7 @@
     ".github/copilot/rules/40-roadmap-governance.md",
     ".github/copilot/rules/70-openspec-workflow.md",
     ".github/copilot/rules/80-template-boundary.md",
+    ".github/copilot/rules/85-agent-skill-authoring.md",
     ".github/copilot/skills/code-reviewer.md",
     ".github/copilot/skills/debug-sheriff.md",
     ".github/copilot/skills/git-steward.md",

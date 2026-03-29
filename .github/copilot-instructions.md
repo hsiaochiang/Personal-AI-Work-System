@@ -51,6 +51,8 @@
 2. 閱讀 `.github/copilot/rules/` 下所有規範
 3. 確認目前階段（`docs/roadmap.md`）
 4. 確認當前版本 brief（`docs/planning/v{N}-brief.md`），掌握這一版的 scope 與完成條件
+   - 4a. 確認 brief 的「使用者確認」區段已填寫（確認日期不為空）—— 若未確認，不可開新 change
+   - 4b. 確認 brief 的 Changes 表各項都有狀態欄位（未開始 / 進行中 / 已歸檔）
 5. 初始化當日 runlog（`docs/runlog/<date>_README.md`）
 6. 檢查 Style Guide 狀態（PENDING/FROZEN）
 7. 若是接手中的任務，先同步檢查 `docs/handoff/current-task.md` / `docs/handoff/blockers.md`
@@ -74,6 +76,7 @@
 | 狀態更新 | `#status` | — | — | roadmap + runlog 更新 |
 | 記錄決策 | `#log-decision` | — | — | `docs/decision-log.md` + `docs/decisions/` |
 | 歸檔 | `#opsx-archive` | — | — | change 歸檔 |
+| Agent/Skill/Rule 撰寫 | — | `rules/85-agent-skill-authoring.md` | — | `.agent.md` / `skills/*.md` / `rules/*.md` |
 | Session 結束 | `#session-close` | — | `skills/scribe.md` | `experience/<YYYY-MM>/slides_<date>.md` |
 
 ## 證據結構
