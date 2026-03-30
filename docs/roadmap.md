@@ -92,10 +92,10 @@
 
 ### 下一步
 
-V1 功能已全部交付。接下來方向：
+V1 功能已全部交付，V2 進行中。
 
-1. **校準與收尾**：確認 roadmap、handoff、user-guide 等文件狀態一致
-2. **進入 V2 規劃**：依使用回饋決定 V2 的第一批 scope
+- V2 Change 1（writeback backup）✅ 已完成
+- 下一優先：V2 Change 2（multi-project true switching）
 
 ### 已知缺口（V1 → V2 之間）
 
@@ -105,6 +105,15 @@ V1 功能已全部交付。接下來方向：
 | 多專案資料源未真正切換 | UI 有 projects hub，但資料源仍為單一專案 | V2 |
 | 對話格式限單一來源 | 僅支援貼上文字，不支援多工具格式匯入 | V3 |
 | 無自動化治理 | 規則衝突偵測、記憶品質檢查仍需手動 | V4 |
+
+### V2 Change 進度
+
+| # | Change | 狀態 | 備註 |
+|:-:|--------|:----:|------|
+| 1 | writeback safety hardening | ✅ 已完成 | `5658def` 2026-03-29 |
+| 2 | multi-project true switching | 未開始 | |
+| 3 | roadmap and docs alignment | 未開始 | |
+| 4 | flow validation and usability hardening | 未開始 | |
 
 ---
 

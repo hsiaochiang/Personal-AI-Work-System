@@ -221,3 +221,26 @@
 
 `V2` 的任務不是做更多功能，
 而是把目前的個人 AI 工作台從「可演示的雛形」提升成「可以穩定依賴的產品」。
+
+## Changes 進度
+
+| # | Change | 目標 | 狀態 |
+|:-:|--------|------|:----:|
+| 1 | writeback safety hardening | 寫回前 backup，可控、可回復 | ✅ 已完成 (`5658def`) |
+| 2 | multi-project true switching | 多專案資料源真正切換 | 未開始 |
+| 3 | roadmap and docs alignment | roadmap 成為單一真源，消除漂移 | 未開始 |
+| 4 | flow validation and usability hardening | 完整工作流驗證 + UI 修正 | 未開始 |
+
+## 使用者確認
+
+| 項目 | 狀態 |
+|------|------|
+| Scope 已確認 | ✅ |
+| Out-of-scope 已確認 | ✅ |
+| 完成標準已確認 | ✅ |
+| 確認日期 | 2026-03-30 |
+
+## 版本狀態
+- 開始日期：2026-03-30
+- 完成日期：
+- 狀態：規劃中

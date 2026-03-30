@@ -48,22 +48,20 @@ node --version
 
 # 2. 啟動 dev server
 cd web
-node server.js
+npm start        # 或 node server.js
 
 # 3. 開啟瀏覽器
 # http://localhost:3000
 ```
 
 ## 已知限制
-- writeback 無 backup 機制，寫回即覆寫
-- 多專案切換僅 UI 層面，API 資料源未隔離
+- 多專案切換僅 UI 層面，API 資料源未隔離（V2 Change 2 改善目標）
 - 對話格式僅支援貼上純文字
 - 無自動化治理
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
-|------|------|---------|
-| V1   | 2026-03-28 | 單專案知識閉環工作台（Phase 1–5 全部完成）|
+|------|------|---------|| V2 Change 1 | 2026-03-29 | writeback 寫回前自動 backup（`.backup/` 機制）|| V1   | 2026-03-28 | 單專案知識閉環工作台（Phase 1–5 全部完成）|
 
 ## 參考連結
 - Version Brief（V1）：`docs/planning/v1-brief.md`
