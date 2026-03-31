@@ -59,3 +59,25 @@
 - 無 blocking issue 請**連續推進**，不需每步等待確認
 - 嚴格依 brief 的 In Scope 執行，不可自行擴大需求
 - 每個階段簡短回報：當前階段、執行摘要、blocking issues、下一步
+
+## 每個 Change 完成後的強制步驟（缺一不可）
+
+> 這是跨 agent 協作的最後一道門。Gemini 完成開發後若跳過這些步驟，
+> Copilot 讀取 remote 狀態時會誤判為「尚未執行」。
+
+1. **更新 `docs/handoff/current-task.md`**
+   - Done 區段加上本 change（含 commit hash 與日期）
+   - 更新 Next Step 為下一個待執行的 change
+   - 更新 Validation Status 為 PASS / FAIL
+
+2. **更新 `docs/roadmap.md`**
+   - V2 Change 進度表：將本 change 標記為 `✅ 已完成`，填入 commit hash
+   - 「下一步」段落：更新為下一個 change
+   - 「已知缺口」表：若本 change 解決了某個缺口，加上 `~~刪除線~~` 並標 ✅
+
+3. **`git add -A && git commit && git push`**
+   - **必須 push 到 origin/main**，本地 commit 不算完成
+   - commit message 格式：`feat(v2): <change 名稱>`
+
+> 若因工具限制無法 push，請在回報中明確說明「本地 commit 已完成，尚未 push」，
+> 並告知 commit hash，讓使用者手動執行 `git push`。
