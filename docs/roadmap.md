@@ -94,15 +94,16 @@
 
 V1 功能已全部交付，V2 進行中。
 
-- V2 Change 1（writeback backup）✅ 已完成
-- 下一優先：V2 Change 2（multi-project true switching）
+- V2 Change 1（writeback safety hardening）✅ 已完成（`5658def`）
+- V2 Change 2（multi-project true switching）✅ 已完成（`b5eea82`）
+- 下一優先：V2 Change 3（roadmap and docs alignment）
 
 ### 已知缺口（V1 → V2 之間）
 
 | 缺口 | 說明 | 歸屬版本 |
 |------|------|:--------:|
 | ~~writeback 無 backup 機制~~ | ✅ 已解決：POST /api/memory/write 寫回前自動備份到 `.backup/`（2026-03-29 `5658def`） | V2 |
-| 多專案資料源未真正切換 | UI 有 projects hub，但資料源仍為單一專案 | V2 |
+| ~~多專案資料源未真正切換~~ | ✅ 已解決：server.js 支援 projectId 參數，各頁面資料跟著當前專案切換（2026-03-31 `b5eea82`） | V2 |
 | 對話格式限單一來源 | 僅支援貼上文字，不支援多工具格式匯入 | V3 |
 | 無自動化治理 | 規則衝突偵測、記憶品質檢查仍需手動 | V4 |
 
@@ -111,7 +112,7 @@ V1 功能已全部交付，V2 進行中。
 | # | Change | 狀態 | 備註 |
 |:-:|--------|:----:|------|
 | 1 | writeback safety hardening | ✅ 已完成 | `5658def` 2026-03-29 |
-| 2 | multi-project true switching | 未開始 | |
+| 2 | multi-project true switching | ✅ 已完成 | `b5eea82` 2026-03-31 |
 | 3 | roadmap and docs alignment | 未開始 | |
 | 4 | flow validation and usability hardening | 未開始 | |
 
