@@ -19,12 +19,31 @@
     3. 命令以 `docs/agents/commands.md` 為準
 - 不要在 Codex 專屬入口重寫完整流程規範
 
-## Gemini Code Assist
+## Gemini Code Assist（IDE Plugin）
 - 若使用 workspace context、starter prompt、pinned prompt，建議內容只有：
     1. 先讀 `AGENTS.md`
     2. 長期證據看 `docs/roadmap.md` / `docs/decision-log.md` / `docs/runlog/`
     3. 短期交接看 `docs/handoff/`
 - Gemini 專屬入口只補充平台限制，例如回覆長度、偏好的工作模式、是否可自行執行命令
+- 注意：IDE Plugin 版本的 Gemini **無法**主動執行終端命令，smoke test / verify 需人工執行後回傳結果
+
+## Gemini CLI（終端機）
+- 已確認能力（2026-03-30）：
+    - ✅ 可主動執行 Shell 命令（如 `python bootstrap_copilot_workspace.py --verify-only`）
+    - ✅ 可完整擷取 stdout / stderr / exit code 並據以決定下一步
+    - ✅ 可直接讀取 / 修改本機檔案（`read_file`、`write_file`、`replace`）
+    - ✅ 可多步驟連續執行，不需人工在每步介入
+- 執行模式：
+    - **預設（逐步確認）**：每個改變系統狀態的步驟暫停等待 `y` 確認，建議第一次跑新 change 時使用
+    - **自動模式**：啟動時加 `--allow-all-tools --allow-all-paths`，適合熟悉流程後全自動跑完整個 change
+- 定位：**開發執行端**。Copilot 完成規劃（brief 確認）後，由 Gemini CLI 接手 opsx-new 起的所有步驟
+- 啟動 prompt（Copilot 移交後，Gemini CLI 開工時使用）：
+
+```
+請讀取 docs/agents/gemini-cli-init.md 並依照其中的指示執行。
+```
+
+> 完整初始化步驟與執行流程詳見 `docs/agents/gemini-cli-init.md`
 
 ## What Not To Do
 - 不要為 Copilot / Codex / Gemini 各維護一整套不同規範

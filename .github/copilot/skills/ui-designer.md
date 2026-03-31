@@ -5,7 +5,7 @@
 
 ## 依據（Evidence）
 - `.github/copilot/rules/10-style-guide.md`（唯一 UI 規範）
-- `design/stitch/stitch.html`（Stitch evidence；或補充截圖/錄影/URL）
+- Stitch HTML（外部輸入檔；或補充截圖/錄影/URL）
 - 目標頁面/元件檔案（repo 內）
 
 ## 輸出（必交付）

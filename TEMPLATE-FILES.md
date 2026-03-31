@@ -13,7 +13,7 @@
 - 若想查分類，可跑 `bootstrap_copilot_workspace.py --list-managed --root <target>`。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
-## Managed Files (54)
+## Managed Files (55)
 - .github/agents/WOS.agent.md
 - .github/agents/openspec-executor.agent.md
 - .github/agents/openspec-planner.agent.md
@@ -58,6 +58,7 @@
 - TEMPLATE-FILES.md
 - docs/agents/OPENSPEC_AGENT_GUIDE.zh-TW.md
 - docs/agents/agent-entrypoints.md
+- docs/agents/gemini-cli-init.md
 - docs/agents/platform-onboarding-checklist.md
 - docs/agents/platform-setup-guide.md
 - docs/agents/platform-snippets.md
@@ -69,13 +70,14 @@
 - docs/uiux/README.md
 - openspec/config.yaml
 
-## Protected Files (8)
+## Protected Files (9)
 - .github/copilot/rules/50-tech-stack.md
 - .github/copilot/rules/60-testing.md
 - .github/copilot/rules/90-project-custom.md
 - docs/agents/commands.md
 - docs/agents/project-context.md
 - docs/decision-log.md
+- docs/release-governance.md
 - docs/roadmap.md
 - docs/system-manual.md
 
