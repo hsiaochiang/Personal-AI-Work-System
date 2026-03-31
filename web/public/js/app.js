@@ -6,7 +6,16 @@
  * @returns {Promise<Object>}
  */
 async function apiFetch(endpoint) {
-  const res = await fetch(endpoint);
+  const url = new URL(endpoint, location.origin);
+  try {
+    const saved = localStorage.getItem('selectedProject');
+    if (saved) {
+      const p = JSON.parse(saved);
+      if (p.id) url.searchParams.set('projectId', p.id);
+    }
+  } catch { /* ignore */ }
+
+  const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`API ${endpoint}: ${res.status}`);
   return res.json();
 }

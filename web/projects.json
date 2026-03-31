@@ -5,6 +5,12 @@
       "name": "個人 AI 工作系統",
       "path": "D:\\program\\Personal-AI-Work-System",
       "description": "個人 AI 工作流程與知識管理系統"
+    },
+    {
+      "id": "mock-test",
+      "name": "測試專案",
+      "path": "D:\\program\\Personal-AI-Work-System\\temp-mock",
+      "description": "測試多專案切換功能"
     }
   ]
 }

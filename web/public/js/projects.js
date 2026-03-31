@@ -25,6 +25,13 @@ function selectProject(project) {
   });
   const nameEl = document.getElementById('sidebar-project-name');
   if (nameEl) nameEl.textContent = project.name;
+  
+  // Optional: visual feedback
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-success';
+  toast.textContent = `已切換至專案: ${project.name}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
 }
 
 function renderProjects(projects) {

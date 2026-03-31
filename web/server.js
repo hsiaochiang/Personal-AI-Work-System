@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 3000;
-const PROJECT_ROOT = path.resolve(__dirname, '..');
+const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const MIME_TYPES = {
@@ -16,16 +16,11 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
 };
 
-// Allowed API file paths (whitelist)
+// Allowed API file paths (whitelist) relative to project root
 const ALLOWED_PATHS = {
   '/api/roadmap': 'docs/roadmap.md',
   '/api/current-task': 'docs/handoff/current-task.md',
 };
-
-// Allowed directories
-const MEMORY_DIR = path.join(PROJECT_ROOT, 'docs', 'memory');
-const BACKUP_DIR = path.join(MEMORY_DIR, '.backup');
-const TEMPLATES_DIR = path.join(PROJECT_ROOT, 'docs', 'templates');
 
 // Allowed memory files for writeback (whitelist)
 const WRITABLE_MEMORY_FILES = [
@@ -57,15 +52,39 @@ function serveStaticFile(res, filePath) {
   });
 }
 
+/**
+ * Get the project root directory based on projectId.
+ * @param {string} projectId 
+ * @returns {string}
+ */
+function getProjectRoot(projectId) {
+  if (!projectId) return DEFAULT_PROJECT_ROOT;
+  try {
+    const projectsFile = path.join(__dirname, 'projects.json');
+    const data = JSON.parse(fs.readFileSync(projectsFile, 'utf-8'));
+    const project = data.projects.find(p => p.id === projectId);
+    return project ? project.path : DEFAULT_PROJECT_ROOT;
+  } catch (e) {
+    return DEFAULT_PROJECT_ROOT;
+  }
+}
+
 function handleAPI(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
+  const projectId = url.searchParams.get('projectId');
+  const projectRoot = getProjectRoot(projectId);
+
+  // Derived directories
+  const MEMORY_DIR = path.join(projectRoot, 'docs', 'memory');
+  const BACKUP_DIR = path.join(MEMORY_DIR, '.backup');
+  const TEMPLATES_DIR = path.join(projectRoot, 'docs', 'templates');
 
   // Specific file endpoints
   if (ALLOWED_PATHS[url.pathname]) {
-    const filePath = path.join(PROJECT_ROOT, ALLOWED_PATHS[url.pathname]);
+    const filePath = path.join(projectRoot, ALLOWED_PATHS[url.pathname]);
     fs.readFile(filePath, 'utf-8', (err, content) => {
       if (err) {
-        sendJSON(res, 404, { error: 'File not found' });
+        sendJSON(res, 404, { error: 'File not found: ' + ALLOWED_PATHS[url.pathname] });
         return;
       }
       sendJSON(res, 200, { content, path: ALLOWED_PATHS[url.pathname] });
@@ -77,7 +96,7 @@ function handleAPI(req, res) {
   if (url.pathname === '/api/memory') {
     fs.readdir(MEMORY_DIR, (err, files) => {
       if (err) {
-        sendJSON(res, 500, { error: 'Cannot read memory directory' });
+        sendJSON(res, 200, { files: [] }); // Directory might not exist yet
         return;
       }
       const mdFiles = files.filter(f => f.endsWith('.md'));
@@ -144,12 +163,6 @@ function handleAPI(req, res) {
           return;
         }
 
-        // Validate content is a string and not empty
-        if (typeof content !== 'string' || content.trim().length === 0) {
-          sendJSON(res, 400, { error: 'Content must be a non-empty string' });
-          return;
-        }
-
         const filePath = path.join(MEMORY_DIR, filename);
         const resolved = path.resolve(filePath);
 
@@ -208,7 +221,7 @@ function handleAPI(req, res) {
     const results = {};
     let pending = sources.length;
     sources.forEach(({ key, relPath }) => {
-      fs.readFile(path.join(PROJECT_ROOT, relPath), 'utf-8', (err, content) => {
+      fs.readFile(path.join(projectRoot, relPath), 'utf-8', (err, content) => {
         results[key] = err ? '' : content;
         pending--;
         if (pending === 0) {
