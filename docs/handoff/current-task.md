@@ -24,9 +24,8 @@
 - Phase 1–5：V1 全數完成 ✅
 - Roadmap 重構為單一真源（V1–V4）✅
 - 文件一致性校準 ✅
-- V2 Change 1 (npm start) ✅
-- V2 Change 2 (writeback backup) ✅ `5658def`
-- V2 Change 3 (multi-project true switching) ✅ `b5eea82` 2026-03-31
+- V2 Change 1 (writeback safety hardening) ✅ `5658def` 2026-03-29
+- V2 Change 2 (multi-project true switching) ✅ `b5eea82` 2026-03-31
 
 ## In Progress
 - （無）
