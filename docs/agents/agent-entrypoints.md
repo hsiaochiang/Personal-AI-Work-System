@@ -36,14 +36,19 @@
 - 執行模式：
     - **預設（逐步確認）**：每個改變系統狀態的步驟暫停等待 `y` 確認，建議第一次跑新 change 時使用
     - **自動模式**：啟動時加 `--allow-all-tools --allow-all-paths`，適合熟悉流程後全自動跑完整個 change
-- 定位：**開發執行端**。Copilot 完成規劃（brief 確認）後，由 Gemini CLI 接手 opsx-new 起的所有步驟
+- 定位：**開發執行端**。Copilot 完成規劃（brief 確認）後，由 Gemini CLI 接手 `/opsx:propose` 起的所有步驟
+- System prompt 入口：`GEMINI.md`（啟動時自動載入，定義可用 commands/skills）
+- 可用 commands：`/opsx:propose`、`/opsx:apply`、`/opsx:archive`、`/opsx:explore`
+- 可用 skills：`.gemini/skills/openspec-*/SKILL.md`
 - 啟動 prompt（Copilot 移交後，Gemini CLI 開工時使用）：
 
 ```
 請讀取 docs/agents/gemini-cli-init.md 並依照其中的指示執行。
+使用 /opsx:propose、/opsx:apply、/opsx:archive 命令，不要手動模擬。
 ```
 
 > 完整初始化步驟與執行流程詳見 `docs/agents/gemini-cli-init.md`
+> System prompt 定義見 `GEMINI.md`
 
 ## What Not To Do
 - 不要為 Copilot / Codex / Gemini 各維護一整套不同規範

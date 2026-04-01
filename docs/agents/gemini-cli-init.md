@@ -1,6 +1,7 @@
 # Gemini CLI 初始化指令
 
 > 每次新 session 開工時，將此檔案的完整內容貼給 Gemini CLI 作為第一句 prompt。
+> **注意**：Gemini CLI 啟動時會自動載入 `GEMINI.md`，本檔案是補充上下文用。
 
 ---
 
@@ -8,50 +9,45 @@
 
 請依序讀取以下檔案，完成後再執行任何任務：
 
-1. `AGENTS.md`
-2. `docs/roadmap.md`（確認目前版本編號 V?）
-3. `docs/handoff/current-task.md`
-4. `docs/planning/v{N}-brief.md`（N = 上一步確認的版本號）
-5. `.github/copilot/rules/40-roadmap-governance.md`
-6. `.github/copilot/rules/36-scope-guard.md`
-7. `.github/copilot/rules/70-openspec-workflow.md`
-8. `.github/copilot/rules/35-quality-gate.md`
+1. `GEMINI.md`（你的 system prompt，確認你有哪些 commands 和 skills 可用）
+2. `AGENTS.md`
+3. `docs/roadmap.md`（確認目前版本編號 V?）
+4. `docs/handoff/current-task.md`
+5. `docs/planning/v{N}-brief.md`（N = 上一步確認的版本號）
 
 ---
 
 ## 執行任務
 
-初始化完成後，根據 brief 中的「預計拆分的 Changes」清單，依序對每個未開始的 change 執行以下流程：
+初始化完成後，根據 brief 中的「預計拆分的 Changes」清單，依序對每個未開始的 change 執行以下流程。
 
-### Step 1：規劃（Planner）
+> **重要**：你已經有可直接使用的 `/opsx:*` 命令（見 `GEMINI.md`），
+> 請使用這些正規命令執行，不要自行模擬。
 
-讀取 `.github/agents/openspec-planner.agent.md`，依照其中的角色定義、前置檢查與工作原則，
-依照 brief 的 spec + acceptance criteria 產出：
+### Step 1：規劃（Propose）
 
-- change name
-- scope / non-scope
-- acceptance criteria（直接從 brief 轉化，不自行增減）
-- 主要風險
+```
+/opsx:propose "<change-name>"
+```
 
+這會呼叫 `openspec` CLI 建立 change 目錄，並產生 proposal / design / tasks。
 產出後等待確認，確認無誤再繼續。
 
-### Step 2：執行（Executor）
-
-讀取 `.github/agents/openspec-executor.agent.md`，依照其中的角色定義與前置檢查執行：
+### Step 2：執行（Apply）
 
 ```
-/opsx-new "<change-name>"
-/opsx-ff
-/opsx-apply "<change-name>"
-/opsx-verify "<change-name>"
+/opsx:apply "<change-name>"
 ```
 
-### Step 3：把關（Review Gate）
+這會讀取 tasks，引導你逐步完成實作。
 
-讀取 `.github/agents/review-gate.agent.md`，依照其中的角色定義做最終把關。
-確認通過後依序執行：
-1. `/commit-push`
-2. `/opsx-archive "<change-name>"` — 將 `openspec/changes/<change-name>/` 用 `git mv` 移入 `openspec/changes/archive/<日期>-<change-name>/`
+### Step 3：歸檔（Archive）
+
+```
+/opsx:archive "<change-name>"
+```
+
+這會執行完整的歸檔流程（檢查 artifacts → 檢查 tasks → sync specs → 移入 archive）。
 
 ---
 
@@ -67,24 +63,23 @@
 > 這是跨 agent 協作的最後一道門。Gemini 完成開發後若跳過這些步驟，
 > Copilot 讀取 remote 狀態時會誤判為「尚未執行」或遺留未歸檔殘留物。
 
-1. **更新 `docs/handoff/current-task.md`**
+1. **執行 `/opsx:archive "<change-name>"`**
+   - 這是你已有的正規命令，會自動完成：artifacts 檢查 → tasks 檢查 → specs sync → 移入 archive
+   - **不要**手動模擬 archive，直接使用命令
+
+2. **更新 `docs/handoff/current-task.md`**
    - Done 區段加上本 change（含 commit hash 與日期）
    - 更新 Next Step 為下一個待執行的 change
    - 更新 Validation Status 為 PASS / FAIL
 
-2. **更新 `docs/roadmap.md`**
+3. **更新 `docs/roadmap.md`**
    - Change 進度表：將本 change 標記為 `✅ 已完成`，填入 commit hash
    - 「下一步」段落：更新為下一個 change
    - 「已知缺口」表：若本 change 解決了某個缺口，加上 `~~刪除線~~` 並標 ✅
 
-3. **`git add -A && git commit && git push`**
+4. **`git add -A && git commit && git push`**
    - **必須 push 到 origin/main**，本地 commit 不算完成
    - commit message 格式：`feat(v{N}): <change 名稱>`
-
-4. **歸檔 openspec change 目錄**
-   - 執行：`git mv openspec/changes/<change-name> openspec/changes/archive/<YYYY-MM-DD>-<change-name>`
-   - commit 並 push（可與步驟 3 合併為同一個 commit）
-   - `openspec/changes/` 中不應殘留已完成的 change 目錄
 
 > 若因工具限制無法 push，請在回報中明確說明「本地 commit 已完成，尚未 push」，
 > 並告知 commit hash，讓使用者手動執行 `git push`。
