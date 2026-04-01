@@ -92,20 +92,19 @@
 
 ### 下一步
 
-V1 功能已全部交付，V2 進行中。
+V1 功能已全部交付，V2 所有核心穩定化與多專案功能也已全數實作完成並驗證。
 
 - V2 Change 1（writeback safety hardening）✅ 已完成（`5658def`）
 - V2 Change 2（multi-project true switching）✅ 已完成（`b5eea82`）
 - V2 Change 3（roadmap and docs alignment）✅ 已完成（`f1f8e08`）
-- 下一優先：V2 Change 4（flow validation and usability hardening）
+- V2 Change 4（flow validation and usability hardening）✅ 已完成
+- 下一優先：正式進入 **V3 (跨工具整合層)**，著手規劃 `v3-brief.md` 與多工具對話格式匯入機制。
 
-### 已知缺口（V1 → V2 之間）
+### 已知缺口（V2 → V3 之間）
 
 | 缺口 | 說明 | 歸屬版本 |
 |------|------|:--------:|
-| ~~writeback 無 backup 機制~~ | ✅ 已解決：POST /api/memory/write 寫回前自動備份到 `.backup/`（2026-03-29 `5658def`） | V2 |
-| ~~多專案資料源未真正切換~~ | ✅ 已解決：server.js 支援 projectId 參數，各頁面資料跟著當前專案切換（2026-03-31 `b5eea82`） | V2 |
-| ~~文件對版本完成度描述漂移~~ | ✅ 已解決：roadmap 成為單一真源，修正 current-task 漂移，對齊 user guide（2026-04-01 `f1f8e08`） | V2 |
+| ~~V2 驗證未完整~~ | ✅ 已解決：補足完整工作流情境驗證與 UI 狀態處理 | V2 |
 | 對話格式限單一來源 | 僅支援貼上文字，不支援多工具格式匯入 | V3 |
 | 無自動化治理 | 規則衝突偵測、記憶品質檢查仍需手動 | V4 |
 
@@ -116,7 +115,7 @@ V1 功能已全部交付，V2 進行中。
 | 1 | writeback safety hardening | ✅ 已完成 | `5658def` 2026-03-29 |
 | 2 | multi-project true switching | ✅ 已完成 | `b5eea82` 2026-03-31 |
 | 3 | roadmap and docs alignment | ✅ 已完成 | `f1f8e08` 2026-04-01 |
-| 4 | flow validation and usability hardening | 未開始 | |
+| 4 | flow validation and usability hardening | ✅ 已完成 | 2026-04-01 |
 
 ---
 

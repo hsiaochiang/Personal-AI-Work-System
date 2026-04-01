@@ -112,8 +112,7 @@ async function runExtraction() {
   candidates = extractCandidates(text);
 
   if (candidates.length === 0) {
-    document.getElementById('candidates-list').innerHTML =
-      '<div class="empty-state"><span class="material-symbols-outlined">search_off</span><p>未找到候選知識項目。請嘗試貼上更多對話內容。</p></div>';
+    showEmpty(document.getElementById('candidates-list'), 'search_off', '未找到候選知識項目。請嘗試貼上更多對話內容。');
   } else {
     renderCandidates();
   }
@@ -292,7 +291,9 @@ async function runWriteback() {
   }
 
   const resultContainer = document.getElementById('writeback-result');
-  resultContainer.innerHTML = '';
+  showLoading(resultContainer);
+  document.getElementById('step-review').classList.add('hidden');
+  document.getElementById('step-result').classList.remove('hidden');
 
   // Group by target file
   const groups = {};
@@ -319,15 +320,10 @@ async function runWriteback() {
       const updatedContent = currentContent.trimEnd() + newSection + '\n';
 
       // Write back
-      const writeRes = await fetch('/api/memory/write', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename, content: updatedContent }),
-      });
-      const writeData = await writeRes.json();
+      const writeData = await apiPost('/api/memory/write', { filename, content: updatedContent });
 
       if (writeData.success) {
-        results.push({ filename, count: items.length, ok: true });
+        results.push({ filename, count: items.length, ok: true, backedUp: writeData.backedUp });
       } else {
         results.push({ filename, count: items.length, ok: false, error: writeData.error });
       }
@@ -337,19 +333,20 @@ async function runWriteback() {
   }
 
   // Render results
+  resultContainer.innerHTML = '';
   results.forEach(r => {
     const div = document.createElement('div');
     div.className = 'writeback-item ' + (r.ok ? 'success' : 'failure');
     const icon = r.ok ? 'check_circle' : 'error';
-    const msg = r.ok
+    let msg = r.ok
       ? `${r.filename} — 成功寫入 ${r.count} 項`
       : `${r.filename} — 失敗: ${r.error}`;
+    if (r.ok && r.backedUp) {
+      msg += ' (已自動備份原檔)';
+    }
     div.innerHTML = `<span class="material-symbols-outlined">${icon}</span><span>${escapeHTML(msg)}</span>`;
     resultContainer.appendChild(div);
   });
-
-  document.getElementById('step-review').classList.add('hidden');
-  document.getElementById('step-result').classList.remove('hidden');
 }
 
 /* ─── Navigation ─── */

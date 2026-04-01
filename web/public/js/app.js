@@ -1,7 +1,7 @@
 /* ─── Shared utilities ─── */
 
 /**
- * Fetch JSON from API endpoint.
+ * Fetch JSON from API endpoint (GET).
  * @param {string} endpoint - e.g. '/api/roadmap'
  * @returns {Promise<Object>}
  */
@@ -17,6 +17,38 @@ async function apiFetch(endpoint) {
 
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`API ${endpoint}: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Send JSON to API endpoint (POST).
+ * @param {string} endpoint - e.g. '/api/memory/write'
+ * @param {Object} body - JSON body
+ * @returns {Promise<Object>}
+ */
+async function apiPost(endpoint, body) {
+  const url = new URL(endpoint, location.origin);
+  try {
+    const saved = localStorage.getItem('selectedProject');
+    if (saved) {
+      const p = JSON.parse(saved);
+      if (p.id) url.searchParams.set('projectId', p.id);
+    }
+  } catch { /* ignore */ }
+
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    let errorMsg = `API ${endpoint}: ${res.status}`;
+    try {
+      const errData = await res.json();
+      if (errData.error) errorMsg = errData.error;
+    } catch { /* ignore */ }
+    throw new Error(errorMsg);
+  }
   return res.json();
 }
 
