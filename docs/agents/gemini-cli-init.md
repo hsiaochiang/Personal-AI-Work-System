@@ -49,7 +49,9 @@
 ### Step 3：把關（Review Gate）
 
 讀取 `.github/agents/review-gate.agent.md`，依照其中的角色定義做最終把關。
-確認通過後執行 `/commit-push`。
+確認通過後依序執行：
+1. `/commit-push`
+2. `/opsx-archive "<change-name>"` — 將 `openspec/changes/<change-name>/` 用 `git mv` 移入 `openspec/changes/archive/<日期>-<change-name>/`
 
 ---
 
@@ -63,7 +65,7 @@
 ## 每個 Change 完成後的強制步驟（缺一不可）
 
 > 這是跨 agent 協作的最後一道門。Gemini 完成開發後若跳過這些步驟，
-> Copilot 讀取 remote 狀態時會誤判為「尚未執行」。
+> Copilot 讀取 remote 狀態時會誤判為「尚未執行」或遺留未歸檔殘留物。
 
 1. **更新 `docs/handoff/current-task.md`**
    - Done 區段加上本 change（含 commit hash 與日期）
@@ -71,13 +73,18 @@
    - 更新 Validation Status 為 PASS / FAIL
 
 2. **更新 `docs/roadmap.md`**
-   - V2 Change 進度表：將本 change 標記為 `✅ 已完成`，填入 commit hash
+   - Change 進度表：將本 change 標記為 `✅ 已完成`，填入 commit hash
    - 「下一步」段落：更新為下一個 change
    - 「已知缺口」表：若本 change 解決了某個缺口，加上 `~~刪除線~~` 並標 ✅
 
 3. **`git add -A && git commit && git push`**
    - **必須 push 到 origin/main**，本地 commit 不算完成
-   - commit message 格式：`feat(v2): <change 名稱>`
+   - commit message 格式：`feat(v{N}): <change 名稱>`
+
+4. **歸檔 openspec change 目錄**
+   - 執行：`git mv openspec/changes/<change-name> openspec/changes/archive/<YYYY-MM-DD>-<change-name>`
+   - commit 並 push（可與步驟 3 合併為同一個 commit）
+   - `openspec/changes/` 中不應殘留已完成的 change 目錄
 
 > 若因工具限制無法 push，請在回報中明確說明「本地 commit 已完成，尚未 push」，
 > 並告知 commit hash，讓使用者手動執行 `git push`。
