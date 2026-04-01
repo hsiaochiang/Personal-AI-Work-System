@@ -4,17 +4,17 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V2 Change 3（roadmap and docs alignment）
+- Name: V2 Change 4（flow validation and usability hardening）
 - Owner agent: (none)
-- Last updated on: 2026-03-31
+- Last updated on: 2026-04-01
 
 ## Goal
-- 讓 roadmap、handoff、current guide 對版本狀態不再互相矛盾
-- 消除 current-task 描述漂移，恢復為精確短期交接用途
+- 補足完整工作流驗證
+- 修正影響日常使用的 UI / feedback 問題
 
 ## Scope
-- In scope: V2 Change 3（roadmap and docs alignment）
-- Out of scope: flow validation（V2 Change 4）、多工具接入（V3）
+- In scope: V2 Change 4（flow validation and usability hardening）
+- Out of scope: 多工具接入（V3）
 
 ## Constraints
 - 純靜態 HTML + vanilla JS（無框架、無 build）
@@ -26,6 +26,7 @@
 - 文件一致性校準 ✅
 - V2 Change 1 (writeback safety hardening) ✅ `5658def` 2026-03-29
 - V2 Change 2 (multi-project true switching) ✅ `b5eea82` 2026-03-31
+- V2 Change 3 (roadmap and docs alignment) ✅ `f1f8e08` 2026-04-01
 
 ## In Progress
 - （無）
@@ -34,16 +35,15 @@
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🟡 1 | V2 Change 3：roadmap and docs alignment | roadmap 真源校準、current-task 更新、user guide 對齊 |
-| 🟡 2 | V2 Change 4：flow validation and usability hardening | 情境驗證 + UI empty/error state 補齊 |
+| 🟡 1 | V2 Change 4：flow validation and usability hardening | 情境驗證 + UI empty/error state 補齊 |
+| 🟡 2 | 提取候選品質改善 | regex pattern 調整 + threshold 調整 |
 
 ## Files Touched（本 session）
-- web/server.js（writeback backup 邏輯）
-- docs/memory/.backup/.gitkeep（新建 backup 目錄）
-- docs/roadmap.md（V2 狀態更新）
-- docs/handoff/current-task.md（本檔）
+- docs/product/user-guide-current.md
+- docs/roadmap.md
+- docs/handoff/current-task.md
+- docs/planning/v2-brief.md
 
 ## Validation Status
-- V2 Change 1 smoke test：✅ PASS（backedUp: true、.backup/ 自動建立）
-- V2 Change 2 smoke test：✅ PASS（Gemini CLI curl 測試，各頁面資料跟著專案切換）
-- Git：⚠️ `b5eea82` 本地完成，尚未 push 至 origin/main
+- V2 Change 3 smoke test：✅ PASS (Documents are strictly aligned)
+- Git：⚠️ `f1f8e08` 本地完成，尚未 push 至 origin/main
