@@ -229,7 +229,7 @@
 | 1 | writeback safety hardening | 寫回前 backup，可控、可回復 | ✅ 已完成 (`5658def`) |
 | 2 | multi-project true switching | 多專案資料源真正切換 | ✅ 已完成 (`b5eea82`) |
 | 3 | roadmap and docs alignment | roadmap 成為單一真源，消除漂移 | ✅ 已完成 (`f1f8e08`) |
-| 4 | flow validation and usability hardening | 完整工作流驗證 + UI 修正 | 未開始 |
+| 4 | flow validation and usability hardening | 完整工作流驗證 + UI 修正 | 🟡 進行中 |
 
 ## 使用者確認
 
