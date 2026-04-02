@@ -4,42 +4,42 @@
 - 統一技術選型，避免同一功能重複引入不同套件
 - 新增 dependency 需有決策記錄
 
-## 技術棧清單（依專案填入）
+## 技術棧清單
 
 ### 語言 / 框架
-- （請填入：例如 TypeScript、Python、React Native + Expo、Next.js 等）
+- **Runtime**: Node.js（≥ 18）
+- **前端**: 純 HTML + vanilla JS（無框架、無 build step、無打包工具）
+- **CSS**: 純 CSS（inline style / class，無預處理器）
+- **後端 server**: Node.js `http` 模組（`web/server.js`），無 Express
 
 ### 狀態管理
-- （請填入：例如 Zustand、Redux Toolkit、Pinia 等）
+- 無；頁面狀態以 DOM 操作 + fetch API 管理
 
 ### 資料儲存
-- 本地：（請填入：例如 AsyncStorage、SQLite、MMKV 等）
-- 遠端：（請填入：例如 Supabase、Firebase、自建 API 等）
+- **本地**：Markdown 純文字檔（`docs/memory/`、`docs/workflows/`）
+- **遠端**：無；目前 local-only
 
 ### UI 元件庫
-- （請填入：例如 NativeBase、Tamagui、shadcn/ui 等）
+- 無；手刻 HTML/CSS，設計 token 來自 Stitch 快照（見 `10-style-guide.md`）
 
 ### 測試工具
-- 單元測試：（請填入：例如 Jest、Vitest 等）
-- 整合 / E2E：（請填入：例如 Detox、Maestro、Playwright 等）
+- 單元測試：目前無 automated test 框架
+- 整合 / E2E：`tools/verify_flow.js`（手動執行）
+- Smoke：`bootstrap_copilot_workspace.py --verify-only`（template governance）
 
 ### 其他工具
-- 音檔處理：（請填入）
-- 多語系：（請填入）
-- CI/CD：（請填入）
-
-## 新增 Dependency 規則
-- 引入新套件前，先確認沒有現有套件能解決
-- 新增套件需記錄決策到 `docs/decisions/`，內容包含：
-  - 套件名稱與版本
-  - 為什麼選這個（vs 替代方案）
-  - 對 bundle size / 啟動速度的影響評估
-  - 授權條款（license）確認
+- OpenSpec CLI：`@fission-ai/openspec`（change lifecycle 管理）
+- 文件 bootstrap：`copilot-workspace-template`（Python 3.11 venv）
 
 ## Node / Python 版本
-- （請填入：例如 Node ≥ 18、Python ≥ 3.11）
+- Node ≥ 18
+- Python ≥ 3.11（僅 template bootstrap 工具使用）
+
+## 新增 Dependency 規則
+- 引入新套件前，先確認沒有現有方式能解決
+- 新增套件需記錄決策到 `docs/decisions/`，包含：套件名稱與版本、選擇原因（vs 替代方案）、license
+- **禁止**：在未獲人工確認前引入任何前端框架（React/Vue/Svelte 等）、打包工具（Vite/webpack）、ORM 或資料庫
 
 ## 使用方式
-- 專案初始化時填入本文件
-- 每次新增 dependency 時對照並更新
+- 每次新增 dependency 時對照並更新本文件
 - Style Freeze 後，此文件連同 `10-style-guide.md` 一起凍結
