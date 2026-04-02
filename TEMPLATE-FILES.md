@@ -13,7 +13,7 @@
 - 若想查分類，可跑 `bootstrap_copilot_workspace.py --list-managed --root <target>`。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
-## Managed Files (60)
+## Managed Files (61)
 - .claude/skills/openspec-apply-change/SKILL.md
 - .claude/skills/openspec-archive-change/SKILL.md
 - .claude/skills/openspec-explore/SKILL.md
@@ -71,6 +71,7 @@
 - docs/agents/wos-playbook.md
 - docs/bugs/README.md
 - docs/handoff/README.md
+- docs/planning/README.md
 - docs/qa/README.md
 - docs/uiux/README.md
 - openspec/config.yaml
@@ -86,10 +87,9 @@
 - docs/roadmap.md
 - docs/system-manual.md
 
-## Init-Only Files (3)
+## Init-Only Files (2)
 - docs/handoff/blockers.md
 - docs/handoff/current-task.md
-- docs/planning/README.md
 
 ## Project-Owned Files In Template Set (0)
 - 目前模板沒有主動生成 unmanaged 檔案；此區段主要用於偵錯分類。

@@ -26,14 +26,14 @@
 - 升級 copilot-workspace-template v1.5.0 + Style Guide FROZEN ✅ `790f782` 2026-04-02
 
 ## In Progress
-- V3 規劃前置整理
+- V3 Brief 待使用者確認
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🟡 1 | 草擬 v3-brief.md | 定義 V3 scope、conversation schema 標準化、adapter 機制 |
-| 🟡 2 | 確認 V3 Brief | 使用者確認 V3 scope 與完成條件後，即可開始第一個 change |
+| � 1 | 確認 V3 Brief | 檢視 `docs/planning/v3-brief.md`，使用者確認 scope 與完成條件（確認日期填入）|
+| 🟡 2 | 啟動第一個 V3 change | 確認完毕後，呼叫 `OpenSpec Planner` 開始 `conversation-schema-definition` |
 
 ## Files Touched（本 session）
 - 19 個 managed files 升級至 template v1.5.0
@@ -41,6 +41,7 @@
 - docs/system-manual.md
 - docs/handoff/current-task.md
 - docs/planning/README.md
+- docs/planning/v3-brief.md (新建)
 
 ## Validation Status
 - Template verify: ✅ PASS (v1.5.0)

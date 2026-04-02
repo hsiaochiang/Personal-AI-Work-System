@@ -64,7 +64,7 @@
 ```
 
 | 銜接點 | 觸發條件 | 交接內容 |
-|--------|---------|----------|
+|--------|---------|---------|
 | WOS → Planner | WOS 偵測到規劃模式（brief 未確認，或 brief 已確認但無 active change） | 使用者描述的需求；WOS 給出 `呼叫 OpenSpec Planner` 建議 |
 | Planner → Executor | proposal / design / spec / tasks 全部產出，使用者確認 scope | change 名稱；`openspec/changes/<name>/` 目錄完整 |
 | Executor → Review Gate | tasks.md 所有 `- [x]`、smoke 文件已建立 | 實作摘要；smoke 結果；blocking / non-blocking issues |

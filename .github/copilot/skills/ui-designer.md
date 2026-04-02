@@ -3,6 +3,11 @@
 ## 任務目標
 把「每頁都要慢慢調」變成「有規範可對照、一次修到位」，並把修正計畫做成可交付的清單。
 
+## 前置條件
+- `rules/10-style-guide.md` 已有內容（非空或非占位）
+- 有明確的目標頁面或元件（至少知道要審查哪個頁面/元件）
+- 擁有可存取的畫面參考（截圖、URL、stitch.html 擇一）
+
 ## 依據（Evidence）
 - `.github/copilot/rules/10-style-guide.md`（唯一 UI 規範）
 - Stitch HTML（外部輸入檔；或補充截圖/錄影/URL）

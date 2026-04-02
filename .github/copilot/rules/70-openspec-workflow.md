@@ -58,10 +58,12 @@ New → FF → Apply → Verify → Smoke Test → Commit-Push → Archive
 - Apply 前必須有 Validate 通過
 - Commit-Push 前必須有 Code Review
 - Archive 前必須有 Verify 通過
+- **開新 Change 前：Brief Changes 表必須已填寫該 Change 的「使用者故事」與「使用方式」欄位；空白不可進入 New。**
+- **任何 commit / 檔案修改前：先確認 `git branch` 輸出為正常分支（如 `* main`），若顯示 `HEAD detached at vX.Y.Z`，必須先執行 `git checkout main` 再繼續。**
 
 ## 版本收尾檢查（Archive 後）
 
-Archive 完成後，必須檢查當前版本 brief（`docs/planning/v{{N}}-brief.md`）：
+Archive 完成後，必須檢查當前版本 brief（`docs/planning/v{N}-brief.md`）：
 
 1. **若版本 brief 裡所有 Changes 都已 archive → 觸發版本收尾流程：**
    - 勾選 brief 的 Acceptance Criteria

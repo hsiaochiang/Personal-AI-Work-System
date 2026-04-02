@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "template_version": "1.5.0",
-  "template_tag": "v1.5.0",
-  "template_commit": "441396b",
+  "template_version": "1.6.0",
+  "template_tag": null,
+  "template_commit": "631f08d",
   "project_name": "Personal-AI-Work-System",
-  "last_applied_at": "2026-04-02T09:03:35",
-  "bootstrap_mode": "overwrite",
+  "last_applied_at": "2026-04-02T13:25:41",
+  "bootstrap_mode": "upgrade",
   "managed_files": [
     ".claude/skills/openspec-apply-change/SKILL.md",
     ".claude/skills/openspec-archive-change/SKILL.md",
@@ -64,6 +64,7 @@
     "docs/agents/wos-playbook.md",
     "docs/bugs/README.md",
     "docs/handoff/README.md",
+    "docs/planning/README.md",
     "docs/qa/README.md",
     "docs/uiux/README.md",
     "openspec/config.yaml"

@@ -75,7 +75,7 @@ tools: [read, search, agent, todo]
 - 若文件彼此矛盾，要明確指出衝突來源
 - 若文件太空，直接說哪些文件缺資訊，不要假裝知道
 
-### 4. 常見情境模式
+### 3. 常見情境模式
 
 當使用者沒有講很多細節時，依問題型態自動切到最合適的模式。
 
@@ -152,6 +152,7 @@ tools: [read, search, agent, todo]
 |--------|:--------:|:------:|:----:|:-----:|:---------:|:---------:|:-----:|------|
 | cross-tool-skill-architecture | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | 已歸檔 |
 | wos-phase-aware-progress | ✅ | ✅ | ✅ | ✅ | — | — | ❌ | 進行中 |
+| executor-review-scope-fix | ✅ | ✅ | ✅ | ✅ | — | — | ❌ | 待開始 |
 ```
 
 - `✅` = 已完成  `❌` = 缺少  `—` = 不適用
@@ -207,10 +208,8 @@ tools: [read, search, agent, todo]
 - `project-context.md` 還停在模板占位，導致專案目的不清
 - `commands.md` 沒有真實命令，導致下一步無法落地
 - `roadmap.md` 與 `current-task.md` 的 Next 不一致
-- `runlog` 過久未更新，無法快速知道最近一次工作內容
-- 當前版本 brief 不存在或過空，導致無法判斷這一版的 scope
+- `runlog` 過久未更新，無法快速知道最近一次工作內容- 當前版本 brief 不存在或過空，導致無法判斷這一版的 scope
 - `system-manual.md` 不存在或過空，導致無法快速了解系統目前能力
-
 若這些問題存在，請用「最低摩擦修補順序」提出建議，而不是一次要求補所有文件。
 
 ## 約束
