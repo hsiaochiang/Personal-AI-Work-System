@@ -57,3 +57,36 @@
 - Codex：若使用自訂 prompt / instructions，內容應只引用本檔與 `docs/agents/*`
 - Gemini Code Assist：若使用 workspace prompt 或 chat starter，內容也應只做導讀，不重複維護第二套規範
 - 原則：共通規則只維護一份，平台專屬入口只做轉接
+
+## 共享 Skill 清單
+
+> 所有 skill 的 canonical 位置。各平台透過原生機制存取（Copilot/Claude 自動掃描、Gemini CLI 由 GEMINI.md import、Codex 由本清單引導讀取）。
+
+### OpenSpec Workflow Skills（`.github/skills/`，OpenSpec CLI 生成）
+
+| Skill 名稱 | Canonical 路徑 | 說明 | 觸發情境 |
+|------------|----------------|------|---------|
+| `openspec-propose` | `.github/skills/openspec-propose/SKILL.md` | 一步提案新 change（proposal + design + spec + tasks） | 使用者描述想做什麼、呼叫 `OpenSpec Planner` |
+| `openspec-explore` | `.github/skills/openspec-explore/SKILL.md` | 進入探索模式，釐清需求與問題 | 需要思考、不確定方向時 |
+| `openspec-apply-change` | `.github/skills/openspec-apply-change/SKILL.md` | 逐步執行 change 的 tasks，標記完成 | `#opsx-apply`、呼叫 `OpenSpec Executor` |
+| `openspec-archive-change` | `.github/skills/openspec-archive-change/SKILL.md` | 將完成的 change 歸檔 | `#opsx-archive`、呼叫 `Review Gate` |
+
+### 共享工作技能（`.github/copilot/skills/`，手動維護）
+
+| Skill 名稱 | Canonical 路徑 | 說明 | 觸發情境 |
+|------------|----------------|------|---------|
+| `openspec-conductor` | `.github/copilot/skills/openspec-conductor.md` | 協調 Change 完整生命週期（New→Archive） | `OpenSpec Executor`、`Review Gate` |
+| `code-reviewer` | `.github/copilot/skills/code-reviewer.md` | Code review（安全、可讀性、一致性） | `#code-review`、commit 前 |
+| `smoke-tester` | `.github/copilot/skills/smoke-tester.md` | 冒煙測試，驗證基本功能不壞 | `#smoke-test`、每次 change 收尾 |
+| `git-steward` | `.github/copilot/skills/git-steward.md` | 正規 commit + push 流程 | `#commit-push` |
+| `ui-designer` | `.github/copilot/skills/ui-designer.md` | UI 審查，產出 ui-review.md | `#ui-review`（僅 UI 類 change） |
+| `ux-fullstack-engineer` | `.github/copilot/skills/ux-fullstack-engineer.md` | UX 流程審查，產出 ux-review.md | `#ux-review`（僅 UI 類 change） |
+| `debug-sheriff` | `.github/copilot/skills/debug-sheriff.md` | Bug 診斷與修復流程 | bug 修復任務 |
+| `scribe` | `.github/copilot/skills/scribe.md` | Session 收尾，產出 experience slides | `#session-close` |
+
+### 各平台存取方式
+
+- **Copilot**：自動掃描 `.github/copilot/skills/` 與 `.github/skills/`，無需額外設定
+- **Claude Code**：掃描 `.claude/skills/<name>/SKILL.md`（薄引用，指向上方 canonical 路徑）
+- **Gemini CLI**：透過 `GEMINI.md` 的 `@file.md` import 語法載入所需 skill
+- **Codex**：讀取本清單後，使用 `read_file` 工具讀取上方 canonical 路徑

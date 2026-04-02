@@ -18,9 +18,19 @@
   - 批次操作 / 檔案生成 / 大量資料處理需確認不造成 UI 凍結（ANR / 無回應）
   - 若有明顯效能疑慮，需記錄測試結果（操作時間 / 記憶體用量）
 
-## System Manual 更新觸發
-- 若 change 影響**使用者可見功能**（新增能力、改變操作方式、移除功能）→ 必須同步更新 `docs/system-manual.md`
-- 若 change 只是內部重構或 agent 規則調整，不影響使用者操作 → 不需更新
+## System Manual 同步門檻（Manual Sync Gate）
+- 若本次異動包含下列任一規劃主檔：
+  - `docs/planning/v{N}-brief.md`
+  - `docs/roadmap.md`
+  - `docs/handoff/current-task.md`
+  → 必須同步更新 `docs/system-manual.md`。
+- `docs/system-manual.md` 至少要補一筆「Planning Impact Log」：
+  - 日期 / 版本
+  - 本次規劃異動摘要
+  - 使用者可見影響（有 / 無）
+  - 影響說明（能力、操作方式、風險或遷移建議）
+- 若判定「無使用者可見影響」，也必須在 log 明確寫出 `No user-facing change` 與原因。
+- 若 change 影響**使用者可見功能**（新增能力、改變操作方式、移除功能），除 log 外仍需同步更新對應功能段落。
 
 ## 若未通過 Done Gate
 - 不得宣稱 Done

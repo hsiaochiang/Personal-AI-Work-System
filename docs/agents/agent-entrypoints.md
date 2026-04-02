@@ -11,6 +11,7 @@
 - 使用 `.github/copilot-instructions.md` 作為常駐入口
 - 內容重點：先讀 `AGENTS.md`，再依任務需要讀 `.github/copilot/rules/` 與 `.github/copilot/skills/`
 - Copilot 專屬內容應限於：語言、輸出格式、工具使用方式、Copilot agents / prompts 的導引
+- **Skill 存取**：自動掃描 `.github/copilot/skills/`（共享技能）與 `.github/skills/`（OpenSpec CLI 技能），無需額外設定
 
 ## Codex
 - 若使用 repo instructions、workspace prompt、custom task prompt，建議內容只有：
@@ -18,6 +19,7 @@
     2. 任務開始或切換前同步 `docs/handoff/`
     3. 命令以 `docs/agents/commands.md` 為準
 - 不要在 Codex 專屬入口重寫完整流程規範
+- **Skill 存取**：讀取 `AGENTS.md` 中的「共享 Skill 清單」段落，找到 canonical 路徑後用 `read_file` 工具直接讀取 `.github/copilot/skills/` 或 `.github/skills/` 下的對應檔案
 
 ## Gemini Code Assist（IDE Plugin）
 - 若使用 workspace context、starter prompt、pinned prompt，建議內容只有：
@@ -26,6 +28,7 @@
     3. 短期交接看 `docs/handoff/`
 - Gemini 專屬入口只補充平台限制，例如回覆長度、偏好的工作模式、是否可自行執行命令
 - 注意：IDE Plugin 版本的 Gemini **無法**主動執行終端命令，smoke test / verify 需人工執行後回傳結果
+- **Skill 存取**：不支援原生 skill 掃描。請透過 `AGENTS.md` 的「共享 Skill 清單」了解路徑後手動讀取
 
 ## Gemini CLI（終端機）
 - 已確認能力（2026-03-30）：
@@ -36,19 +39,15 @@
 - 執行模式：
     - **預設（逐步確認）**：每個改變系統狀態的步驟暫停等待 `y` 確認，建議第一次跑新 change 時使用
     - **自動模式**：啟動時加 `--allow-all-tools --allow-all-paths`，適合熟悉流程後全自動跑完整個 change
-- 定位：**開發執行端**。Copilot 完成規劃（brief 確認）後，由 Gemini CLI 接手 `/opsx:propose` 起的所有步驟
-- System prompt 入口：`GEMINI.md`（啟動時自動載入，定義可用 commands/skills）
-- 可用 commands：`/opsx:propose`、`/opsx:apply`、`/opsx:archive`、`/opsx:explore`
-- 可用 skills：`.gemini/skills/openspec-*/SKILL.md`
+- 定位：**開發執行端**。Copilot 完成規劃（brief 確認）後，由 Gemini CLI 接手 opsx-new 起的所有步驟
+- **Skill 存取**：透過根目錄 `GEMINI.md` 的 `@file.md` import 語法自動載入。`GEMINI.md` 已 import AGENTS.md 與常用 skill，無需手動引用
 - 啟動 prompt（Copilot 移交後，Gemini CLI 開工時使用）：
 
 ```
 請讀取 docs/agents/gemini-cli-init.md 並依照其中的指示執行。
-使用 /opsx:propose、/opsx:apply、/opsx:archive 命令，不要手動模擬。
 ```
 
 > 完整初始化步驟與執行流程詳見 `docs/agents/gemini-cli-init.md`
-> System prompt 定義見 `GEMINI.md`
 
 ## What Not To Do
 - 不要為 Copilot / Codex / Gemini 各維護一整套不同規範

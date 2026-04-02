@@ -80,7 +80,7 @@
 | 層級 | 文件 | 回答的問題 |
 |------|------|-----------|
 | L0 全貌 | `docs/roadmap.md` | 產品方向、版本地圖、目前位置 |
-| L1 版本 | `docs/planning/v{{N}}-brief.md` | 這一版核心問題、in/out scope、完成條件 |
+| L1 版本 | `docs/planning/v{N}-brief.md` | 這一版核心問題、in/out scope、完成條件 |
 | L2 變更 | `openspec/changes/<name>/` | 這一次具體改什麼、怎麼驗收 |
 
 ### Agent 判斷流程
@@ -99,7 +99,7 @@
 
 ### 何時必須建立 Version Brief
 - 當要推進一個新版本且預期會拆成多個 changes 時
-- 存放於 `docs/planning/v{{N}}-brief.md`
+- 存放於 `docs/planning/v{N}-brief.md`
 
 ### Version Brief 必要區段
 1. 版本目標
@@ -126,3 +126,12 @@
 | scope 變更 | 更新 In Scope / Out of Scope |
 | 版本完成 | 勾選 Acceptance Criteria + 更新版本狀態 + 填寫跨版本影響 |
 | 使用者確認範圍 | 填寫使用者確認區段 |
+| 新增或更新 brief（含 backlog 調整） | 同步更新 `docs/system-manual.md` 的 Planning Impact Log |
+
+## Planning → Manual 同步契約
+- 規劃文件（roadmap / v{N}-brief / current-task）更新後，必須在同一輪交付內更新 `docs/system-manual.md`。
+- `system-manual` 至少要回答：
+  - 這次規劃是否已改變使用者操作？
+  - 若尚未改變，預期會改變哪些操作（待實作）？
+  - 使用者現在該怎麼判斷版本與可用能力？
+- 若未完成同步，不得宣稱「規劃完成可交接」。

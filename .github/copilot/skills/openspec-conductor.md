@@ -46,3 +46,28 @@
 - 下一步該做什麼（包含要下的指令/動作）
 - 規格缺口清單（缺一不可的驗收點）
 - evidence 應落檔的位置（runlog / decision / bugs / qa）
+
+## Agent 銜接流程
+
+完整協作流程（由 WOS 起始，形成迴圈）：
+
+```
+使用者 → @WOS（判斷下一步）
+          ↓ 規劃模式：brief 未確認 / 無 active change
+   OpenSpec Planner（產出 change 定義）
+          ↓ 開發模式：brief 已確認 + active change 存在
+   OpenSpec Executor（執行 change lifecycle）
+          ↓ 品質閘：tasks 全完成 / smoke 存在
+   Review Gate（判斷可否 commit / sync / archive）
+          ↓ 收尾 / 進度查詢
+     @WOS（#progress 查看整體進度）
+```
+
+| 銜接點 | 觸發條件 | 交接內容 |
+|--------|---------|----------|
+| WOS → Planner | WOS 偵測到規劃模式（brief 未確認，或 brief 已確認但無 active change） | 使用者描述的需求；WOS 給出 `呼叫 OpenSpec Planner` 建議 |
+| Planner → Executor | proposal / design / spec / tasks 全部產出，使用者確認 scope | change 名稱；`openspec/changes/<name>/` 目錄完整 |
+| Executor → Review Gate | tasks.md 所有 `- [x]`、smoke 文件已建立 | 實作摘要；smoke 結果；blocking / non-blocking issues |
+| Review Gate → WOS | commit + archive 完成 | 歸檔路徑；v{N}-brief 更新；next change 建議 |
+
+> 上述流程是建議，不是強制。任何 agent 都可直接呼叫，使用者可自行決定跳過某個節點。

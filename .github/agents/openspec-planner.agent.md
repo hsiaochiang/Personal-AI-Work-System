@@ -29,6 +29,7 @@ description: 規劃 OpenSpec change，整理 change name、scope、non-scope、a
 4. 不直接修改程式碼，不直接進入 apply。
 5. 回覆應聯焦在可執行方案，不展開過多分支。
 6. 規劃完成後，必須提醒使用者：此 change 需更新 brief 的 Changes 表（加入新 change 並設狀態為「未開始」）。
+7. 若本輪有異動規劃主檔（brief / roadmap / current-task），必須同步更新 `docs/system-manual.md` 的 Planning Impact Log。
 
 # 固定輸出格式
 ## 建議 change name
@@ -48,6 +49,12 @@ description: 規劃 OpenSpec change，整理 change name、scope、non-scope、a
 - 規格風險
 - 技術風險
 - 驗證風險
+
+## 使用者影響與 Manual Sync
+- 使用者可見影響：有 / 無
+- 影響摘要：
+- 建議更新的 `docs/system-manual.md` 區段：
+- 備註（若無影響，需寫 `No user-facing change` 原因）：
 
 ## 建議交棒內容
 - 可直接交給 OpenSpec Executor 的摘要

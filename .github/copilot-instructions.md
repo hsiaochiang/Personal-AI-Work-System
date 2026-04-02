@@ -30,6 +30,18 @@
 - Bug 修復 → 必須產出 `docs/bugs/<date>_<slug>.md` + `docs/qa/<date>_smoke.md`
 - 未通過門檻不得宣稱 Done
 
+## 使用者驗證 Checklist（每個 Change 完成時）
+每個 change 在宣告完成前，使用者應確認：
+- [ ] **Smoke 文件存在**：`docs/qa/<date>_<change-name>-smoke.md` 已產出，且全部項目通過
+- [ ] **純邏輯 change**：若 design.md 不含 UI 關鍵字，ui-review / ux-review 欄位顯示 `—`（不適用）
+- [ ] **UI/UX change**：若 design.md 含 UI 關鍵字，ui-review 與 ux-review 文件已產出
+- [ ] **Tasks 全打勾**：`tasks.md` 所有 `- [ ]` 已改為 `- [x]`
+- [ ] **已 commit + push**：`git log` 可看到對應 commit
+- [ ] **已歸檔**：`openspec/changes/archive/<date>-<name>/` 目錄存在
+- [ ] **Brief 狀態更新**：`docs/planning/v{N}-brief.md` 的 Changes 表中該 change 狀態已更新為「已完成」
+
+> 驗證方法：呼叫 `@WOS` → 輸入 `#progress`，確認進度表中該 change 的 smoke 欄為 ✅、狀態為「已歸檔」
+
 ## 範圍護欄
 - 一次改動超過 5 個檔案 → 先記錄決策（`docs/decisions/`）
 - 需要改動 Style Contract → 先記錄決策

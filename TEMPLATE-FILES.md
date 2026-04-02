@@ -13,7 +13,11 @@
 - 若想查分類，可跑 `bootstrap_copilot_workspace.py --list-managed --root <target>`。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
-## Managed Files (55)
+## Managed Files (60)
+- .claude/skills/openspec-apply-change/SKILL.md
+- .claude/skills/openspec-archive-change/SKILL.md
+- .claude/skills/openspec-explore/SKILL.md
+- .claude/skills/openspec-propose/SKILL.md
 - .github/agents/WOS.agent.md
 - .github/agents/openspec-executor.agent.md
 - .github/agents/openspec-planner.agent.md
@@ -55,6 +59,7 @@
 - .github/copilot/skills/ux-fullstack-engineer.md
 - .github/prompts/openspec-execute.prompt.md
 - AGENTS.md
+- GEMINI.md
 - TEMPLATE-FILES.md
 - docs/agents/OPENSPEC_AGENT_GUIDE.zh-TW.md
 - docs/agents/agent-entrypoints.md
