@@ -15,7 +15,8 @@ openspec/changes/       → 單一 change 的規格與執行追蹤
 | 版本 | 檔案 | 狀態 |
 |:----:|------|:----:|
 | V1 | `v1-brief.md` | ✅ 已完成 |
-| V2 | `v2-brief.md` | 🔜 規劃中 |
+| V2 | `v2-brief.md` | ✅ 已完成 |
+| V3 | `v3-brief.md` | ⏳ 待撰寫 |
 
 ## 其他規劃文件
 

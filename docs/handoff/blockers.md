@@ -3,17 +3,8 @@
 > 只記錄會影響接手或需要人工決策的阻塞，避免流水帳。
 
 ## Active Blockers
-- 目前無阻斷 S7 的 active blockers（僅保留監控風險）
-- 2026-03-26：S7 Final Review Gate（治理 MVP）判定 GO，仍無 blocker
-- 2026-03-26：完成 S7 one-shot cycle（Cycle-01）後複核，仍無 blocker
-- 2026-03-26：完成 S7 tasks 2.x-5.x（executor）後複核，仍無 blocker
-- 2026-03-25：完成 `phase2-semi-auto-memory-extraction-mvp` 的 sync/archive 後複核，仍無 blocker
-- 2026-03-25：完成 `phase3-real-project-validation` 的 sync/archive 後複核，仍無 blocker
-- 2026-03-25：啟動 `phase4-v1-convergence-finalization` 後複核，仍無 blocker
-- 2026-03-26：完成 `phase4-v1-convergence-finalization` archive 後複核，仍無 blocker
-- 2026-03-26：啟動 `phase5-v2-lightweight-ui-workbench-mvp` 後複核，仍無 blocker
-- 2026-03-26：完成 `phase5-v2-lightweight-ui-workbench-mvp` archive 後複核，仍無 blocker
-- 2026-03-26：啟動 `phase6-v3-multi-tool-integration-framework-mvp` 後複核，仍無 blocker
+- 目前無 active blockers
+- 2026-04-02：V2 全數完成，升級 template v1.5.0 完畢，無阻斷事項
 
 ## Clean-room Replay Blocker（2026-03-26）
 

@@ -4,15 +4,15 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V2 穩定化與多專案工作台版本收尾
+- Name: V3 跨工具整合層規劃
 - Owner agent: (none)
-- Last updated on: 2026-04-01
+- Last updated on: 2026-04-02
 
 ## Goal
-- 收斂 V2，準備進入 V3 跨工具整合層
+- 草擬 V3 Version Brief，定義 conversation schema 標準化與多工具對話格式匯入機制
 
 ## Scope
-- In scope: V3 規劃與準備
+- In scope: V3 brief 撰寫、conversation schema 設計、adapter 機制規劃
 - Out of scope: V4 自動化治理
 
 ## Constraints
@@ -21,32 +21,28 @@
 
 ## Done
 - Phase 1–5：V1 全數完成 ✅
+- V2 Changes 1–4 全部完成並 archive ✅
 - Roadmap 重構為單一真源（V1–V4）✅
-- 文件一致性校準 ✅
-- V2 Change 1 (writeback safety hardening) ✅ `5658def` 2026-03-29
-- V2 Change 2 (multi-project true switching) ✅ `b5eea82` 2026-03-31
-- V2 Change 3 (roadmap and docs alignment) ✅ `f1f8e08` 2026-04-01
-- V2 Change 4 (flow validation and usability hardening) ✅ 2026-04-01
+- 升級 copilot-workspace-template v1.5.0 + Style Guide FROZEN ✅ `790f782` 2026-04-02
 
 ## In Progress
-- （無）
+- V3 規劃前置整理
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🟡 1 | V2 版本收尾 | 檢視所有 V2 Changes，進行 archive 與 L1 Brief 驗收 |
-| 🟡 2 | 規劃 V3 (跨工具整合層) | 草擬 `v3-brief.md`，定義 conversation schema 標準化 |
+| 🟡 1 | 草擬 v3-brief.md | 定義 V3 scope、conversation schema 標準化、adapter 機制 |
+| 🟡 2 | 確認 V3 Brief | 使用者確認 V3 scope 與完成條件後，即可開始第一個 change |
 
 ## Files Touched（本 session）
-- web/public/js/app.js (新增 apiPost)
-- web/public/js/extract.js (修復寫回邏輯並補齊 loading 狀態)
-- tools/verify_flow.js (新增自動化 e2e 測試)
-- docs/qa/v2-e2e-flow.md (測試報告)
-- docs/roadmap.md
+- 19 個 managed files 升級至 template v1.5.0
+- .github/copilot/rules/10-style-guide.md (FROZEN)
+- docs/system-manual.md
 - docs/handoff/current-task.md
-- docs/planning/v2-brief.md
+- docs/planning/README.md
 
 ## Validation Status
-- V2 E2E Flow Validation: ✅ PASS (`tools/verify_flow.js`)
-- Git：⚠️ 本地完成，尚未 push 至 origin/main
+- Template verify: ✅ PASS (v1.5.0)
+- Style guide: ✅ FROZEN
+- Git：✅ 已 push 至 origin/main (`790f782`)

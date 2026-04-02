@@ -4,16 +4,17 @@
 
 ## Project Summary
 - Project name: Personal-AI-Work-System
-- Repository purpose: 建立可跨 ChatGPT、Gemini、VS Code、Antigravity 使用的個人 AI 工作系統，先以 markdown 驅動的知識沉澱與 handoff workflow 驗證核心價值
-- Primary stack: Markdown 文件工作流、VS Code / GitHub Copilot 協作、OpenSpec 規格流程、模板化 agent 規則
-- Runtime targets: VS Code workspace、文件驅動規劃與治理流程、後續半自動提取腳本
+- Repository purpose: 建立可跨 ChatGPT、Gemini、VS Code、Antigravity 使用的個人 AI 工作系統，以 markdown 驅動的知識沉澱、輕量 web UI 工作台與 handoff workflow 為核心
+- Primary stack: Node.js HTTP server + vanilla HTML/JS（無框架無 build）、Markdown 文件工作流、VS Code / GitHub Copilot 協作、OpenSpec 規格流程、copilot-workspace-template v1.5.0
+- Runtime targets: `node web/server.js` → http://localhost:3000（本地 dev server）
 - Deployment environments: 目前以 local workspace 為主；尚未進入正式 dev / staging / prod 部署
+- Current version: V2 已完成（穩定化與多專案工作台），V3 規劃中（跨工具整合層）
 
 ## Repository Map
-- Application entry points: `README.md`、`docs/planning/project-overview.md`、`docs/memory/project-context.md`
-- Main packages / apps: 目前無正式 app；以 `docs/`、`.github/`、`openspec/` 為主要工作區
+- Application entry points: `web/server.js`（dev server）、`web/public/index.html`（前端入口）
+- Main packages / apps: `web/` 輕量工作台 UI + API server
 - Shared libraries: `docs/memory/` 專案記憶、`docs/workflows/` 工作流、`docs/templates/` handoff 模板
-- Infra / scripts / tooling: `.github/` agent / prompt / rule 結構、`openspec/` change lifecycle、上游 `copilot-workspace-template` bootstrap 工具
+- Infra / scripts / tooling: `.github/` agent / prompt / rule 結構、`openspec/` change lifecycle、上游 `copilot-workspace-template` bootstrap 工具、`tools/verify_flow.js` E2E 驗證
 
 ## Architecture Boundaries
 - Core modules: 專案記憶層、handoff 層、規劃 / roadmap 層、OpenSpec workflow 層
