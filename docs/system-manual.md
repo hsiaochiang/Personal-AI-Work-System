@@ -75,6 +75,7 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-03 | V3 Change 1 | 完成 `conversation-schema-definition` 的 schema 文件、主 spec sync 與 archive 收尾 | 無（No user-facing change；本次僅定義 `ConversationMessage` / `ConversationDoc` 契約並同步治理文件，尚未改動 `/extract` 或 `/memory` 操作） |
 | 2026-04-02 | V4 | 撰寫 v4-brief.md，定義治理自動化與個人 AI OS 計劃 | 無（規劃文件，未開始實作） |
 | 2026-04-02 | V3 | 撰寫 v3-brief.md，定義跨工具整合層計劃 | 無（規劃文件，未開始實作） |
 | 2026-04-02 | Template 1.5 | 升級 copilot-workspace-template v1.5.0，凍結 Style Guide | 無（開發流程改善，不影響產品功能） |

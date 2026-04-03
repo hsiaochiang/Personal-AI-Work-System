@@ -4,7 +4,7 @@
 
 ## Active Blockers
 - 目前無 active blockers
-- 2026-04-02：V2 全數完成，升級 template v1.5.0 完畢，無阻斷事項
+- 2026-04-03：`conversation-schema-definition` 已完成 archive，當前無阻斷事項
 
 ## Clean-room Replay Blocker（2026-03-26）
 
