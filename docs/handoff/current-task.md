@@ -4,26 +4,26 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 post-archive handoff — local-import-vscode-copilot complete
+- Name: V3 handoff — source-attribution-in-memory archived
 - Owner agent: Codex
 - Last updated on: 2026-04-03
 
 ## Goal
-- 確認 `local-import-vscode-copilot` 已完成 sync / archive / git 收尾
-- 保留下一位 agent 接手 `source-attribution-in-memory` 所需的最小脈絡
-- 維持 `/extract` 的 Copilot / ChatGPT / plain text 三條入口一致
+- 確認 `source-attribution-in-memory` 已完成 sync / archive 收尾
+- 保留下一位 agent 接手 `import-ui-multi-source` 所需的最小脈絡
+- 維持 `/extract` 現有 Copilot / ChatGPT / plain text 路徑與 `/memory` source badge 行為一致
 
 ## Scope
 - In scope:
-  - 本機 Copilot session JSONL 掃描與單一 session 載入
-  - `ConversationDoc` 正規化（`source: copilot`）
-  - `/extract` 最小 Copilot import UI、路徑覆寫與狀態提示
-  - local import 驗證與治理文件同步
+  - `source-attribution-in-memory` 的 brief / roadmap / handoff / manual / runlog 收尾對齊
+  - 主 spec sync 與 archive 結果記錄
+  - 下一個 V3 Change 6 的接手脈絡
 - Out of scope:
-  - `source-attribution-in-memory`
-  - `import-ui-multi-source`
-  - memory badge / writeback metadata
+  - `import-ui-multi-source` 實作本體
+  - ChatGPT / Copilot / plain adapter parser 調整
   - 多 session merge / 搜尋 / preview-rich picker
+  - Gemini / Claude / Antigravity adapter
+  - release
   - 新依賴 / 前端框架 / build tool
 
 ## Constraints
@@ -39,77 +39,65 @@
 - V3 brief 使用者確認 ✅（2026-04-02）
 - V3 Change 1 `conversation-schema-definition` 已 archive ✅
 - V3 Change 2 `plain-text-adapter-refactor` 已 archive ✅
-- V3 Change 3 `chatgpt-adapter` 已 sync / archive / git 收尾 ✅
-- **V3 Change 4 `#opsx-new` 完成** ✅（`openspec/changes/local-import-vscode-copilot/` 已建立）
-- **V3 Change 4 `#opsx-ff` 完成** ✅（`proposal / design / spec / tasks` 全部建立）
-- **V3 Change 4 strict validate** ✅ PASS（`openspec validate local-import-vscode-copilot --type change --strict`）
-- 已確認本機存在 Copilot session JSONL 路徑 ✅
-  - `%AppData%\\Code - Insiders\\User\\globalStorage\\emptyWindowChatSessions\\*.jsonl`
-  - 至少 1 筆 session 含 request / response 可作為 parser 依據
-- **V3 Change 4 `#opsx-apply` 完成** ✅（tasks 9/9 勾選完成）
+- V3 Change 3 `chatgpt-adapter` 已 archive ✅
+- V3 Change 4 `local-import-vscode-copilot` 已 sync / archive / git 收尾 ✅
 - `/extract` 已支援：
   - 刷新本機 Copilot session 清單
   - 載入單一 VS Code Copilot JSONL session → `ConversationDoc`
   - 覆寫 Copilot session 路徑
   - ChatGPT / plain text 路徑維持可用
-- `tools/fixtures/copilot-sessions/sample-session.jsonl` 已建立 ✅
-- `docs/qa/2026-04-03_local-import-vscode-copilot-smoke.md` 已建立 ✅
-- `docs/uiux/2026-04-03_ui-review.md` 已補 local-import addendum ✅
-- `docs/uiux/2026-04-03_ux-review.md` 已補 local-import addendum ✅
-- **V3 Change 4 `#opsx-verify` 完成** ✅
-  - `node tools/verify_local_import_vscode_copilot.js`
-  - `node tools/verify_chatgpt_adapter.js`
-  - `node tools/verify_plain_text_adapter.js`
-- **V3 Change 4 `#opsx-sync` 完成** ✅（`openspec/specs/local-import-vscode-copilot/spec.md`）
-- **V3 Change 4 git commit / push 完成** ✅（`bc3c0bd add copilot local import` → `origin/main`）
-- **V3 Change 4 `#opsx-archive` 完成** ✅（封存至 `openspec/changes/archive/2026-04-03-local-import-vscode-copilot/`）
+- `source-attribution-in-memory` active change 已建立 ✅
+- `proposal.md`、`design.md`、`specs/source-attribution-in-memory/spec.md`、`tasks.md` 已建立 ✅
+- `openspec validate --changes "source-attribution-in-memory" --strict` ✅ PASS
+- `web/public/js/extract.js` 已保存 source metadata 寫回 ✅
+- `web/public/js/memory.js` / `web/public/css/style.css` 已支援來源 badge 顯示 ✅
+- targeted verify + adapter regression + `verify_flow` ✅ PASS
+- `docs/qa/2026-04-03_source-attribution-in-memory-smoke.md`、UI/UX review addendum、runlog / manual sync 已完成 ✅
+- `openspec/specs/source-attribution-in-memory/spec.md` 已 sync ✅
+- `source-attribution-in-memory` 已 archive 至 `openspec/changes/archive/2026-04-03-source-attribution-in-memory/` ✅
 
 ## In Progress
-- 準備切換至 `source-attribution-in-memory`
 - 無 active blocker
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `source-attribution-in-memory` | 開新 session 做 planner / executor，補 memory source metadata 與 badge |
-| 🟡 2 | `import-ui-multi-source` | 後續收斂 `/extract` 成工具 selector 與 richer import UI |
-| 🟡 3 | V3 收尾 | 視 Change 5、6 完成度，再更新 brief / roadmap 的版本狀態 |
+| 🔴 1 | `import-ui-multi-source` | 啟動 planner / executor，收斂 `/extract` 的多來源匯入 UI 與 tool selector |
+| 🟡 2 | V3 收尾 | 視 Change 6 完成度，再更新 brief / roadmap 的版本狀態 |
+| 🟡 3 | Git publish | 本輪功能與治理文件已可對外同步 |
 
 ## Files Touched（本 session）
-- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/proposal.md
-- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/design.md
-- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/specs/local-import-vscode-copilot/spec.md
-- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/tasks.md
-- openspec/specs/local-import-vscode-copilot/spec.md
+- openspec/changes/archive/2026-04-03-source-attribution-in-memory/proposal.md
+- openspec/changes/archive/2026-04-03-source-attribution-in-memory/design.md
+- openspec/changes/archive/2026-04-03-source-attribution-in-memory/specs/source-attribution-in-memory/spec.md
+- openspec/changes/archive/2026-04-03-source-attribution-in-memory/tasks.md
+- openspec/specs/source-attribution-in-memory/spec.md
+- docs/handoff/current-task.md
 - docs/planning/v3-brief.md
 - docs/roadmap.md
-- docs/handoff/current-task.md
 - docs/system-manual.md
 - docs/runlog/2026-04-03_README.md
-- docs/qa/2026-04-03_local-import-vscode-copilot-smoke.md
+- docs/qa/2026-04-03_source-attribution-in-memory-smoke.md
 - docs/uiux/2026-04-03_ui-review.md
 - docs/uiux/2026-04-03_ux-review.md
-- web/public/js/conversation-adapters.js
+- web/public/js/memory-source-utils.js
 - web/public/js/extract.js
-- web/public/extract.html
+- web/public/js/memory.js
 - web/public/css/style.css
-- web/public/js/app.js
-- web/server.js
-- tools/fixtures/copilot-sessions/sample-session.jsonl
-- tools/verify_local_import_vscode_copilot.js
+- web/public/extract.html
+- web/public/memory.html
 
 ## Validation Status
-- OpenSpec new：✅ PASS（`openspec new change local-import-vscode-copilot`）
+- V3 brief confirmation：✅ PASS（2026-04-02，Wilson）
+- Scope gate：✅ PASS（change 屬於 V3 brief 的 Source Attribution 範圍）
+- OpenSpec new：✅ PASS（active change 已建立）
 - OpenSpec ff：✅ PASS（artifacts 全齊）
 - OpenSpec strict validate：✅ PASS（change）
-- 本機 Copilot path preflight：✅ PASS（已找到 `.jsonl`）
-- Local import verify：✅ PASS（`node tools/verify_local_import_vscode_copilot.js`）
-- ChatGPT regression verify：✅ PASS（`node tools/verify_chatgpt_adapter.js`）
-- Plain-text regression verify：✅ PASS（`node tools/verify_plain_text_adapter.js`）
-- UI review：✅ PASS（`docs/uiux/2026-04-03_ui-review.md` addendum）
-- UX review：✅ PASS（`docs/uiux/2026-04-03_ux-review.md` addendum）
-- Review Gate：✅ PASS（archive 前 blocker 已修正）
-- Git publish：✅ PASS（`git push origin main` → `bc3c0bd`）
-- OpenSpec sync：✅ PASS（main spec 已建立）
-- OpenSpec archive：✅ PASS（`openspec archive local-import-vscode-copilot -y --skip-specs`）
+- Source attribution verify：✅ PASS（`node tools/verify_source_attribution_in_memory.js`）
+- Plain-text regression：✅ PASS（`node tools/verify_plain_text_adapter.js`）
+- ChatGPT regression：✅ PASS（`node tools/verify_chatgpt_adapter.js`）
+- Copilot regression：✅ PASS（`node tools/verify_local_import_vscode_copilot.js`）
+- Flow validation：✅ PASS（`node tools/verify_flow.js` with local server）
+- OpenSpec sync：✅ PASS（`openspec/specs/source-attribution-in-memory/spec.md`）
+- OpenSpec archive：✅ PASS（`openspec archive source-attribution-in-memory -y --skip-specs`）

@@ -19,6 +19,13 @@ const CATEGORY_ICONS = {
   'task-patterns.md': 'pattern',
 };
 
+function getMemorySourceUtilsAPI() {
+  if (!window.MemorySourceUtils) {
+    throw new Error('MemorySourceUtils 未載入');
+  }
+  return window.MemorySourceUtils;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('memory-content');
   const kpiTotal = document.getElementById('kpi-total');
@@ -56,28 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Groups are ## or ### headings, items are - list entries.
  */
 function parseMemoryFile(md) {
-  const groups = [];
-  let currentGroup = null;
-  const lines = md.split('\n');
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-
-    // Detect group headers (## or ###)
-    const headerMatch = trimmed.match(/^#{2,3}\s+(.+)$/);
-    if (headerMatch) {
-      currentGroup = { title: headerMatch[1], items: [] };
-      groups.push(currentGroup);
-      continue;
-    }
-
-    // Collect list items under current group
-    if (currentGroup && trimmed.startsWith('- ')) {
-      currentGroup.items.push(trimmed.replace(/^-\s*/, ''));
-    }
-  }
-
-  return groups;
+  return getMemorySourceUtilsAPI().parseMemoryMarkdown(md);
 }
 
 function renderMemory(container, files) {
@@ -128,8 +114,21 @@ function renderMemory(container, files) {
         const card = document.createElement('div');
         card.className = 'memory-item';
 
+        const sourcePresentation = getMemorySourceUtilsAPI().getMemorySourcePresentation(item.source);
+        if (sourcePresentation) {
+          const headerRow = document.createElement('div');
+          headerRow.className = 'memory-item-header';
+
+          const badge = document.createElement('span');
+          badge.className = `source-badge ${sourcePresentation.className}`;
+          badge.textContent = sourcePresentation.label;
+          headerRow.appendChild(badge);
+
+          card.appendChild(headerRow);
+        }
+
         // Check for key: value pattern
-        const kvMatch = item.match(/^(.+?)[:：]\s*(.+)$/);
+        const kvMatch = item.content.match(/^(.+?)[:：]\s*(.+)$/);
         if (kvMatch) {
           const title = document.createElement('div');
           title.className = 'memory-item-title';
@@ -143,7 +142,7 @@ function renderMemory(container, files) {
         } else {
           const body = document.createElement('div');
           body.className = 'memory-item-body';
-          body.textContent = item;
+          body.textContent = item.content;
           card.appendChild(body);
         }
 

@@ -93,6 +93,13 @@ function getConversationAdapterAPI() {
   return window.ConversationAdapters;
 }
 
+function getMemorySourceUtilsAPI() {
+  if (!window.MemorySourceUtils) {
+    throw new Error('MemorySourceUtils 未載入');
+  }
+  return window.MemorySourceUtils;
+}
+
 /* ─── Init ─── */
 document.addEventListener('DOMContentLoaded', () => {
   const inputEl = document.getElementById('input-text');
@@ -519,14 +526,17 @@ async function runWriteback() {
   toWrite.forEach(cand => {
     const filename = CATEGORIES[cand.category].filename;
     if (!groups[filename]) groups[filename] = [];
-    const content = cand.editedContent || cand.content;
-    groups[filename].push(content);
+    groups[filename].push({
+      content: cand.editedContent || cand.content,
+      source: cand.source,
+    });
   });
 
   const results = [];
 
   for (const [filename, items] of Object.entries(groups)) {
     try {
+      const memorySourceUtils = getMemorySourceUtilsAPI();
       // Read current content first
       const memData = await apiFetch('/api/memory');
       const file = memData.files.find(f => f.filename === filename);
@@ -534,7 +544,10 @@ async function runWriteback() {
 
       // Append new items
       const newSection = '\n\n## 提取於 ' + new Date().toISOString().slice(0, 10) + '\n\n' +
-        items.map(item => '- ' + item.split('\n')[0].replace(/^[-*•>#\d.)\s]+/, '').trim()).join('\n');
+        items
+          .map(item => memorySourceUtils.buildAttributedMemoryListItem(item.content, item.source))
+          .filter(Boolean)
+          .join('\n');
 
       const updatedContent = currentContent.trimEnd() + newSection + '\n';
 

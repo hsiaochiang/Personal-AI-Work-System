@@ -380,6 +380,12 @@ body {
   line-height: 1.5;
 }
 
+.memory-item-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
 .memory-item-title {
   font-weight: 600;
   color: var(--on-surface);
@@ -1104,6 +1110,10 @@ body {
 
 .source-log { background: #dbeafe; color: #1e40af; }
 .source-memory { background: var(--primary-container); color: var(--on-primary-container); }
+.source-chatgpt { background: #dcfce7; color: #166534; }
+.source-copilot { background: #e0e7ff; color: #3730a3; }
+.source-plain { background: #fef3c7; color: #92400e; }
+.source-custom { background: #ede9fe; color: #6d28d9; }
 
 .decision-title {
   font-size: 0.9rem;

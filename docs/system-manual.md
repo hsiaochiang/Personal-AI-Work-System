@@ -30,6 +30,12 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V3 Change 2）：既有純文字入口已接上 `ConversationDoc` adapter 基線，為後續多來源匯入保留共同介面
 - 改善（V3 Change 3）：新增 `ChatGPTAdapter`，支援分享頁 transcript 貼上與 ChatGPT conversation JSON 匯入；若內容不符合 ChatGPT 偵測條件，系統會自動退回 `PlainTextAdapter`
 - 改善（V3 Change 4）：新增 Copilot 本機 session 匯入；`/extract` 可直接讀取最近的 VS Code Copilot JSONL session，並支援覆寫 session 路徑
+- 改善（V3 Change 5）：寫回 memory 條目時會自動保存來源 metadata（`plain` / `chatgpt` / `copilot`），供 `/memory` 顯示來源 badge
+
+### 專案記憶（/memory）
+- 能力描述：讀取 `docs/memory/*.md` 並以分類卡片呈現專案記憶
+- 操作方式：瀏覽器開啟 http://localhost:3000/memory
+- 改善（V3 Change 5）：若記憶條目含 `<!-- source: ... -->` metadata，頁面會顯示對應來源 badge；舊條目沒有 metadata 仍可正常顯示
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
@@ -63,11 +69,13 @@ npm start        # 或 node server.js
 ## 已知限制
 - ChatGPT JSON 若包含多筆 conversation，現階段僅 deterministic 選擇最近更新的一筆；尚無 picker UI
 - Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
+- 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V3 Change 5 | 2026-04-03 | memory source metadata 寫回與 `/memory` 來源 badge |
 | V3 Change 4 | 2026-04-03 | VS Code Copilot 本機 session JSONL 匯入、path override 與 `/extract` local import UI |
 | V3 Change 3 | 2026-04-03 | ChatGPT transcript / JSON 匯入與 plain-text fallback 驗證 |
 | V2 Change 4 | 2026-04-01 | flow validation 與 usability hardening |
@@ -81,6 +89,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-03 | V3 Change 5 archive | 完成 `source-attribution-in-memory` 的 main spec sync 與 archive 收尾；下一步切換至 `import-ui-multi-source` | 無（No user-facing change；功能已在 executor apply / verify 階段上線，本次為治理收尾與交接切換） |
+| 2026-04-03 | V3 Change 5 executor | 完成 `source-attribution-in-memory` 的 apply / verify：`/extract` 寫回 memory 時會保存來源 metadata，`/memory` 可顯示對應來源 badge；既有 legacy 條目維持相容 | 有（使用者現在可在 `/memory` 看到新寫回記憶的來源 badge，例如 ChatGPT / Copilot / Plain；既有條目若沒有 metadata 則維持原樣） |
+| 2026-04-03 | V3 Change 5 executor start | 啟動 `source-attribution-in-memory` executor，完成 `#opsx-new`、`#opsx-ff` 與 strict validate；active change 進入 memory source metadata / badge 實作 | 無（No user-facing change；目前僅建立 artifacts、切換 handoff 與 brief 狀態，尚未改動 `/memory` 或 writeback 行為） |
+| 2026-04-03 | V3 Change 5 planner | 啟動 `source-attribution-in-memory` 的 Planner scope gate，確認 brief 已有人類確認、change 仍在 V3 scope 內，並將 handoff 切換為 memory source metadata / badge 規劃 | 無（No user-facing change；本次僅完成規劃與交接切換，尚未改動 `/memory` 或 writeback 行為） |
 | 2026-04-03 | V3 Change 4 archive | 完成 `local-import-vscode-copilot` archive，active change 已封存至 `openspec/changes/archive/2026-04-03-local-import-vscode-copilot/`，handoff 轉向下一個 V3 change | 無（No user-facing change；本次為治理收尾與交接切換，`/extract` 能力不變） |
 | 2026-04-03 | V3 Change 4 git publish | 完成 `add copilot local import` commit 與 `origin/main` push，handoff 改為僅待人工確認 `#opsx-archive` | 無（No user-facing change；僅同步發布狀態與交接資訊） |
 | 2026-04-03 | V3 Change 4 review-gate cleanup | 校正 `docs/planning/v3-brief.md` 的 Change 4 impact 文字，使 brief 與 `/extract` 實際能力、handoff、manual 同步一致 | 無（No user-facing change；僅治理文件對齊，功能仍為 Copilot local import + ChatGPT / plain text 共存） |
