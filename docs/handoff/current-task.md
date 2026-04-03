@@ -4,14 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 executor — import-ui-multi-source
+- Name: V3 review-gate — import-ui-multi-source synced
 - Owner agent: Codex
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `import-ui-multi-source` 的 OpenSpec `new` / `ff` / `apply` / `verify`
-- 在 `/extract` 收斂工具來源 selector、per-source import controls 與 candidate source 顯示
-- 維持既有 Copilot / ChatGPT / plain text 匯入能力與 source metadata writeback，不擴大到新 adapter
+- 完成 `import-ui-multi-source` 的 Review Gate 與 main spec sync
+- 確認 `/extract` 的多來源匯入 UI 已可收斂為 V3 Change 6 的最終實作形態
+- 保留 archive 前最後一段人工確認與 V3 收尾脈絡
 
 ## Scope
 - In scope:
@@ -55,24 +55,28 @@
 - `/extract` 已完成工具來源 selector、per-source controls 與 candidate source badge 實作 ✅
 - targeted verify `node tools/verify_import_ui_multi_source.js` PASS，plain / chatgpt / copilot regressions 全 PASS ✅
 - `docs/qa/2026-04-04_import-ui-multi-source-smoke.md`、`docs/uiux/2026-04-04_ui-review.md`、`docs/uiux/2026-04-04_ux-review.md` 已補齊 ✅
+- Review Gate：✅ PASS（無 blocking issue；可進入 `#opsx-sync`，archive 僅差人工確認）
+- `openspec/specs/import-ui-multi-source/spec.md` 已 sync ✅
+- `add multi-source import UI` 已 commit / push 至 `origin/main`（`335d338`）✅
 
 ## In Progress
-- `import-ui-multi-source` 已完成 verify，待 Review Gate 判定是否進入 sync / archive
+- `import-ui-multi-source` 已完成 Review Gate 與 sync，待人工確認是否執行 `#opsx-archive`
 - template verify 目前被 `.github/prompts/openspec-execute.prompt.md` 缺檔阻塞；需先確認是否為模板漂移或指令文件過期
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `import-ui-multi-source` | 交給 Review Gate，判定是否可進入 `#opsx-sync` / `#opsx-archive` |
-| 🟡 2 | Sync / archive | 若 Review Gate PASS，執行 main spec sync；archive 需人工確認 |
-| 🟡 3 | V3 收尾 | 若 Change 6 archive，評估 V3 brief / roadmap 是否可進入版本收尾 |
+| 🔴 1 | `import-ui-multi-source` | 若你確認，執行 `#opsx-archive` 完成 Change 6 收尾 |
+| 🟡 2 | V3 收尾 | 若 Change 6 archive，更新 V3 brief / roadmap 的版本收尾狀態 |
+| 🟡 3 | Template blocker | 補 `.github/prompts/openspec-execute.prompt.md` 或確認模板 prompt 已改名，解除 verify-only FAIL |
 
 ## Files Touched（本 session）
 - openspec/changes/import-ui-multi-source/proposal.md
 - openspec/changes/import-ui-multi-source/design.md
 - openspec/changes/import-ui-multi-source/specs/import-ui-multi-source/spec.md
 - openspec/changes/import-ui-multi-source/tasks.md
+- openspec/specs/import-ui-multi-source/spec.md
 - web/public/extract.html
 - web/public/js/extract.js
 - web/public/css/style.css
@@ -95,4 +99,7 @@
 - Strict validate：✅ PASS（`openspec validate import-ui-multi-source --strict`）
 - Targeted verify：✅ PASS（`node tools/verify_import_ui_multi_source.js`）
 - Regression verify：✅ PASS（plain / chatgpt / local-import-vscode-copilot 全 PASS）
+- Review Gate：✅ PASS（可進入 sync；archive 僅差人工確認）
+- Main spec sync：✅ PASS（`openspec/specs/import-ui-multi-source/spec.md`）
+- Git publish：✅ PASS（`335d338` → `origin/main`）
 - Template verify：⚠️ FAIL（`tools/bootstrap_copilot_workspace.py --verify-only` 回報缺少 `.github/prompts/openspec-execute.prompt.md`）
