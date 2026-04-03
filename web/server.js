@@ -1,6 +1,12 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const {
+  adaptVSCodeCopilotConversation,
+  listVSCodeCopilotSessionsFromDirectory,
+  resolveVSCodeCopilotSessionDir,
+  summarizeVSCodeCopilotSession,
+} = require('./public/js/conversation-adapters.js');
 
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -269,6 +275,57 @@ function handleAPI(req, res) {
         sendJSON(res, 500, { error: 'Invalid JSON in projects.json' });
       }
     });
+    return true;
+  }
+
+  if (url.pathname === '/api/copilot/sessions') {
+    try {
+      const sessionDir = resolveVSCodeCopilotSessionDir(url.searchParams.get('sessionDir'));
+      const sessions = listVSCodeCopilotSessionsFromDirectory(sessionDir, { maxSessions: 10 });
+      sendJSON(res, 200, { sessionDir, sessions });
+    } catch (error) {
+      sendJSON(res, 400, { error: error.message });
+    }
+    return true;
+  }
+
+  if (url.pathname === '/api/copilot/session') {
+    try {
+      const sessionDir = resolveVSCodeCopilotSessionDir(url.searchParams.get('sessionDir'));
+      const fileName = (url.searchParams.get('fileName') || '').trim();
+
+      if (!fileName || fileName !== path.basename(fileName) || !/\.jsonl$/i.test(fileName)) {
+        sendJSON(res, 400, { error: 'fileName 必須是單一 .jsonl 檔名' });
+        return true;
+      }
+
+      const resolvedDir = path.resolve(sessionDir);
+      const resolvedFile = path.resolve(path.join(resolvedDir, fileName));
+      if (!resolvedFile.startsWith(resolvedDir + path.sep)) {
+        sendJSON(res, 403, { error: 'Copilot session path traversal denied' });
+        return true;
+      }
+
+      const raw = fs.readFileSync(resolvedFile, 'utf8');
+      const stats = fs.statSync(resolvedFile);
+      const conversationDoc = adaptVSCodeCopilotConversation(raw, {
+        fileName,
+        updatedAt: stats.mtime.toISOString(),
+      });
+      const summary = summarizeVSCodeCopilotSession(raw, {
+        fileName,
+        updatedAt: stats.mtime.toISOString(),
+      });
+
+      sendJSON(res, 200, {
+        sessionDir: resolvedDir,
+        fileName,
+        summary,
+        conversationDoc,
+      });
+    } catch (error) {
+      sendJSON(res, 400, { error: error.message });
+    }
     return true;
   }
 

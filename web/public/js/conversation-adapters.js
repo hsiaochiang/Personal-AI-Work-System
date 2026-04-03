@@ -11,10 +11,33 @@
   const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'copilot']);
   const ALLOWED_ROLES = new Set(['user', 'assistant', 'system', 'tool']);
   const ISO_8601_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/;
+  const COPILOT_EXCLUDED_RESPONSE_KINDS = new Set([
+    'mcpServersStarting',
+    'thinking',
+    'toolInvocationSerialized',
+  ]);
   const TRANSCRIPT_ROLE_ALIASES = {
     user: new Set(['you', 'you said', 'user', 'human', '你', '你說', '使用者', '提問']),
     assistant: new Set(['chatgpt', 'chatgpt said', 'assistant', '助理', '回答', '回覆']),
   };
+  const NODE_FS = safeNodeRequire('fs');
+  const NODE_PATH = safeNodeRequire('path');
+  const DEFAULT_COPILOT_SESSION_SUBPATHS = [
+    ['Code - Insiders', 'User', 'globalStorage', 'emptyWindowChatSessions'],
+    ['Code', 'User', 'globalStorage', 'emptyWindowChatSessions'],
+  ];
+
+  function safeNodeRequire(moduleName) {
+    if (typeof module === 'undefined' || !module.exports || typeof require !== 'function') {
+      return null;
+    }
+
+    try {
+      return require(moduleName);
+    } catch (error) {
+      return null;
+    }
+  }
 
   function isIsoTimestamp(value) {
     if (typeof value !== 'string' || value.trim().length === 0) {
@@ -159,6 +182,50 @@
     return Boolean(value && typeof value === 'object' && value.mapping && typeof value.mapping === 'object');
   }
 
+  function ensureNodeRuntime() {
+    if (!NODE_FS || !NODE_PATH || typeof process === 'undefined') {
+      throw new Error('此功能僅支援 Node.js runtime');
+    }
+  }
+
+  function listDefaultVSCodeCopilotSessionDirs() {
+    ensureNodeRuntime();
+
+    const roots = [];
+    if (typeof process.env.APPDATA === 'string' && process.env.APPDATA.trim()) {
+      roots.push(process.env.APPDATA.trim());
+    }
+    if (typeof process.env.USERPROFILE === 'string' && process.env.USERPROFILE.trim()) {
+      roots.push(NODE_PATH.join(process.env.USERPROFILE.trim(), 'AppData', 'Roaming'));
+    }
+
+    const candidates = [];
+    roots.forEach((root) => {
+      DEFAULT_COPILOT_SESSION_SUBPATHS.forEach((segments) => {
+        candidates.push(NODE_PATH.join(root, ...segments));
+      });
+    });
+
+    return Array.from(new Set(candidates));
+  }
+
+  function getDefaultVSCodeCopilotSessionDir() {
+    ensureNodeRuntime();
+    const candidates = listDefaultVSCodeCopilotSessionDirs();
+    return candidates.find((candidate) => NODE_FS.existsSync(candidate)) || candidates[0] || null;
+  }
+
+  function resolveVSCodeCopilotSessionDir(overrideDir) {
+    ensureNodeRuntime();
+
+    if (typeof overrideDir === 'string' && overrideDir.trim()) {
+      return NODE_PATH.resolve(overrideDir.trim());
+    }
+
+    const defaultDir = getDefaultVSCodeCopilotSessionDir();
+    return defaultDir ? NODE_PATH.resolve(defaultDir) : null;
+  }
+
   function toSortableTimestamp(value) {
     const normalized = normalizeTimestamp(value);
     return normalized ? new Date(normalized).getTime() : 0;
@@ -243,6 +310,221 @@
         };
       })
       .filter(Boolean);
+  }
+
+  function parseJsonLines(input) {
+    if (Array.isArray(input)) {
+      return input;
+    }
+
+    if (input && typeof input === 'object') {
+      return [input];
+    }
+
+    if (typeof input !== 'string' || input.trim().length === 0) {
+      throw new Error('Copilot session 需要非空 JSONL 輸入');
+    }
+
+    return input
+      .replace(/\r\n?/g, '\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => JSON.parse(line));
+  }
+
+  function extractVSCodeCopilotSessionSnapshot(input) {
+    if (input && typeof input === 'object' && Array.isArray(input.requests)) {
+      return input;
+    }
+
+    if (input && typeof input === 'object' && input.v && Array.isArray(input.v.requests)) {
+      return input.v;
+    }
+
+    const entries = parseJsonLines(input);
+    let snapshot = null;
+
+    entries.forEach((entry) => {
+      if (!entry || typeof entry !== 'object') {
+        return;
+      }
+
+      if (entry.kind === 0 && entry.v && typeof entry.v === 'object') {
+        snapshot = entry.v;
+        return;
+      }
+
+      if (!snapshot && entry.v && typeof entry.v === 'object') {
+        snapshot = entry.v;
+        return;
+      }
+
+      if (!snapshot && Array.isArray(entry.requests)) {
+        snapshot = entry;
+      }
+    });
+
+    if (!snapshot) {
+      throw new Error('Copilot session JSONL 未找到完整 snapshot');
+    }
+
+    return snapshot;
+  }
+
+  function extractCopilotUserText(request) {
+    if (!request || typeof request !== 'object') {
+      return '';
+    }
+
+    return extractTextParts(request.message).trim();
+  }
+
+  function extractCopilotAssistantText(request) {
+    if (!request || typeof request !== 'object' || !Array.isArray(request.response)) {
+      return '';
+    }
+
+    const visibleChunks = request.response
+      .filter((entry) => entry && typeof entry === 'object')
+      .filter((entry) => typeof entry.value === 'string' && entry.value.trim().length > 0)
+      .filter((entry) => !COPILOT_EXCLUDED_RESPONSE_KINDS.has(entry.kind))
+      .map((entry) => entry.value.trim());
+
+    return Array.from(new Set(visibleChunks)).join('\n\n').trim();
+  }
+
+  function buildVSCodeCopilotMessages(session) {
+    const requests = Array.isArray(session && session.requests) ? session.requests : [];
+    const messages = [];
+
+    requests.forEach((request) => {
+      const userText = extractCopilotUserText(request);
+      const assistantText = extractCopilotAssistantText(request);
+      const userTimestamp = normalizeTimestamp(request && request.timestamp);
+      const assistantTimestamp = normalizeTimestamp(
+        request && request.modelState && request.modelState.completedAt
+      ) || userTimestamp;
+
+      if (userText) {
+        messages.push({
+          role: 'user',
+          content: userText,
+          source: 'copilot',
+          timestamp: userTimestamp,
+        });
+      }
+
+      if (assistantText) {
+        messages.push({
+          role: 'assistant',
+          content: assistantText,
+          source: 'copilot',
+          timestamp: assistantTimestamp,
+        });
+      }
+    });
+
+    return messages;
+  }
+
+  function summarizeVSCodeCopilotSession(input, metadata) {
+    const session = extractVSCodeCopilotSessionSnapshot(input);
+    const requests = Array.isArray(session.requests) ? session.requests : [];
+    const messages = buildVSCodeCopilotMessages(session);
+    const title =
+      (session.customTitle && String(session.customTitle).trim()) ||
+      extractCopilotUserText(requests[0]).slice(0, 80) ||
+      session.sessionId ||
+      (metadata && metadata.fileName) ||
+      'Untitled Copilot Session';
+    const updatedAt = normalizeTimestamp(
+      (metadata && metadata.updatedAt) || session.lastInteractionDate || session.creationDate
+    );
+    const preview = messages[0] ? messages[0].content.slice(0, 160) : '';
+    const firstRequest = requests[0] || {};
+
+    return {
+      title,
+      sessionId: session.sessionId || (metadata && metadata.fileName) || undefined,
+      fileName: metadata && metadata.fileName,
+      updatedAt,
+      requestCount: requests.length,
+      messageCount: messages.length,
+      modelId:
+        firstRequest.modelId ||
+        (session.inputState && session.inputState.selectedModel && session.inputState.selectedModel.identifier) ||
+        null,
+      preview,
+    };
+  }
+
+  function adaptVSCodeCopilotConversation(input, metadata) {
+    const session = extractVSCodeCopilotSessionSnapshot(input);
+    const messages = buildVSCodeCopilotMessages(session);
+    const summary = summarizeVSCodeCopilotSession(session, metadata);
+    const firstRequest = Array.isArray(session.requests) ? session.requests[0] : null;
+    const toolVersion =
+      (firstRequest && firstRequest.agent && firstRequest.agent.extensionVersion) ||
+      summary.modelId ||
+      undefined;
+
+    if (messages.length === 0) {
+      throw new Error('Copilot session 未找到可匯入的對話內容');
+    }
+
+    return createConversationDoc(messages, {
+      title: summary.title,
+      sessionId: summary.sessionId,
+      toolVersion,
+      ...(metadata || {}),
+    });
+  }
+
+  function listVSCodeCopilotSessionsFromDirectory(sessionDir, options) {
+    ensureNodeRuntime();
+
+    const resolvedDir = resolveVSCodeCopilotSessionDir(sessionDir);
+    if (!resolvedDir) {
+      throw new Error('找不到預設的 Copilot session 路徑');
+    }
+
+    if (!NODE_FS.existsSync(resolvedDir)) {
+      throw new Error(`Copilot session 路徑不存在：${resolvedDir}`);
+    }
+
+    const directoryEntries = NODE_FS.readdirSync(resolvedDir, { withFileTypes: true });
+    const maxSessions = Number.isFinite(options && options.maxSessions)
+      ? Math.max(1, options.maxSessions)
+      : 10;
+    const sessions = [];
+
+    directoryEntries.forEach((entry) => {
+      if (!entry.isFile() || !/\.jsonl$/i.test(entry.name)) {
+        return;
+      }
+
+      const filePath = NODE_PATH.join(resolvedDir, entry.name);
+      const stats = NODE_FS.statSync(filePath);
+
+      try {
+        const raw = NODE_FS.readFileSync(filePath, 'utf8');
+        const summary = summarizeVSCodeCopilotSession(raw, {
+          fileName: entry.name,
+          updatedAt: stats.mtime.toISOString(),
+        });
+
+        if (summary.requestCount > 0 && summary.messageCount > 0) {
+          sessions.push(summary);
+        }
+      } catch (error) {
+        // Ignore malformed or unsupported session files during listing.
+      }
+    });
+
+    return sessions
+      .sort((left, right) => toSortableTimestamp(right.updatedAt) - toSortableTimestamp(left.updatedAt))
+      .slice(0, maxSessions);
   }
 
   function createConversationDoc(messages, metadata) {
@@ -448,9 +730,16 @@
     adaptChatGPTConversation,
     adaptChatGPTJsonConversation,
     adaptConversationInput,
+    adaptVSCodeCopilotConversation,
     adaptPlainTextConversation,
     conversationDocToText,
     createConversationDoc,
+    extractVSCodeCopilotSessionSnapshot,
+    getDefaultVSCodeCopilotSessionDir,
+    listVSCodeCopilotSessionsFromDirectory,
+    listDefaultVSCodeCopilotSessionDirs,
+    resolveVSCodeCopilotSessionDir,
+    summarizeVSCodeCopilotSession,
     validateConversationDoc,
   };
 });

@@ -63,7 +63,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>知識提取</h2>
-        <p class="description">貼上 ChatGPT transcript / 一般對話，或上傳 ChatGPT JSON → 自動正規化為 `ConversationDoc` → 提取候選知識 → 審核後寫回記憶</p>
+        <p class="description">從本機 Copilot session 載入、貼上 ChatGPT transcript / 一般對話，或上傳 ChatGPT JSON → 自動正規化為 `ConversationDoc` → 提取候選知識 → 審核後寫回記憶</p>
       </div>
 
       <!-- Step 1: Input -->
@@ -71,8 +71,28 @@
         <div class="card-header">
           <span class="card-title">
             <span class="step-badge">1</span>
-            貼上對話或上傳 ChatGPT 檔案
+            載入 Copilot session、貼上對話或上傳 ChatGPT 檔案
           </span>
+        </div>
+        <div class="copilot-import-panel">
+          <div class="copilot-import-header">
+            <div>
+              <h3>VS Code Copilot 本機匯入</h3>
+              <p>從本機 `Code / Code - Insiders` 的 Copilot Chat session JSONL 讀取最近對話，不需手動複製貼上。</p>
+            </div>
+          </div>
+          <div class="copilot-import-controls">
+            <input class="copilot-path-input" id="copilot-session-path" type="text" placeholder="Copilot session 路徑（可留空使用預設值）" spellcheck="false">
+            <button class="btn btn-secondary" id="btn-refresh-copilot" type="button">
+              <span class="material-symbols-outlined">sync</span>
+              刷新 Copilot Sessions
+            </button>
+          </div>
+          <div class="extract-status" id="copilot-status">
+            <span class="material-symbols-outlined">folder</span>
+            <span>尚未讀取 Copilot session 清單。</span>
+          </div>
+          <div class="copilot-session-list" id="copilot-session-list"></div>
         </div>
         <div class="extract-import-row">
           <button class="btn btn-secondary" id="btn-upload-file" type="button">
@@ -82,10 +102,10 @@
           <input class="hidden" id="input-file" type="file" accept=".json,.txt,application/json,text/plain">
           <div class="extract-status" id="import-status">
             <span class="material-symbols-outlined">notes</span>
-            <span>未上傳檔案，可直接貼上 ChatGPT transcript 或一般純文字。</span>
+            <span>尚未載入 Copilot / ChatGPT 檔案，可直接貼上 ChatGPT transcript 或一般純文字。</span>
           </div>
         </div>
-        <textarea class="extract-textarea" id="input-text" placeholder="將 AI 對話內容貼在這裡…&#10;&#10;支援輸入：&#10;• ChatGPT 分享頁 transcript（You / ChatGPT turns）&#10;• ChatGPT conversation JSON 匯出內容&#10;• 一般純文字（自動 fallback）&#10;&#10;提取引擎會自動識別：&#10;• 專案背景資訊 → project-context.md&#10;• 偏好與規則 → preference-rules.md&#10;• 任務模式 → task-patterns.md&#10;• 決策記錄 → decision-log.md&#10;• 輸出模式 → output-patterns.md&#10;• 技能候選 → skill-candidates.md" rows="10"></textarea>
+        <textarea class="extract-textarea" id="input-text" placeholder="將 AI 對話內容貼在這裡，或先從上方載入 Copilot / ChatGPT 內容…&#10;&#10;支援輸入：&#10;• VS Code Copilot 本機 session（上方清單載入）&#10;• ChatGPT 分享頁 transcript（You / ChatGPT turns）&#10;• ChatGPT conversation JSON 匯出內容&#10;• 一般純文字（自動 fallback）&#10;&#10;提取引擎會自動識別：&#10;• 專案背景資訊 → project-context.md&#10;• 偏好與規則 → preference-rules.md&#10;• 任務模式 → task-patterns.md&#10;• 決策記錄 → decision-log.md&#10;• 輸出模式 → output-patterns.md&#10;• 技能候選 → skill-candidates.md" rows="10"></textarea>
         <div class="extract-actions">
           <button class="btn btn-primary" id="btn-extract">
             <span class="material-symbols-outlined">auto_awesome</span>

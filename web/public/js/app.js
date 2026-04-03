@@ -16,7 +16,14 @@ async function apiFetch(endpoint) {
   } catch { /* ignore */ }
 
   const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`API ${endpoint}: ${res.status}`);
+  if (!res.ok) {
+    let errorMsg = `API ${endpoint}: ${res.status}`;
+    try {
+      const errData = await res.json();
+      if (errData.error) errorMsg = errData.error;
+    } catch { /* ignore */ }
+    throw new Error(errorMsg);
+  }
   return res.json();
 }
 

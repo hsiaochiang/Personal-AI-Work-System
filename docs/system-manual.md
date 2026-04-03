@@ -24,11 +24,12 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 限制：範本結構硬編碼在前端 JS，不支援自訂範本
 
 ### 知識提取與寫回（/extract）
-- 能力描述：貼上 AI 對話或上傳 ChatGPT JSON / TXT → 先由對應 adapter 正規化為 `ConversationDoc` → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
-- 操作方式：直接貼 ChatGPT transcript / 一般文字，或先上傳 ChatGPT conversation JSON / TXT → 點「提取候選知識」→ 審核候選 → 點「寫回」
+- 能力描述：從本機 Copilot session 載入、貼上 AI 對話或上傳 ChatGPT JSON / TXT → 先由對應 adapter 正規化為 `ConversationDoc` → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
+- 操作方式：在 `/extract` 先刷新並載入 Copilot session，或直接貼 ChatGPT transcript / 一般文字，或上傳 ChatGPT conversation JSON / TXT → 點「提取候選知識」→ 審核候選 → 點「寫回」
 - 改善（V2）：寫回前自動 backup（`.backup/` 機制），不再整檔覆蓋
 - 改善（V3 Change 2）：既有純文字入口已接上 `ConversationDoc` adapter 基線，為後續多來源匯入保留共同介面
 - 改善（V3 Change 3）：新增 `ChatGPTAdapter`，支援分享頁 transcript 貼上與 ChatGPT conversation JSON 匯入；若內容不符合 ChatGPT 偵測條件，系統會自動退回 `PlainTextAdapter`
+- 改善（V3 Change 4）：新增 Copilot 本機 session 匯入；`/extract` 可直接讀取最近的 VS Code Copilot JSONL session，並支援覆寫 session 路徑
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
@@ -61,12 +62,13 @@ npm start        # 或 node server.js
 
 ## 已知限制
 - ChatGPT JSON 若包含多筆 conversation，現階段僅 deterministic 選擇最近更新的一筆；尚無 picker UI
-- 其他工具來源（如 VS Code Copilot 本機匯入）尚未實作
+- Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V3 Change 4 | 2026-04-03 | VS Code Copilot 本機 session JSONL 匯入、path override 與 `/extract` local import UI |
 | V3 Change 3 | 2026-04-03 | ChatGPT transcript / JSON 匯入與 plain-text fallback 驗證 |
 | V2 Change 4 | 2026-04-01 | flow validation 與 usability hardening |
 | V2 Change 3 | 2026-04-01 | roadmap 與文件一致性校準 |
@@ -79,6 +81,9 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-03 | V3 Change 4 review-gate cleanup | 校正 `docs/planning/v3-brief.md` 的 Change 4 impact 文字，使 brief 與 `/extract` 實際能力、handoff、manual 同步一致 | 無（No user-facing change；僅治理文件對齊，功能仍為 Copilot local import + ChatGPT / plain text 共存） |
+| 2026-04-03 | V3 Change 4 executor | 完成 `local-import-vscode-copilot` 的 apply / verify / sync：`/extract` 新增 Copilot 本機 session list、path override 與單一 session 載入；既有 ChatGPT / plain text 路徑維持可用 | 有（使用者現在可在 `/extract` 直接刷新並載入本機 VS Code Copilot Chat JSONL session，再沿用既有 extraction / review / writeback 流程；尚無搜尋、多 session merge 或 source badge） |
+| 2026-04-03 | V3 Change 4 executor start | 啟動 `local-import-vscode-copilot` executor，完成 `#opsx-new` 與 preflight，確認本機 `Code - Insiders` 存在可讀的 Copilot session JSONL；下一步進入 parser / API / `/extract` local import UI 實作 | 無（No user-facing change；目前僅建立 active change artifacts、更新 brief / handoff / manual，尚未改動 `/extract` 行為） |
 | 2026-04-03 | V3 Change 3 archive | 完成 `chatgpt-adapter` 的 main spec sync 與 archive 收尾；`/extract` 的 ChatGPT transcript / JSON 匯入能力維持上線，下一步切換至 `local-import-vscode-copilot` | 無（No new user-facing change；本次為治理收尾與主 spec 同步，功能已在 executor 階段上線） |
 | 2026-04-03 | V3 Change 3 executor | 完成 `chatgpt-adapter` 的 new / ff / apply / verify：`/extract` 新增 ChatGPT transcript auto-detect、JSON/TXT 上傳入口與 plain-text fallback 驗證 | 有（使用者現在可在 `/extract` 直接貼上 ChatGPT transcript，或上傳 ChatGPT conversation JSON / TXT；仍無多 conversation picker 與 source badge） |
 | 2026-04-03 | V3 Change 3 planner | 啟動 `chatgpt-adapter` 的 Planner scope gate，確認 change 在 V3 brief scope 內、無 active duplicate change，並交棒給下一個 Executor session 建立 artifacts | 無（No user-facing change；本次僅完成 change 規劃與 handoff 更新，尚未改動 `/extract` 或匯入格式支援） |

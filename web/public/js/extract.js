@@ -80,7 +80,11 @@ const CATEGORIES = {
 let candidates = [];
 let memorySnapshot = {};
 let selectedImportFile = null;
+let selectedConversationDoc = null;
+let selectedCopilotSession = null;
+let copilotSessions = [];
 let hydratingInputFromFile = false;
+let copilotPathWasEdited = false;
 
 function getConversationAdapterAPI() {
   if (!window.ConversationAdapters) {
@@ -95,22 +99,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const charCount = document.getElementById('char-count');
   const uploadButton = document.getElementById('btn-upload-file');
   const fileInput = document.getElementById('input-file');
+  const copilotPathInput = document.getElementById('copilot-session-path');
+  const refreshCopilotButton = document.getElementById('btn-refresh-copilot');
 
   inputEl.addEventListener('input', () => {
     charCount.textContent = inputEl.value.length + ' 字';
 
-    if (!hydratingInputFromFile && selectedImportFile) {
-      selectedImportFile = null;
-      updateImportStatus('已切回手動貼上模式，系統將自動偵測 ChatGPT / plain text。', 'edit');
+    if (!hydratingInputFromFile && (selectedImportFile || selectedConversationDoc)) {
+      clearImportedContentState('已切回手動貼上模式，系統將自動偵測 Copilot / ChatGPT / plain text。', 'edit');
     }
   });
 
+  copilotPathInput.addEventListener('input', () => {
+    copilotPathWasEdited = true;
+  });
   uploadButton.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', handleImportFile);
+  refreshCopilotButton.addEventListener('click', refreshCopilotSessions);
   document.getElementById('btn-extract').addEventListener('click', runExtraction);
   document.getElementById('btn-writeback').addEventListener('click', runWriteback);
   document.getElementById('btn-back').addEventListener('click', goBack);
   document.getElementById('btn-restart').addEventListener('click', restart);
+
+  refreshCopilotSessions();
 });
 
 async function handleImportFile(event) {
@@ -129,11 +140,14 @@ async function handleImportFile(event) {
     charCount.textContent = `${content.length} 字`;
     hydratingInputFromFile = false;
 
+    selectedConversationDoc = null;
+    selectedCopilotSession = null;
     selectedImportFile = {
       name: file.name,
       type: file.type || '',
     };
 
+    renderCopilotSessions();
     updateImportStatus(`已載入 ${file.name}，可直接按「提取候選知識」。`, 'upload_file');
   } catch (error) {
     hydratingInputFromFile = false;
@@ -149,19 +163,149 @@ function updateImportStatus(message, icon) {
   statusEl.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
 }
 
+function updateCopilotStatus(message, icon) {
+  const statusEl = document.getElementById('copilot-status');
+  statusEl.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
+}
+
+function getCopilotSessionDir() {
+  return document.getElementById('copilot-session-path').value.trim();
+}
+
+function clearImportedContentState(message, icon) {
+  selectedImportFile = null;
+  selectedConversationDoc = null;
+  selectedCopilotSession = null;
+  renderCopilotSessions();
+  updateImportStatus(message, icon);
+}
+
+async function refreshCopilotSessions() {
+  const listEl = document.getElementById('copilot-session-list');
+  showLoading(listEl);
+  updateCopilotStatus('讀取本機 Copilot session 中…', 'sync');
+
+  try {
+    const endpoint = new URL('/api/copilot/sessions', location.origin);
+    const sessionDir = getCopilotSessionDir();
+    if (sessionDir) {
+      endpoint.searchParams.set('sessionDir', sessionDir);
+    }
+
+    const data = await apiFetch(endpoint.pathname + endpoint.search);
+    copilotSessions = Array.isArray(data.sessions) ? data.sessions : [];
+
+    if ((!copilotPathWasEdited || !sessionDir) && data.sessionDir) {
+      document.getElementById('copilot-session-path').value = data.sessionDir;
+    }
+
+    renderCopilotSessions();
+    if (copilotSessions.length > 0) {
+      updateCopilotStatus(`找到 ${copilotSessions.length} 筆可匯入 session。`, 'check_circle');
+    } else {
+      updateCopilotStatus('目前找不到可匯入的 Copilot session。', 'search_off');
+    }
+  } catch (error) {
+    copilotSessions = [];
+    showError(listEl, error.message);
+    updateCopilotStatus(`讀取 Copilot session 失敗：${error.message}`, 'error');
+  }
+}
+
+function renderCopilotSessions() {
+  const listEl = document.getElementById('copilot-session-list');
+  listEl.innerHTML = '';
+
+  if (copilotSessions.length === 0) {
+    showEmpty(listEl, 'forum', '尚無可匯入的 Copilot session。你可以先確認路徑後重新整理。');
+    return;
+  }
+
+  copilotSessions.forEach((session) => {
+    const item = document.createElement('div');
+    const isSelected = selectedCopilotSession && selectedCopilotSession.fileName === session.fileName;
+    item.className = `copilot-session-item${isSelected ? ' is-selected' : ''}`;
+
+    const updatedAt = session.updatedAt
+      ? new Date(session.updatedAt).toLocaleString('zh-TW', { hour12: false })
+      : '未知時間';
+    const title = session.title || session.fileName || 'Untitled Copilot Session';
+    const preview = session.preview || '無可預覽內容';
+    const modelId = session.modelId || 'copilot';
+
+    item.innerHTML = `
+      <div class="copilot-session-copy">
+        <div class="copilot-session-title">${escapeHTML(title)}</div>
+        <div class="copilot-session-meta">${escapeHTML(updatedAt)} · ${escapeHTML(modelId)} · ${escapeHTML(String(session.requestCount || 0))} requests</div>
+        <div class="copilot-session-preview">${escapeHTML(preview)}</div>
+      </div>
+      <button class="btn btn-secondary" type="button">
+        <span class="material-symbols-outlined">download</span>
+        載入
+      </button>
+    `;
+
+    item.querySelector('button').addEventListener('click', () => loadCopilotSession(session));
+    listEl.appendChild(item);
+  });
+}
+
+async function loadCopilotSession(session) {
+  if (!session || !session.fileName) {
+    return;
+  }
+
+  updateCopilotStatus(`載入 ${session.title || session.fileName} 中…`, 'download');
+
+  try {
+    const endpoint = new URL('/api/copilot/session', location.origin);
+    endpoint.searchParams.set('fileName', session.fileName);
+    const sessionDir = getCopilotSessionDir();
+    if (sessionDir) {
+      endpoint.searchParams.set('sessionDir', sessionDir);
+    }
+
+    const data = await apiFetch(endpoint.pathname + endpoint.search);
+    const conversationDoc = data.conversationDoc;
+    const previewText = getConversationAdapterAPI().conversationDocToText(conversationDoc);
+    const inputEl = document.getElementById('input-text');
+    const charCount = document.getElementById('char-count');
+
+    hydratingInputFromFile = true;
+    inputEl.value = previewText;
+    charCount.textContent = `${previewText.length} 字`;
+    hydratingInputFromFile = false;
+
+    selectedImportFile = null;
+    selectedConversationDoc = conversationDoc;
+    selectedCopilotSession = data.summary || session;
+
+    renderCopilotSessions();
+    updateImportStatus(`已載入 Copilot session「${selectedCopilotSession.title || session.fileName}」，可直接按「提取候選知識」。`, 'hub');
+    updateCopilotStatus(`已載入 ${selectedCopilotSession.title || session.fileName}。`, 'check_circle');
+  } catch (error) {
+    hydratingInputFromFile = false;
+    updateCopilotStatus(`載入 session 失敗：${error.message}`, 'error');
+  }
+}
+
 /* ─── Step 1 → Step 2: Extract ─── */
 async function runExtraction() {
   const text = document.getElementById('input-text').value.trim();
-  if (!text) return;
+  if (!text && !selectedConversationDoc) return;
 
   let conversationDoc;
   try {
-    const metadata = {};
-    if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
-      metadata.inputFormatHint = 'chatgpt-json';
-    }
+    if (selectedConversationDoc) {
+      conversationDoc = selectedConversationDoc;
+    } else {
+      const metadata = {};
+      if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
+        metadata.inputFormatHint = 'chatgpt-json';
+      }
 
-    conversationDoc = getConversationAdapterAPI().adaptConversationInput(text, metadata);
+      conversationDoc = getConversationAdapterAPI().adaptConversationInput(text, metadata);
+    }
   } catch (error) {
     alert(error.message);
     return;
@@ -434,11 +578,14 @@ function restart() {
   candidates = [];
   memorySnapshot = {};
   selectedImportFile = null;
+  selectedConversationDoc = null;
+  selectedCopilotSession = null;
   hydratingInputFromFile = false;
   document.getElementById('input-text').value = '';
   document.getElementById('input-file').value = '';
   document.getElementById('char-count').textContent = '0 字';
-  updateImportStatus('未上傳檔案，可直接貼上 ChatGPT transcript 或一般純文字。', 'notes');
+  renderCopilotSessions();
+  updateImportStatus('尚未載入 Copilot / ChatGPT 檔案，可直接貼上 ChatGPT transcript 或一般純文字。', 'notes');
   document.getElementById('step-result').classList.add('hidden');
   document.getElementById('step-input').classList.remove('hidden');
 }
