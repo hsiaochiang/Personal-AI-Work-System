@@ -61,9 +61,10 @@
   - `node tools/verify_chatgpt_adapter.js`
   - `node tools/verify_plain_text_adapter.js`
 - **V3 Change 4 `#opsx-sync` 完成** ✅（`openspec/specs/local-import-vscode-copilot/spec.md`）
+- **V3 Change 4 git commit / push 完成** ✅（`bc3c0bd add copilot local import` → `origin/main`）
 
 ## In Progress
-- Review Gate 已完成，等待 git commit / push 與人工確認是否執行 `#opsx-archive`
+- 等待人工確認是否執行 `#opsx-archive`
 - 無 active blocker
 
 ## Next Step
@@ -108,5 +109,6 @@
 - UI review：✅ PASS（`docs/uiux/2026-04-03_ui-review.md` addendum）
 - UX review：✅ PASS（`docs/uiux/2026-04-03_ux-review.md` addendum）
 - Review Gate：✅ PASS（唯一 brief/manual sync 漂移已修正，可進入 commit / push；archive 仍待人工確認）
+- Git publish：✅ PASS（`git push origin main` → `bc3c0bd`）
 - OpenSpec sync：✅ PASS（main spec 已建立）
 - OpenSpec archive：⏸️ 待人工確認（不可逆）
