@@ -475,6 +475,13 @@ body {
   .sidebar { display: none; }
   .main-content { margin-left: 0; padding: 1.25rem; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .extract-source-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .extract-source-select {
+    width: 100%;
+  }
 }
 
 /* ─── Buttons ─── */
@@ -688,12 +695,64 @@ body {
   box-shadow: 0 0 0 2px var(--primary-container);
 }
 
-.copilot-import-panel {
+.extract-source-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.05rem;
   margin-bottom: 1rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  background: var(--surface-container-lowest);
+}
+
+.extract-source-copy {
+  min-width: 0;
+}
+
+.extract-source-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.extract-source-hint {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--on-surface-variant);
+}
+
+.extract-source-select {
+  min-width: 180px;
+  padding: 0.72rem 0.85rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.extract-source-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-container);
+}
+
+.source-panel {
+  margin-bottom: 1rem;
+}
+
+.copilot-import-panel {
   padding: 1rem;
   border: 1px solid var(--outline-variant);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, var(--surface-container-lowest), var(--surface-container-low));
+  background: linear-gradient(180deg, var(--surface-container-lowest), var(--surface-container));
 }
 
 .copilot-import-header {
@@ -716,6 +775,32 @@ body {
   font-size: 0.78rem;
   line-height: 1.5;
   color: var(--on-surface-variant);
+}
+
+.source-panel-header {
+  margin-bottom: 0.75rem;
+}
+
+.source-panel-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.source-panel-header p {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--on-surface-variant);
+}
+
+.chatgpt-import-panel,
+.plain-import-panel {
+  padding: 1rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  background: var(--surface-container-lowest);
 }
 
 .copilot-import-controls {
@@ -819,6 +904,10 @@ body {
   font-size: 16px;
 }
 
+.import-status-banner {
+  margin-bottom: 0.875rem;
+}
+
 .extract-actions {
   display: flex;
   align-items: center;
@@ -893,7 +982,19 @@ body {
 .candidate-target {
   font-size: 0.75rem;
   color: var(--outline);
+}
+
+.candidate-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.candidate-source-badge {
+  flex-shrink: 0;
 }
 
 .candidate-edit {

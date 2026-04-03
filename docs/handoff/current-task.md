@@ -4,25 +4,26 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 handoff — source-attribution-in-memory archived
+- Name: V3 executor — import-ui-multi-source
 - Owner agent: Codex
-- Last updated on: 2026-04-03
+- Last updated on: 2026-04-04
 
 ## Goal
-- 確認 `source-attribution-in-memory` 已完成 sync / archive 收尾
-- 保留下一位 agent 接手 `import-ui-multi-source` 所需的最小脈絡
-- 維持 `/extract` 現有 Copilot / ChatGPT / plain text 路徑與 `/memory` source badge 行為一致
+- 完成 `import-ui-multi-source` 的 OpenSpec `new` / `ff` / `apply` / `verify`
+- 在 `/extract` 收斂工具來源 selector、per-source import controls 與 candidate source 顯示
+- 維持既有 Copilot / ChatGPT / plain text 匯入能力與 source metadata writeback，不擴大到新 adapter
 
 ## Scope
 - In scope:
-  - `source-attribution-in-memory` 的 brief / roadmap / handoff / manual / runlog 收尾對齊
-  - 主 spec sync 與 archive 結果記錄
-  - 下一個 V3 Change 6 的接手脈絡
+  - 建立 `openspec/changes/import-ui-multi-source/` active change artifacts
+  - 實作 `/extract` 的工具來源 selector 與 per-source UI / routing
+  - 在候選審核階段顯示來源 badge / source summary
+  - 補 verify、QA / UI / UX 證據與 handoff / manual / runlog 同步
 - Out of scope:
-  - `import-ui-multi-source` 實作本體
-  - ChatGPT / Copilot / plain adapter parser 調整
+  - 新增 Gemini / Claude / Antigravity adapter
+  - ChatGPT / Copilot parser 大改或新 server API 架構
   - 多 session merge / 搜尋 / preview-rich picker
-  - Gemini / Claude / Antigravity adapter
+  - 新的 metadata schema 或 memory writeback 格式
   - release
   - 新依賴 / 前端框架 / build tool
 
@@ -41,63 +42,57 @@
 - V3 Change 2 `plain-text-adapter-refactor` 已 archive ✅
 - V3 Change 3 `chatgpt-adapter` 已 archive ✅
 - V3 Change 4 `local-import-vscode-copilot` 已 sync / archive / git 收尾 ✅
-- `/extract` 已支援：
-  - 刷新本機 Copilot session 清單
-  - 載入單一 VS Code Copilot JSONL session → `ConversationDoc`
-  - 覆寫 Copilot session 路徑
-  - ChatGPT / plain text 路徑維持可用
-- `source-attribution-in-memory` active change 已建立 ✅
-- `proposal.md`、`design.md`、`specs/source-attribution-in-memory/spec.md`、`tasks.md` 已建立 ✅
-- `openspec validate --changes "source-attribution-in-memory" --strict` ✅ PASS
-- `web/public/js/extract.js` 已保存 source metadata 寫回 ✅
-- `web/public/js/memory.js` / `web/public/css/style.css` 已支援來源 badge 顯示 ✅
-- targeted verify + adapter regression + `verify_flow` ✅ PASS
-- `docs/qa/2026-04-03_source-attribution-in-memory-smoke.md`、UI/UX review addendum、runlog / manual sync 已完成 ✅
-- `openspec/specs/source-attribution-in-memory/spec.md` 已 sync ✅
-- `source-attribution-in-memory` 已 archive 至 `openspec/changes/archive/2026-04-03-source-attribution-in-memory/` ✅
+- V3 Change 5 `source-attribution-in-memory` 已 sync / archive 收尾 ✅
+- `openspec new change import-ui-multi-source` 已完成，active change 目錄已建立 ✅
+- `import-ui-multi-source` proposal / design / spec / tasks 已建立並通過 strict validate ✅
+- `/extract` 既有能力基線已確認：
+  - VS Code Copilot 本機 session list / path override / 單一 session 載入
+  - ChatGPT transcript / JSON 匯入
+  - plain text fallback
+- `docs/planning/v3-brief.md` 已列出 `import-ui-multi-source` 的使用者故事、備註與使用方式 ✅
+- Planner scope gate 已完成：本 change 屬於 V3 brief In Scope D「Import UI（匯入入口改版）」✅
+- Executor preflight 已完成：`main` branch、`openspec/config.yaml`、V3 brief 使用者確認、無 active duplicate change ✅
+- `/extract` 已完成工具來源 selector、per-source controls 與 candidate source badge 實作 ✅
+- targeted verify `node tools/verify_import_ui_multi_source.js` PASS，plain / chatgpt / copilot regressions 全 PASS ✅
+- `docs/qa/2026-04-04_import-ui-multi-source-smoke.md`、`docs/uiux/2026-04-04_ui-review.md`、`docs/uiux/2026-04-04_ux-review.md` 已補齊 ✅
 
 ## In Progress
-- 無 active blocker
+- `import-ui-multi-source` 已完成 verify，待 Review Gate 判定是否進入 sync / archive
+- template verify 目前被 `.github/prompts/openspec-execute.prompt.md` 缺檔阻塞；需先確認是否為模板漂移或指令文件過期
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `import-ui-multi-source` | 啟動 planner / executor，收斂 `/extract` 的多來源匯入 UI 與 tool selector |
-| 🟡 2 | V3 收尾 | 視 Change 6 完成度，再更新 brief / roadmap 的版本狀態 |
-| 🟡 3 | Git publish | 本輪功能與治理文件已可對外同步 |
+| 🔴 1 | `import-ui-multi-source` | 交給 Review Gate，判定是否可進入 `#opsx-sync` / `#opsx-archive` |
+| 🟡 2 | Sync / archive | 若 Review Gate PASS，執行 main spec sync；archive 需人工確認 |
+| 🟡 3 | V3 收尾 | 若 Change 6 archive，評估 V3 brief / roadmap 是否可進入版本收尾 |
 
 ## Files Touched（本 session）
-- openspec/changes/archive/2026-04-03-source-attribution-in-memory/proposal.md
-- openspec/changes/archive/2026-04-03-source-attribution-in-memory/design.md
-- openspec/changes/archive/2026-04-03-source-attribution-in-memory/specs/source-attribution-in-memory/spec.md
-- openspec/changes/archive/2026-04-03-source-attribution-in-memory/tasks.md
-- openspec/specs/source-attribution-in-memory/spec.md
-- docs/handoff/current-task.md
-- docs/planning/v3-brief.md
-- docs/roadmap.md
-- docs/system-manual.md
-- docs/runlog/2026-04-03_README.md
-- docs/qa/2026-04-03_source-attribution-in-memory-smoke.md
-- docs/uiux/2026-04-03_ui-review.md
-- docs/uiux/2026-04-03_ux-review.md
-- web/public/js/memory-source-utils.js
-- web/public/js/extract.js
-- web/public/js/memory.js
-- web/public/css/style.css
+- openspec/changes/import-ui-multi-source/proposal.md
+- openspec/changes/import-ui-multi-source/design.md
+- openspec/changes/import-ui-multi-source/specs/import-ui-multi-source/spec.md
+- openspec/changes/import-ui-multi-source/tasks.md
 - web/public/extract.html
-- web/public/memory.html
+- web/public/js/extract.js
+- web/public/css/style.css
+- tools/verify_import_ui_multi_source.js
+- tools/verify_plain_text_adapter.js
+- docs/qa/2026-04-04_import-ui-multi-source-smoke.md
+- docs/uiux/2026-04-04_ui-review.md
+- docs/uiux/2026-04-04_ux-review.md
+- docs/roadmap.md
+- docs/planning/v3-brief.md
+- docs/handoff/current-task.md
+- docs/system-manual.md
+- docs/runlog/2026-04-04_README.md
 
 ## Validation Status
 - V3 brief confirmation：✅ PASS（2026-04-02，Wilson）
-- Scope gate：✅ PASS（change 屬於 V3 brief 的 Source Attribution 範圍）
-- OpenSpec new：✅ PASS（active change 已建立）
-- OpenSpec ff：✅ PASS（artifacts 全齊）
-- OpenSpec strict validate：✅ PASS（change）
-- Source attribution verify：✅ PASS（`node tools/verify_source_attribution_in_memory.js`）
-- Plain-text regression：✅ PASS（`node tools/verify_plain_text_adapter.js`）
-- ChatGPT regression：✅ PASS（`node tools/verify_chatgpt_adapter.js`）
-- Copilot regression：✅ PASS（`node tools/verify_local_import_vscode_copilot.js`）
-- Flow validation：✅ PASS（`node tools/verify_flow.js` with local server）
-- OpenSpec sync：✅ PASS（`openspec/specs/source-attribution-in-memory/spec.md`）
-- OpenSpec archive：✅ PASS（`openspec archive source-attribution-in-memory -y --skip-specs`）
+- Scope gate：✅ PASS（change 屬於 V3 brief In Scope D「Import UI」範圍）
+- Duplicate change gate：✅ PASS（建立前確認無同名 / 同目的 active change；`openspec list --json` 為空）
+- Executor preflight：✅ PASS（`main` branch、`openspec/config.yaml`、brief 使用者確認、`openspec new change import-ui-multi-source`）
+- Strict validate：✅ PASS（`openspec validate import-ui-multi-source --strict`）
+- Targeted verify：✅ PASS（`node tools/verify_import_ui_multi_source.js`）
+- Regression verify：✅ PASS（plain / chatgpt / local-import-vscode-copilot 全 PASS）
+- Template verify：⚠️ FAIL（`tools/bootstrap_copilot_workspace.py --verify-only` 回報缺少 `.github/prompts/openspec-execute.prompt.md`）

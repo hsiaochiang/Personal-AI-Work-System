@@ -85,6 +85,28 @@ let selectedCopilotSession = null;
 let copilotSessions = [];
 let hydratingInputFromFile = false;
 let copilotPathWasEdited = false;
+let selectedImportSource = 'plain';
+
+const IMPORT_SOURCE_CONFIG = {
+  plain: {
+    hint: '直接貼上一般對話或整理後的文字內容，系統會以 plain text source 提取。',
+    placeholder: '將一般對話內容貼在這裡…\n\n這個模式會直接使用 PlainTextAdapter。\n\n提取引擎會依內容嘗試識別：\n• 專案背景資訊 → project-context.md\n• 偏好與規則 → preference-rules.md\n• 任務模式 → task-patterns.md\n• 決策記錄 → decision-log.md\n• 輸出模式 → output-patterns.md\n• 技能候選 → skill-candidates.md',
+    statusMessage: '純文字模式已就緒，可直接貼上一般對話內容。',
+    statusIcon: 'notes',
+  },
+  chatgpt: {
+    hint: '貼上 ChatGPT transcript，或上傳官方 conversation JSON / TXT，系統會明確走 ChatGPT adapter。',
+    placeholder: '將 ChatGPT transcript 貼在這裡，或先上傳官方 JSON / TXT 檔案…\n\n支援輸入：\n• ChatGPT 分享頁 transcript（You / ChatGPT turns）\n• ChatGPT conversation JSON 匯出內容\n\n提取引擎會使用 ChatGPTAdapter，而不是 plain text fallback。',
+    statusMessage: 'ChatGPT 模式已就緒，可貼上 transcript 或上傳 JSON / TXT。',
+    statusIcon: 'forum',
+  },
+  copilot: {
+    hint: '先從本機 session 清單載入一筆 Copilot 對話，再進入既有 extraction 流程。',
+    placeholder: '先從上方載入一筆 VS Code Copilot session…\n\n載入後這裡會顯示對話預覽；若你手動編輯內容，系統會退出 Copilot 匯入模式。',
+    statusMessage: 'Copilot 模式已就緒，請先載入一筆本機 session。',
+    statusIcon: 'hub',
+  },
+};
 
 function getConversationAdapterAPI() {
   if (!window.ConversationAdapters) {
@@ -104,6 +126,7 @@ function getMemorySourceUtilsAPI() {
 document.addEventListener('DOMContentLoaded', () => {
   const inputEl = document.getElementById('input-text');
   const charCount = document.getElementById('char-count');
+  const sourceSelect = document.getElementById('import-source-select');
   const uploadButton = document.getElementById('btn-upload-file');
   const fileInput = document.getElementById('input-file');
   const copilotPathInput = document.getElementById('copilot-session-path');
@@ -113,10 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
     charCount.textContent = inputEl.value.length + ' 字';
 
     if (!hydratingInputFromFile && (selectedImportFile || selectedConversationDoc)) {
-      clearImportedContentState('已切回手動貼上模式，系統將自動偵測 Copilot / ChatGPT / plain text。', 'edit');
+      clearImportedContentState(getManualEditResetMessage(), 'edit');
     }
   });
 
+  sourceSelect.addEventListener('change', (event) => {
+    setImportSource(event.target.value);
+  });
   copilotPathInput.addEventListener('input', () => {
     copilotPathWasEdited = true;
   });
@@ -128,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-back').addEventListener('click', goBack);
   document.getElementById('btn-restart').addEventListener('click', restart);
 
+  setImportSource(selectedImportSource, { clearImportedState: false });
   refreshCopilotSessions();
 });
 
@@ -177,6 +204,83 @@ function updateCopilotStatus(message, icon) {
 
 function getCopilotSessionDir() {
   return document.getElementById('copilot-session-path').value.trim();
+}
+
+function getImportSourceConfig(source) {
+  return IMPORT_SOURCE_CONFIG[source] || IMPORT_SOURCE_CONFIG.plain;
+}
+
+function getCurrentSourcePresentation(source) {
+  return getMemorySourceUtilsAPI().getMemorySourcePresentation(source) || {
+    label: source,
+    className: 'source-custom',
+  };
+}
+
+function getManualEditResetMessage() {
+  if (selectedImportSource === 'copilot') {
+    return '已離開 Copilot session 載入狀態；若要用 Copilot 模式提取，請重新選擇一筆 session。';
+  }
+
+  if (selectedImportSource === 'chatgpt') {
+    return '已切回手動編輯的 ChatGPT 內容；系統會依 ChatGPT 模式重新解析 textarea。';
+  }
+
+  return '純文字模式會直接使用你目前貼上的內容。';
+}
+
+function renderSourcePanels() {
+  ['plain', 'chatgpt', 'copilot'].forEach((source) => {
+    const panel = document.getElementById(`source-panel-${source}`);
+    if (!panel) {
+      return;
+    }
+
+    panel.classList.toggle('hidden', source !== selectedImportSource);
+  });
+}
+
+function updateSourceSelectorUI() {
+  const sourceSelect = document.getElementById('import-source-select');
+  const hintEl = document.getElementById('import-source-hint');
+  const inputEl = document.getElementById('input-text');
+  const config = getImportSourceConfig(selectedImportSource);
+
+  sourceSelect.value = selectedImportSource;
+  hintEl.textContent = config.hint;
+  inputEl.placeholder = config.placeholder;
+  renderSourcePanels();
+}
+
+function refreshImportStatusForSource() {
+  if (selectedImportSource === 'copilot' && selectedCopilotSession) {
+    updateImportStatus(`已載入 Copilot session「${selectedCopilotSession.title || selectedCopilotSession.fileName}」，可直接按「提取候選知識」。`, 'hub');
+    return;
+  }
+
+  if (selectedImportSource === 'chatgpt' && selectedImportFile) {
+    updateImportStatus(`已載入 ${selectedImportFile.name}，可直接按「提取候選知識」。`, 'upload_file');
+    return;
+  }
+
+  const config = getImportSourceConfig(selectedImportSource);
+  updateImportStatus(config.statusMessage, config.statusIcon);
+}
+
+function setImportSource(source, options) {
+  const nextSource = IMPORT_SOURCE_CONFIG[source] ? source : 'plain';
+  const previousSource = selectedImportSource;
+  const hasImportedState = Boolean(selectedImportFile || selectedConversationDoc || selectedCopilotSession);
+  selectedImportSource = nextSource;
+  updateSourceSelectorUI();
+
+  if ((options && options.clearImportedState === false) !== true && previousSource !== nextSource && hasImportedState) {
+    const nextConfig = getImportSourceConfig(nextSource);
+    clearImportedContentState(nextConfig.statusMessage, nextConfig.statusIcon);
+    return;
+  }
+
+  refreshImportStatusForSource();
 }
 
 function clearImportedContentState(message, icon) {
@@ -299,19 +403,32 @@ async function loadCopilotSession(session) {
 /* ─── Step 1 → Step 2: Extract ─── */
 async function runExtraction() {
   const text = document.getElementById('input-text').value.trim();
-  if (!text && !selectedConversationDoc) return;
+  const adapterApi = getConversationAdapterAPI();
 
   let conversationDoc;
   try {
-    if (selectedConversationDoc) {
+    if (selectedImportSource === 'copilot') {
+      if (!selectedConversationDoc) {
+        alert('請先在「VS Code Copilot」模式載入一筆本機 session。');
+        return;
+      }
       conversationDoc = selectedConversationDoc;
-    } else {
+    } else if (selectedImportSource === 'chatgpt') {
+      if (!text) {
+        alert('請先貼上 ChatGPT transcript，或上傳 ChatGPT JSON / TXT。');
+        return;
+      }
       const metadata = {};
       if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
         metadata.inputFormatHint = 'chatgpt-json';
       }
-
-      conversationDoc = getConversationAdapterAPI().adaptConversationInput(text, metadata);
+      conversationDoc = adapterApi.adaptChatGPTConversation(text, metadata);
+    } else {
+      if (!text) {
+        alert('請先貼上要提取的純文字對話。');
+        return;
+      }
+      conversationDoc = adapterApi.adaptPlainTextConversation(text);
     }
   } catch (error) {
     alert(error.message);
@@ -445,6 +562,7 @@ function renderCandidates() {
 
   candidates.forEach((cand, idx) => {
     const cat = CATEGORIES[cand.category];
+    const sourcePresentation = getCurrentSourcePresentation(cand.source);
     const card = document.createElement('div');
     card.className = 'candidate-card' + (cand.decision === 'rejected' ? ' rejected' : '');
     card.dataset.idx = idx;
@@ -466,7 +584,10 @@ function renderCandidates() {
         </div>
       </div>
       <div class="candidate-content">${escapeHTML(cand.keyLine)}</div>
-      <div class="candidate-target">→ ${escapeHTML(cat.filename)}</div>
+      <div class="candidate-meta-row">
+        <div class="candidate-target">→ ${escapeHTML(cat.filename)}</div>
+        <span class="source-badge ${escapeHTML(sourcePresentation.className)} candidate-source-badge">${escapeHTML(sourcePresentation.label)}</span>
+      </div>
       <textarea class="candidate-edit hidden" rows="3">${escapeHTML(cand.content)}</textarea>
       <button class="btn-text toggle-edit" data-action="toggle-edit">
         <span class="material-symbols-outlined">edit</span> 編輯內容
@@ -504,8 +625,17 @@ function renderCandidates() {
 function updateSummary() {
   const adopted = candidates.filter(c => c.decision !== 'rejected').length;
   const rejected = candidates.filter(c => c.decision === 'rejected').length;
+  const sourceCounts = candidates.reduce((acc, candidate) => {
+    const source = candidate.source || 'plain';
+    acc[source] = (acc[source] || 0) + 1;
+    return acc;
+  }, {});
+  const sourceSummary = Object.entries(sourceCounts)
+    .map(([source, count]) => `${getCurrentSourcePresentation(source).label} ${count}`)
+    .join('、');
+
   document.getElementById('review-summary').textContent =
-    `${adopted} 採用 / ${rejected} 拒絕 / 共 ${candidates.length} 項`;
+    `${adopted} 採用 / ${rejected} 拒絕 / 共 ${candidates.length} 項` + (sourceSummary ? ` · 來源：${sourceSummary}` : '');
 }
 
 /* ─── Step 2 → Step 3: Writeback ─── */
@@ -598,7 +728,7 @@ function restart() {
   document.getElementById('input-file').value = '';
   document.getElementById('char-count').textContent = '0 字';
   renderCopilotSessions();
-  updateImportStatus('尚未載入 Copilot / ChatGPT 檔案，可直接貼上 ChatGPT transcript 或一般純文字。', 'notes');
+  setImportSource('plain', { clearImportedState: false });
   document.getElementById('step-result').classList.add('hidden');
   document.getElementById('step-input').classList.remove('hidden');
 }

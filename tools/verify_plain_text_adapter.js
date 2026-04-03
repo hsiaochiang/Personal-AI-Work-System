@@ -68,8 +68,9 @@ async function runServerSmoke() {
   try {
     const extractPage = await fetchText('/extract');
     assert.strictEqual(extractPage.status, 200);
-    assert.match(extractPage.body, /ChatGPT JSON \/ TXT/);
-    assert.match(extractPage.body, /一般純文字/);
+    assert.match(extractPage.body, /value="plain"/);
+    assert.match(extractPage.body, /純文字匯入/);
+    assert.match(extractPage.body, /PlainTextAdapter/);
     assert.match(extractPage.body, /\/js\/conversation-adapters\.js/);
 
     const adapterScript = await fetchText('/js/conversation-adapters.js');

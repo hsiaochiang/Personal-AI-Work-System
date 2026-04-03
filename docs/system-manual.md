@@ -24,13 +24,14 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 限制：範本結構硬編碼在前端 JS，不支援自訂範本
 
 ### 知識提取與寫回（/extract）
-- 能力描述：從本機 Copilot session 載入、貼上 AI 對話或上傳 ChatGPT JSON / TXT → 先由對應 adapter 正規化為 `ConversationDoc` → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
-- 操作方式：在 `/extract` 先刷新並載入 Copilot session，或直接貼 ChatGPT transcript / 一般文字，或上傳 ChatGPT conversation JSON / TXT → 點「提取候選知識」→ 審核候選 → 點「寫回」
+- 能力描述：在 `/extract` 先選擇工具來源（純文字 / ChatGPT / VS Code Copilot），再用對應入口貼上文字、上傳 ChatGPT JSON / TXT，或載入 Copilot session；內容會先正規化為 `ConversationDoc`，再進入候選提取、審核與寫回 `docs/memory/`
+- 操作方式：開啟 `/extract` → 選擇工具來源 → 依模式貼上文字、上傳 ChatGPT 檔案，或刷新並載入 Copilot session → 點「提取候選知識」→ 審核候選（可看到來源 badge）→ 點「寫回」
 - 改善（V2）：寫回前自動 backup（`.backup/` 機制），不再整檔覆蓋
 - 改善（V3 Change 2）：既有純文字入口已接上 `ConversationDoc` adapter 基線，為後續多來源匯入保留共同介面
 - 改善（V3 Change 3）：新增 `ChatGPTAdapter`，支援分享頁 transcript 貼上與 ChatGPT conversation JSON 匯入；若內容不符合 ChatGPT 偵測條件，系統會自動退回 `PlainTextAdapter`
 - 改善（V3 Change 4）：新增 Copilot 本機 session 匯入；`/extract` 可直接讀取最近的 VS Code Copilot JSONL session，並支援覆寫 session 路徑
 - 改善（V3 Change 5）：寫回 memory 條目時會自動保存來源 metadata（`plain` / `chatgpt` / `copilot`），供 `/memory` 顯示來源 badge
+- 改善（V3 Change 6）：`/extract` 新增工具來源 selector 與 per-source import controls；候選審核卡片與 summary 會顯示來源 badge / source summary
 
 ### 專案記憶（/memory）
 - 能力描述：讀取 `docs/memory/*.md` 並以分類卡片呈現專案記憶
@@ -69,12 +70,14 @@ npm start        # 或 node server.js
 ## 已知限制
 - ChatGPT JSON 若包含多筆 conversation，現階段僅 deterministic 選擇最近更新的一筆；尚無 picker UI
 - Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
+- `/extract` 的工具來源 selector 目前只涵蓋 `plain` / `chatgpt` / `copilot`；尚未支援 Gemini / Claude / Antigravity
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V3 Change 6 | 2026-04-04 | `/extract` 工具來源 selector、per-source import controls 與 candidate source badge |
 | V3 Change 5 | 2026-04-03 | memory source metadata 寫回與 `/memory` 來源 badge |
 | V3 Change 4 | 2026-04-03 | VS Code Copilot 本機 session JSONL 匯入、path override 與 `/extract` local import UI |
 | V3 Change 3 | 2026-04-03 | ChatGPT transcript / JSON 匯入與 plain-text fallback 驗證 |
@@ -89,6 +92,9 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V3 Change 6 executor verify | 完成 `import-ui-multi-source` apply / verify：`/extract` 新增工具來源 selector、per-source import controls 與 candidate source badge；下一步待 Review Gate 判定是否進入 sync / archive | 有（使用者現在可在 `/extract` 先選 `plain` / `chatgpt` / `copilot`，再使用對應入口匯入內容；候選審核階段可直接看到來源 badge） |
+| 2026-04-04 | V3 Change 6 executor start | 啟動 `import-ui-multi-source` executor，完成 preflight 與 `#opsx-new` / `#opsx-ff` artifact 草稿；brief / handoff 已切換為 active change 狀態，下一步進入 `/extract` tool selector 與 source badge 實作 | 無（No user-facing change；本次僅建立 active change artifacts 與治理同步，尚未改動 `/extract` UI 或匯入行為） |
+| 2026-04-03 | V3 Change 6 planner | 啟動 `import-ui-multi-source` 的 Planner scope gate，確認 brief 已有人類確認、change 屬於 V3 Import UI scope，且 repo 無 active duplicate；handoff 已切換為 Executor-ready 規劃狀態 | 無（No user-facing change；本次僅完成規劃、交接與治理同步，尚未改動 `/extract` UI 或匯入流程） |
 | 2026-04-03 | V3 Change 5 archive | 完成 `source-attribution-in-memory` 的 main spec sync 與 archive 收尾；下一步切換至 `import-ui-multi-source` | 無（No user-facing change；功能已在 executor apply / verify 階段上線，本次為治理收尾與交接切換） |
 | 2026-04-03 | V3 Change 5 executor | 完成 `source-attribution-in-memory` 的 apply / verify：`/extract` 寫回 memory 時會保存來源 metadata，`/memory` 可顯示對應來源 badge；既有 legacy 條目維持相容 | 有（使用者現在可在 `/memory` 看到新寫回記憶的來源 badge，例如 ChatGPT / Copilot / Plain；既有條目若沒有 metadata 則維持原樣） |
 | 2026-04-03 | V3 Change 5 executor start | 啟動 `source-attribution-in-memory` executor，完成 `#opsx-new`、`#opsx-ff` 與 strict validate；active change 進入 memory source metadata / badge 實作 | 無（No user-facing change；目前僅建立 artifacts、切換 handoff 與 brief 狀態，尚未改動 `/memory` 或 writeback 行為） |
