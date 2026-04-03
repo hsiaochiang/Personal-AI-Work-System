@@ -30,25 +30,37 @@
 - 升級 copilot-workspace-template v1.6.0 + Style Guide FROZEN ✅ `8a80f9a`
 - **V3 brief 使用者確認** ✅ 2026-04-02（auto-import 範圍已依可行性評估修訂）
 - V4 brief 草擬完成 ✅（使用者尚未確認）
+- **V3 Change 1 `#opsx-new` 完成** ✅（`conversation-schema-definition` proposal/design/specs/tasks 全部建立）
+- `docs/workflows/conversation-schema.md` 已建立 ✅（定義 `ConversationMessage` / `ConversationDoc`）
+- **V3 Change 1 `#opsx-apply` 完成** ✅（tasks 9/9 勾選完成）
+- OpenSpec strict validate 再驗證 ✅（`conversation-schema-definition`）
 
 ## In Progress
-- V3 Change 1：`conversation-schema-definition`（Codex 開始執行）
+- V3 Change 1：ready for archive（等待人工確認是否執行 `#opsx-archive`）
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `conversation-schema-definition` | 建立 schema 文件 + 型別定義，執行 `#opsx-new` 或 `openspec-propose` 開始 |
-| 🟡 2 | `plain-text-adapter-refactor` | schema 完成後接著抽取 PlainTextAdapter |
+| 🔴 1 | `conversation-schema-definition` | 已完成 `#opsx-new` + `#opsx-apply`；待人工確認後可執行 `#opsx-archive` |
+| 🟡 2 | `plain-text-adapter-refactor` | 建議在 Change 1 archive 後執行下一個 `#opsx-new` |
 | 🟡 3 | 確認 V4 Brief | `docs/planning/v4-brief.md` 使用者確認後填入確認日期 |
 
 ## Files Touched（本 session）
 - docs/planning/v3-brief.md (新建)
 - docs/planning/v4-brief.md (新建)
+- docs/workflows/conversation-schema.md (新建)
+- openspec/changes/conversation-schema-definition/proposal.md (新建)
+- openspec/changes/conversation-schema-definition/design.md (新建)
+- openspec/changes/conversation-schema-definition/specs/conversation-schema/spec.md (新建)
+- openspec/changes/conversation-schema-definition/tasks.md (更新：9/9 task 勾選完成)
 - docs/handoff/current-task.md
+- docs/planning/v3-brief.md (更新：change 狀態)
 - docs/system-manual.md
 
 ## Validation Status
+- OpenSpec strict validate：✅ PASS（`conversation-schema-definition`）
+- OpenSpec apply progress：✅ 9/9 completed（state: `all_done`）
 - Template verify: ✅ PASS (v1.5.0)
 - Style guide: ✅ FROZEN
-- Git：⏳ 本 session 尚未 push（v3/v4 brief 草擬完成）
+- Git：⏳ 本 session 尚未 push（含 V3 Change 1 `#opsx-new` + `#opsx-apply` 產出）
