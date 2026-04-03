@@ -8,7 +8,7 @@
 - Primary stack: Node.js HTTP server + vanilla HTML/JS（無框架無 build）、Markdown 文件工作流、VS Code / GitHub Copilot 協作、OpenSpec 規格流程、copilot-workspace-template v1.5.0
 - Runtime targets: `node web/server.js` → http://localhost:3000（本地 dev server）
 - Deployment environments: 目前以 local workspace 為主；尚未進入正式 dev / staging / prod 部署
-- Current version: V2 已完成（穩定化與多專案工作台），V3 規劃中（跨工具整合層）
+- Current version: V3 已完成（跨工具整合層），V4 規劃中（治理、自動化、個人 AI 作業系統）
 
 ## Repository Map
 - Application entry points: `web/server.js`（dev server）、`web/public/index.html`（前端入口）

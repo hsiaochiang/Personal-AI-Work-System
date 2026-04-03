@@ -4,14 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 review-gate — import-ui-multi-source synced
+- Name: V3 archived — ready for V4 planning
 - Owner agent: Codex
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `import-ui-multi-source` 的 Review Gate 與 main spec sync
-- 確認 `/extract` 的多來源匯入 UI 已可收斂為 V3 Change 6 的最終實作形態
-- 保留 archive 前最後一段人工確認與 V3 收尾脈絡
+- 完成 `import-ui-multi-source` archive 與 V3 brief 收尾
+- 保留下一位 agent 啟動 V4 或處理 template blocker 所需的最小脈絡
+- 維持 `/extract` 與 `/memory` 的 V3 多來源能力已封存完成的事實一致
 
 ## Scope
 - In scope:
@@ -58,24 +58,26 @@
 - Review Gate：✅ PASS（無 blocking issue；可進入 `#opsx-sync`，archive 僅差人工確認）
 - `openspec/specs/import-ui-multi-source/spec.md` 已 sync ✅
 - `add multi-source import UI` 已 commit / push 至 `origin/main`（`335d338`）✅
+- `import-ui-multi-source` 已 archive 至 `openspec/changes/archive/2026-04-03-import-ui-multi-source/` ✅
+- V3 brief 六個 planned changes 全部 archive 完成 ✅
 
 ## In Progress
-- `import-ui-multi-source` 已完成 Review Gate 與 sync，待人工確認是否執行 `#opsx-archive`
 - template verify 目前被 `.github/prompts/openspec-execute.prompt.md` 缺檔阻塞；需先確認是否為模板漂移或指令文件過期
+- V4 brief / roadmap 下一步尚未開始，待使用者決定先處理治理 blocker 或直接進入 V4 規劃
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `import-ui-multi-source` | 若你確認，執行 `#opsx-archive` 完成 Change 6 收尾 |
-| 🟡 2 | V3 收尾 | 若 Change 6 archive，更新 V3 brief / roadmap 的版本收尾狀態 |
-| 🟡 3 | Template blocker | 補 `.github/prompts/openspec-execute.prompt.md` 或確認模板 prompt 已改名，解除 verify-only FAIL |
+| 🔴 1 | Template blocker | 補 `.github/prompts/openspec-execute.prompt.md` 或確認模板 prompt 已改名，解除 verify-only FAIL |
+| 🟡 2 | V4 規劃 | 視使用者優先序，啟動 V4 brief / change 規劃 |
+| 🟡 3 | GitHub / release 決策 | 如需 PR / release，另由人工明確指示 |
 
 ## Files Touched（本 session）
-- openspec/changes/import-ui-multi-source/proposal.md
-- openspec/changes/import-ui-multi-source/design.md
-- openspec/changes/import-ui-multi-source/specs/import-ui-multi-source/spec.md
-- openspec/changes/import-ui-multi-source/tasks.md
+- openspec/changes/archive/2026-04-03-import-ui-multi-source/proposal.md
+- openspec/changes/archive/2026-04-03-import-ui-multi-source/design.md
+- openspec/changes/archive/2026-04-03-import-ui-multi-source/specs/import-ui-multi-source/spec.md
+- openspec/changes/archive/2026-04-03-import-ui-multi-source/tasks.md
 - openspec/specs/import-ui-multi-source/spec.md
 - web/public/extract.html
 - web/public/js/extract.js
@@ -102,4 +104,5 @@
 - Review Gate：✅ PASS（可進入 sync；archive 僅差人工確認）
 - Main spec sync：✅ PASS（`openspec/specs/import-ui-multi-source/spec.md`）
 - Git publish：✅ PASS（`335d338` → `origin/main`）
+- Archive：✅ PASS（`openspec archive import-ui-multi-source -y --skip-specs`）
 - Template verify：⚠️ FAIL（`tools/bootstrap_copilot_workspace.py --verify-only` 回報缺少 `.github/prompts/openspec-execute.prompt.md`）

@@ -8,7 +8,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 
 - **V1** — 單專案知識閉環工作台 ✅ 已完成
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
-- **V3** — 跨工具整合層 🔄 進行中
+- **V3** — 跨工具整合層 ✅ 已完成
 - **V4** — 治理、自動化、個人 AI 作業系統 ⏳ 規劃中
 
 ## 功能總覽
@@ -92,6 +92,7 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V3 Change 6 archive | `import-ui-multi-source` 已 archive 至 `openspec/changes/archive/2026-04-03-import-ui-multi-source/`，V3 六個 planned changes 全數完成；下一步轉向 template blocker 與 V4 規劃 | 無（No user-facing change；本次為治理收尾，使用者可見能力已在 apply / verify / sync 階段上線） |
 | 2026-04-04 | V3 Change 6 review gate + sync | `import-ui-multi-source` Review Gate 判定 PASS，main spec 已同步到 `openspec/specs/import-ui-multi-source/spec.md`，目前只剩 archive 需人工確認 | 無（No user-facing change；使用者可見能力已在 executor verify 階段上線，本次是治理收尾與 spec 同步） |
 | 2026-04-04 | V3 Change 6 executor verify | 完成 `import-ui-multi-source` apply / verify：`/extract` 新增工具來源 selector、per-source import controls 與 candidate source badge；下一步待 Review Gate 判定是否進入 sync / archive | 有（使用者現在可在 `/extract` 先選 `plain` / `chatgpt` / `copilot`，再使用對應入口匯入內容；候選審核階段可直接看到來源 badge） |
 | 2026-04-04 | V3 Change 6 executor start | 啟動 `import-ui-multi-source` executor，完成 preflight 與 `#opsx-new` / `#opsx-ff` artifact 草稿；brief / handoff 已切換為 active change 狀態，下一步進入 `/extract` tool selector 與 source badge 實作 | 無（No user-facing change；本次僅建立 active change artifacts 與治理同步，尚未改動 `/extract` UI 或匯入行為） |
