@@ -9,10 +9,8 @@
 - Project-owned files：模板不追蹤；完全由專案自行維護。
 
 ## Safe Upgrade
-> ⚠️ 以下指令從**模板 repo 目錄**執行（`D:\program\copilot-workspace-template`），不是在本專案目錄執行。
-- 升級前先跑 `python deploy/bootstrap.py --root <目標專案路徑> --upgrade-preview`。
-- 若想查分類，可跑 `python deploy/bootstrap.py --root <目標專案路徑> --list-managed`。
-- 或批次執行：`python deploy/orchestrate.py --dry-run`（從模板 repo 目錄）。
+- 升級前先跑 `deploy/bootstrap.py --upgrade-preview --root <target>`。
+- 若想查分類，可跑 `deploy/bootstrap.py --list-managed --root <target>`。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
 ## Managed Files (64)

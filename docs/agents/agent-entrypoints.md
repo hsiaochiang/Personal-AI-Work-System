@@ -14,13 +14,12 @@
 - **Skill 存取**：自動掃描 `.github/copilot/skills/`（共享技能）與 `.github/skills/`（OpenSpec CLI 技能），無需額外設定
 
 ## Codex
-- **可靠自動入口**：`AGENTS.md`（Codex CLI 自動 discovery）
-- **Codex 專用導覽補充**：`CODEX.md`（列出所有 skill / rule / agent 完整路徑清單，需顯式讀取）
-- 若使用 repo instructions、workspace prompt、custom task prompt，先讀 `AGENTS.md`，再讀 `CODEX.md`
+- 入口檔：`CODEX.md`（列出所有 skill / rule / agent 完整路徑清單）
+- 若使用 repo instructions、workspace prompt、custom task prompt，直接引用 `CODEX.md` 即可
 - **三角色輪替模式**：Planner → Executor → Review Gate，每個角色一個獨立 session
-- **Skill 存取**：Codex CLI 原生掃描 `.agents/skills/`；或由 `CODEX.md` 引導以 `read_file` 讀取
+- **Skill 存取**：讀取 `CODEX.md`，依其中清單以 `read_file` 工具讀取對應 skill 路徑
 - **角色規格書**：`.github/agents/*.agent.md` 為角色規格書（非原生 agent），搭配 `read_file` 讀取後依角色行動
-- **Per-change 提示詞**：`docs/agents/codex-prompts/v3/`（已生成，6 個 change × 3 角色 = 18 個檔）
+- **Per-change 提示詞**：`docs/agents/codex-prompts/v{N}/`（brief 確認後由 `#codex-prompts-generate` 一鍵生成）
 - 詳細啟動流程：`docs/agents/codex-cli-init.md`
 
 ## Gemini Code Assist（IDE Plugin）

@@ -1,9 +1,6 @@
 # Codex CLI 專案上下文
 
-> **OpenAI Codex CLI 使用**：本檔案為 Codex 專用導覽文件，需在 session 啟動時**手動貼入**或顯式讀取。
-> Codex CLI 可靠自動入口為 `AGENTS.md`（自動 discovery），本檔案**不會**被 Codex CLI 自動載入，
-> 除非在 `~/.codex/config.toml` 設定 `project_doc_fallback_filenames = ["CODEX.md"]`（per-machine 設定）。
-> 所有共通規則以 `AGENTS.md` 為準。
+> 本檔案請在每次新 Codex session 啟動時手動貼入，或設定為 workspace instructions。所有共通規則以 AGENTS.md 為準。
 
 ## 必讀入口
 
@@ -51,5 +48,5 @@
 - **三角色輪替模式**：Planner → Executor → Review Gate
 - 角色切換時開新 session，不要 resume（避免上下文污染）
 - 每個角色用獨立 session；同角色的續接用 `codex resume --last -C <repo-path>`
-- per-change 提示詞（若已生成）路徑為：`docs/agents/codex-prompts/v3/`；執行 `#codex-prompts-generate` 可建立（須先確認 brief）
+- per-change 提示詞已備好在：`docs/agents/codex-prompts/v{N}/`（確認 brief 後由 `#codex-prompts-generate` 生成）
 - 詳細啟動流程：`docs/agents/codex-cli-init.md`

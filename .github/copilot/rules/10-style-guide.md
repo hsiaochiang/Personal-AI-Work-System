@@ -1,7 +1,7 @@
 # 10-style-guide（Style Contract）
 
-> 狀態：**FROZEN**
-> 來源：（已確認 FROZEN，2026/4/2 Wilson 確認）
+> 狀態：**PENDING**
+> 來源：（尚未提供 Stitch HTML）
 
 ## 1) 字體（Fonts）
 - （待匯入 Stitch HTML 後自動萃取或人工補齊）

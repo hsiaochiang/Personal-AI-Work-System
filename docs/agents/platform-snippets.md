@@ -16,13 +16,12 @@
 ## Codex Minimal Entrypoint
 
 ```text
-Read AGENTS.md first (it is the reliable auto-discovered entry for Codex CLI).
-Then read CODEX.md for Codex-specific path guidance (skills, rules, agent specs, per-change prompts).
+Read CODEX.md first (it references AGENTS.md and lists all skill / rule / agent paths).
 If this is a handoff, read docs/handoff/current-task.md and docs/handoff/blockers.md next.
 Use docs/agents/commands.md as the source of truth for setup, test, lint, build, and smoke commands.
 Update handoff only on task start, subtask completion, blocker discovery, agent switch, or session close.
 Do not silently change scope, rewrite architecture, add major dependencies, or perform irreversible actions without approval.
-Per-change prompts: docs/agents/codex-prompts/v3/
+Per-change prompts: docs/agents/codex-prompts/v{N}/
 ```
 
 ## Gemini Code Assist Minimal Entrypoint
