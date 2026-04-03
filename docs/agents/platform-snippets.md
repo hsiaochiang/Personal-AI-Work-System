@@ -16,12 +16,13 @@
 ## Codex Minimal Entrypoint
 
 ```text
-Read AGENTS.md first.
+Read AGENTS.md first (it is the reliable auto-discovered entry for Codex CLI).
+Then read CODEX.md for Codex-specific path guidance (skills, rules, agent specs, per-change prompts).
 If this is a handoff, read docs/handoff/current-task.md and docs/handoff/blockers.md next.
 Use docs/agents/commands.md as the source of truth for setup, test, lint, build, and smoke commands.
-Use docs/agents/project-context.md, docs/roadmap.md, docs/decision-log.md, and docs/runlog/ for project context.
 Update handoff only on task start, subtask completion, blocker discovery, agent switch, or session close.
 Do not silently change scope, rewrite architecture, add major dependencies, or perform irreversible actions without approval.
+Per-change prompts: docs/agents/codex-prompts/v3/
 ```
 
 ## Gemini Code Assist Minimal Entrypoint

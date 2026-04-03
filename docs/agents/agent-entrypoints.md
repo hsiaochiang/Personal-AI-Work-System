@@ -14,12 +14,14 @@
 - **Skill 存取**：自動掃描 `.github/copilot/skills/`（共享技能）與 `.github/skills/`（OpenSpec CLI 技能），無需額外設定
 
 ## Codex
-- 若使用 repo instructions、workspace prompt、custom task prompt，建議內容只有：
-    1. 先讀 `AGENTS.md`
-    2. 任務開始或切換前同步 `docs/handoff/`
-    3. 命令以 `docs/agents/commands.md` 為準
-- 不要在 Codex 專屬入口重寫完整流程規範
-- **Skill 存取**：讀取 `AGENTS.md` 中的「共享 Skill 清單」段落，找到 canonical 路徑後用 `read_file` 工具直接讀取 `.github/copilot/skills/` 或 `.github/skills/` 下的對應檔案
+- **可靠自動入口**：`AGENTS.md`（Codex CLI 自動 discovery）
+- **Codex 專用導覽補充**：`CODEX.md`（列出所有 skill / rule / agent 完整路徑清單，需顯式讀取）
+- 若使用 repo instructions、workspace prompt、custom task prompt，先讀 `AGENTS.md`，再讀 `CODEX.md`
+- **三角色輪替模式**：Planner → Executor → Review Gate，每個角色一個獨立 session
+- **Skill 存取**：Codex CLI 原生掃描 `.agents/skills/`；或由 `CODEX.md` 引導以 `read_file` 讀取
+- **角色規格書**：`.github/agents/*.agent.md` 為角色規格書（非原生 agent），搭配 `read_file` 讀取後依角色行動
+- **Per-change 提示詞**：`docs/agents/codex-prompts/v3/`（已生成，6 個 change × 3 角色 = 18 個檔）
+- 詳細啟動流程：`docs/agents/codex-cli-init.md`
 
 ## Gemini Code Assist（IDE Plugin）
 - 若使用 workspace context、starter prompt、pinned prompt，建議內容只有：
@@ -32,7 +34,7 @@
 
 ## Gemini CLI（終端機）
 - 已確認能力（2026-03-30）：
-    - ✅ 可主動執行 Shell 命令（如 `python bootstrap_copilot_workspace.py --verify-only`）
+    - ✅ 可主動執行 Shell 命令（如 `python deploy/bootstrap.py --verify-only`）
     - ✅ 可完整擷取 stdout / stderr / exit code 並據以決定下一步
     - ✅ 可直接讀取 / 修改本機檔案（`read_file`、`write_file`、`replace`）
     - ✅ 可多步驟連續執行，不需人工在每步介入

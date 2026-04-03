@@ -54,9 +54,21 @@
 
 ## Thin Entry Strategy
 - Copilot：`.github/copilot-instructions.md` 只保留 Copilot 專屬規則，並先導向本檔
-- Codex：若使用自訂 prompt / instructions，內容應只引用本檔與 `docs/agents/*`
+- Codex：**`AGENTS.md` 為 Codex CLI 可靠自動入口**；`CODEX.md` 為 Codex 專用導覽補充文件（需顯式讀取）；詳細啟動流程見 `docs/agents/codex-cli-init.md`
 - Gemini Code Assist：若使用 workspace prompt 或 chat starter，內容也應只做導讀，不重複維護第二套規範
 - 原則：共通規則只維護一份，平台專屬入口只做轉接
+
+## Skills 路徑對照（三層定位）
+
+> 這個 repo 同時存在三層 OpenSpec skills，各有明確定位：
+
+| 目錄 | 定位 | 適用平台 |
+|------|------|---------|
+| `.github/skills/` | **Canonical source**（GitHub Copilot OpenSpec path，也是其他兩層的來源） | Copilot Chat |
+| `.codex/skills/` | OpenSpec 對 Codex 的 tool-specific install path（副本，來源：`.github/skills/`） | GitHub Copilot Coding agent |
+| `.agents/skills/` | Codex CLI repo-native discovery path（副本，來源：`.github/skills/`） | OpenAI Codex CLI |
+
+同步原則：修改 skill 永遠先更新 `.github/skills/`，再同步到其他兩層。
 
 ## 共享 Skill 清單
 
@@ -83,10 +95,12 @@
 | `ux-fullstack-engineer` | `.github/copilot/skills/ux-fullstack-engineer.md` | UX 流程審查，產出 ux-review.md | `#ux-review`（僅 UI 類 change） |
 | `debug-sheriff` | `.github/copilot/skills/debug-sheriff.md` | Bug 診斷與修復流程 | bug 修復任務 |
 | `scribe` | `.github/copilot/skills/scribe.md` | Session 收尾，產出 experience slides | `#session-close` |
+| `deploy-conductor` | `.github/copilot/skills/deploy-conductor.md` | 布版完整生命週期（Prepare→Execute→Verify） | `#deploy-prepare`、`#deploy-execute`、`#deploy-verify` |
+| `upgrade-advisor` | `.github/copilot/skills/upgrade-advisor.md` | 目標專案升級顧問（版本差異 + 升級計畫） | `#template-upgrade`（在目標專案中使用） |
 
 ### 各平台存取方式
 
 - **Copilot**：自動掃描 `.github/copilot/skills/` 與 `.github/skills/`，無需額外設定
 - **Claude Code**：掃描 `.claude/skills/<name>/SKILL.md`（薄引用，指向上方 canonical 路徑）
 - **Gemini CLI**：透過 `GEMINI.md` 的 `@file.md` import 語法載入所需 skill
-- **Codex**：讀取本清單後，使用 `read_file` 工具讀取上方 canonical 路徑
+- **Codex**：啟動時讀取 `CODEX.md`，依其中路徑清單以 `read_file` 工具讀取所需 skill / rule / agent；per-change 提示詞見 `docs/agents/codex-prompts/`
