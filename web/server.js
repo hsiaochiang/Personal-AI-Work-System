@@ -314,12 +314,31 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+function logServerStartup(port) {
   console.log(`\n  個人 AI 工作系統儀表板`);
   console.log(`  ──────────────────────`);
-  console.log(`  http://localhost:${PORT}\n`);
+  console.log(`  http://localhost:${port}\n`);
   console.log(`  頁面：`);
-  console.log(`    總覽     http://localhost:${PORT}/`);
-  console.log(`    當前任務  http://localhost:${PORT}/task`);
-  console.log(`    專案記憶  http://localhost:${PORT}/memory\n`);
-});
+  console.log(`    總覽     http://localhost:${port}/`);
+  console.log(`    當前任務  http://localhost:${port}/task`);
+  console.log(`    專案記憶  http://localhost:${port}/memory\n`);
+}
+
+function startServer(port = PORT, callback) {
+  return server.listen(port, () => {
+    logServerStartup(port);
+    if (typeof callback === 'function') {
+      callback();
+    }
+  });
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = {
+  PORT,
+  server,
+  startServer,
+};

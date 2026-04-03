@@ -39,6 +39,7 @@
 | P2 | 治理文件狀態漂移（roadmap/handoff/runlog 不一致） | 中 | 中 | 以 `docs/roadmap.md` 為真源做收尾比對 | 同一階段在不同文件出現互斥狀態 | 暫停交接；完成一致性修補與 decision-log 留痕後解除 |
 
 ## Resolved Blockers
+- 2026-04-03：`plain-text-adapter-refactor` Review Gate 曾因 shared validator 未嚴格檢查 ISO 8601、且缺少 `docs/uiux/2026-04-03_ui-review.md` 而 FAIL；現已補強 `web/public/js/conversation-adapters.js` 驗證、更新 `tools/verify_plain_text_adapter.js`，並新增 UI review 證據後解除
 - S6 主 spec 曾未 sync，導致 `openspec validate multi-tool-integration-framework --type spec --strict` 回報 ENOENT（缺 `openspec/specs/multi-tool-integration-framework/spec.md`）；已同步主 spec 並重跑 strict validate(spec) PASS
 - S3 `opsx-sync` 初版把 delta spec 直接同步為 main spec，導致 `openspec validate real-project-validation --type spec --strict` 失敗（缺少 `## Purpose`/`## Requirements`）；已改為 main spec 標準結構後 PASS
 - 模板升級曾把 handoff / runlog 證據檔與 protected 骨架混在一起；目前已改用 init-only / non-seeded 模型處理，後續由本 repo 自行維護 `current-task.md`、`blockers.md` 與每日 runlog

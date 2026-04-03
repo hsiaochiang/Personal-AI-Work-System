@@ -8,7 +8,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 
 - **V1** — 單專案知識閉環工作台 ✅ 已完成
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
-- **V3** — 跨工具整合層 ⏳ 規劃中
+- **V3** — 跨工具整合層 🔄 進行中
 - **V4** — 治理、自動化、個人 AI 作業系統 ⏳ 規劃中
 
 ## 功能總覽
@@ -24,9 +24,10 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 限制：範本結構硬編碼在前端 JS，不支援自訂範本
 
 ### 知識提取與寫回（/extract）
-- 能力描述：貼上 AI 對話 → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
+- 能力描述：貼上 AI 對話 → 先由 `PlainTextAdapter` 正規化為 `ConversationDoc` → 啟發式提取候選 → 審核（採用/編輯/忽略）→ 寫回 `docs/memory/`
 - 操作方式：貼文字 → 審核候選 → 點「寫回」
 - 改善（V2）：寫回前自動 backup（`.backup/` 機制），不再整檔覆蓋
+- 改善（V3 Change 2）：既有純文字入口已接上 `ConversationDoc` adapter 基線，為後續多來源匯入保留共同介面；目前使用者操作路徑不變
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
@@ -75,6 +76,9 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-03 | V3 Change 2 archive | 完成 `plain-text-adapter-refactor` 的 main spec sync、Review Gate 修補與 archive 收尾；下一步切換至 `chatgpt-adapter` | 無（No user-facing change；本次為治理收尾，已上線的 `/extract` adapter-based plain text flow 不變） |
+| 2026-04-03 | V3 Change 2 apply | 完成 `plain-text-adapter-refactor`：新增 `PlainTextAdapter`、將 `/extract` 入口改接 `ConversationDoc`、補 adapter 驗證與 smoke 證據 | 無（No workflow change；純文字貼上與寫回操作路徑不變，僅內部改為 adapter-based pipeline） |
+| 2026-04-03 | V3 Change 2 preflight | 啟動 `plain-text-adapter-refactor` 的 Planner 前置，收斂 change scope、驗收條件與風險，準備進入 `#opsx-new` | 無（No user-facing change；本次僅規劃 `PlainTextAdapter` 重構邊界，尚未改動 `/extract` 行為） |
 | 2026-04-03 | V3 Change 1 | 完成 `conversation-schema-definition` 的 schema 文件、主 spec sync 與 archive 收尾 | 無（No user-facing change；本次僅定義 `ConversationMessage` / `ConversationDoc` 契約並同步治理文件，尚未改動 `/extract` 或 `/memory` 操作） |
 | 2026-04-02 | V4 | 撰寫 v4-brief.md，定義治理自動化與個人 AI OS 計劃 | 無（規劃文件，未開始實作） |
 | 2026-04-02 | V3 | 撰寫 v3-brief.md，定義跨工具整合層計劃 | 無（規劃文件，未開始實作） |

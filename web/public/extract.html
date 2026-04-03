@@ -63,7 +63,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>知識提取</h2>
-        <p class="description">貼上對話內容 → 自動提取候選知識 → 審核後寫回記憶</p>
+        <p class="description">貼上對話內容 → 先由 PlainTextAdapter 正規化 → 自動提取候選知識 → 審核後寫回記憶</p>
       </div>
 
       <!-- Step 1: Input -->
@@ -71,7 +71,7 @@
         <div class="card-header">
           <span class="card-title">
             <span class="step-badge">1</span>
-            貼上對話文字
+            貼上純文字對話
           </span>
         </div>
         <textarea class="extract-textarea" id="input-text" placeholder="將 AI 對話內容貼在這裡…&#10;&#10;提取引擎會自動識別：&#10;• 專案背景資訊 → project-context.md&#10;• 偏好與規則 → preference-rules.md&#10;• 任務模式 → task-patterns.md&#10;• 決策記錄 → decision-log.md&#10;• 輸出模式 → output-patterns.md&#10;• 技能候選 → skill-candidates.md" rows="10"></textarea>
@@ -130,6 +130,7 @@
   </div>
 
   <script src="/js/app.js"></script>
+  <script src="/js/conversation-adapters.js"></script>
   <script src="/js/extract.js"></script>
 </body>
 </html>

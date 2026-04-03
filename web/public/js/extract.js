@@ -80,6 +80,13 @@ const CATEGORIES = {
 let candidates = [];
 let memorySnapshot = {};
 
+function getConversationAdapterAPI() {
+  if (!window.ConversationAdapters) {
+    throw new Error('ConversationAdapters 未載入');
+  }
+  return window.ConversationAdapters;
+}
+
 /* ─── Init ─── */
 document.addEventListener('DOMContentLoaded', () => {
   const inputEl = document.getElementById('input-text');
@@ -100,6 +107,14 @@ async function runExtraction() {
   const text = document.getElementById('input-text').value.trim();
   if (!text) return;
 
+  let conversationDoc;
+  try {
+    conversationDoc = getConversationAdapterAPI().adaptPlainTextConversation(text);
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+
   // Load current memory for dedup
   try {
     const data = await apiFetch('/api/memory');
@@ -108,8 +123,8 @@ async function runExtraction() {
     });
   } catch { /* continue without dedup */ }
 
-  // Extract candidates
-  candidates = extractCandidates(text);
+  // Extract candidates from normalized conversation doc
+  candidates = extractCandidatesFromConversationDoc(conversationDoc);
 
   if (candidates.length === 0) {
     showEmpty(document.getElementById('candidates-list'), 'search_off', '未找到候選知識項目。請嘗試貼上更多對話內容。');
@@ -126,11 +141,17 @@ async function runExtraction() {
  * Heuristic extraction: split text into paragraphs/sentences,
  * score each against category patterns, yield candidates above threshold.
  */
-function extractCandidates(text) {
+function extractCandidatesFromConversationDoc(conversationDoc) {
+  const conversationText = getConversationAdapterAPI().conversationDocToText(conversationDoc);
+  return extractCandidatesFromText(conversationText, conversationDoc);
+}
+
+function extractCandidatesFromText(text, conversationDoc) {
   const results = [];
   // Split into meaningful chunks (paragraphs or multi-line blocks)
   const chunks = splitIntoChunks(text);
   const seen = new Set();
+  const primarySource = conversationDoc?.messages?.[0]?.source || 'plain';
 
   chunks.forEach((chunk, idx) => {
     const trimmed = chunk.trim();
@@ -172,6 +193,7 @@ function extractCandidates(text) {
         category: bestCategory,
         content: trimmed,
         keyLine: keyLine,
+        source: primarySource,
         dedupeKey: dedupeKey,
         confidence: confidence,
         decision: confidence >= 0.6 ? 'pending' : 'rejected',
