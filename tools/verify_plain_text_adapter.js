@@ -2,17 +2,19 @@ const assert = require('assert');
 const http = require('http');
 
 const {
+  adaptConversationInput,
   adaptPlainTextConversation,
   conversationDocToText,
   validateConversationDoc,
 } = require('../web/public/js/conversation-adapters.js');
 const { PORT, startServer, server } = require('../web/server.js');
+const VERIFY_PORT = Number(process.env.VERIFY_PORT || PORT + 1);
 
 function fetchText(targetPath) {
   return new Promise((resolve, reject) => {
     const req = http.request({
       hostname: '127.0.0.1',
-      port: PORT,
+      port: VERIFY_PORT,
       path: targetPath,
       method: 'GET',
     }, (res) => {
@@ -51,6 +53,8 @@ async function runAdapterChecks() {
     messages: [{ role: 'user', content: 'x', source: 'plain', timestamp: null }],
     metadata: { schemaVersion: 'v1', importedAt: 'April 3, 2026' },
   }), /ISO 8601/);
+  const autoDetectedDoc = adaptConversationInput(sampleText);
+  assert.strictEqual(autoDetectedDoc.messages[0].source, 'plain');
 
   console.log('PASS adapter contract');
 }
@@ -58,13 +62,14 @@ async function runAdapterChecks() {
 async function runServerSmoke() {
   await new Promise((resolve, reject) => {
     server.once('error', reject);
-    startServer(PORT, resolve);
+    startServer(VERIFY_PORT, resolve);
   });
 
   try {
     const extractPage = await fetchText('/extract');
     assert.strictEqual(extractPage.status, 200);
-    assert.match(extractPage.body, /PlainTextAdapter/);
+    assert.match(extractPage.body, /ChatGPT JSON \/ TXT/);
+    assert.match(extractPage.body, /一般純文字/);
     assert.match(extractPage.body, /\/js\/conversation-adapters\.js/);
 
     const adapterScript = await fetchText('/js/conversation-adapters.js');

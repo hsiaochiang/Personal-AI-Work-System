@@ -682,6 +682,30 @@ body {
   box-shadow: 0 0 0 2px var(--primary-container);
 }
 
+.extract-import-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.extract-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl);
+  padding: 0.35rem 0.75rem;
+}
+
+.extract-status .material-symbols-outlined {
+  font-size: 16px;
+}
+
 .extract-actions {
   display: flex;
   align-items: center;

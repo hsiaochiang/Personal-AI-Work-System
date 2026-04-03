@@ -1,0 +1,11 @@
+You
+我想先讓 /extract 支援 ChatGPT transcript，不要引入新的前端框架。
+
+ChatGPT
+可以先做 auto-detect 與最小 JSON 上傳入口，保留既有 textarea 流程。
+
+You
+再補上 verify script，確保 plain text fallback 不壞。
+
+ChatGPT
+這樣可以把 chatgpt-adapter 控制在最小安全範圍內。

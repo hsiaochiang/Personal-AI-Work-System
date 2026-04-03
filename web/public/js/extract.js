@@ -79,6 +79,8 @@ const CATEGORIES = {
 
 let candidates = [];
 let memorySnapshot = {};
+let selectedImportFile = null;
+let hydratingInputFromFile = false;
 
 function getConversationAdapterAPI() {
   if (!window.ConversationAdapters) {
@@ -91,16 +93,61 @@ function getConversationAdapterAPI() {
 document.addEventListener('DOMContentLoaded', () => {
   const inputEl = document.getElementById('input-text');
   const charCount = document.getElementById('char-count');
+  const uploadButton = document.getElementById('btn-upload-file');
+  const fileInput = document.getElementById('input-file');
 
   inputEl.addEventListener('input', () => {
     charCount.textContent = inputEl.value.length + ' 字';
+
+    if (!hydratingInputFromFile && selectedImportFile) {
+      selectedImportFile = null;
+      updateImportStatus('已切回手動貼上模式，系統將自動偵測 ChatGPT / plain text。', 'edit');
+    }
   });
 
+  uploadButton.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', handleImportFile);
   document.getElementById('btn-extract').addEventListener('click', runExtraction);
   document.getElementById('btn-writeback').addEventListener('click', runWriteback);
   document.getElementById('btn-back').addEventListener('click', goBack);
   document.getElementById('btn-restart').addEventListener('click', restart);
 });
+
+async function handleImportFile(event) {
+  const [file] = event.target.files || [];
+  if (!file) {
+    return;
+  }
+
+  try {
+    const content = await file.text();
+    const inputEl = document.getElementById('input-text');
+    const charCount = document.getElementById('char-count');
+
+    hydratingInputFromFile = true;
+    inputEl.value = content;
+    charCount.textContent = `${content.length} 字`;
+    hydratingInputFromFile = false;
+
+    selectedImportFile = {
+      name: file.name,
+      type: file.type || '',
+    };
+
+    updateImportStatus(`已載入 ${file.name}，可直接按「提取候選知識」。`, 'upload_file');
+  } catch (error) {
+    hydratingInputFromFile = false;
+    selectedImportFile = null;
+    alert(`讀取檔案失敗：${error.message}`);
+  } finally {
+    event.target.value = '';
+  }
+}
+
+function updateImportStatus(message, icon) {
+  const statusEl = document.getElementById('import-status');
+  statusEl.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
+}
 
 /* ─── Step 1 → Step 2: Extract ─── */
 async function runExtraction() {
@@ -109,13 +156,19 @@ async function runExtraction() {
 
   let conversationDoc;
   try {
-    conversationDoc = getConversationAdapterAPI().adaptPlainTextConversation(text);
+    const metadata = {};
+    if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
+      metadata.inputFormatHint = 'chatgpt-json';
+    }
+
+    conversationDoc = getConversationAdapterAPI().adaptConversationInput(text, metadata);
   } catch (error) {
     alert(error.message);
     return;
   }
 
   // Load current memory for dedup
+  memorySnapshot = {};
   try {
     const data = await apiFetch('/api/memory');
     data.files.forEach(f => {
@@ -380,8 +433,12 @@ function goBack() {
 function restart() {
   candidates = [];
   memorySnapshot = {};
+  selectedImportFile = null;
+  hydratingInputFromFile = false;
   document.getElementById('input-text').value = '';
+  document.getElementById('input-file').value = '';
   document.getElementById('char-count').textContent = '0 字';
+  updateImportStatus('未上傳檔案，可直接貼上 ChatGPT transcript 或一般純文字。', 'notes');
   document.getElementById('step-result').classList.add('hidden');
   document.getElementById('step-input').classList.remove('hidden');
 }

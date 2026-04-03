@@ -1,0 +1,70 @@
+[
+  {
+    "title": "較舊的討論",
+    "create_time": 1710000000,
+    "update_time": 1710000100,
+    "current_node": "old-assistant",
+    "mapping": {
+      "old-root": {
+        "id": "old-root",
+        "message": null,
+        "parent": null,
+        "children": ["old-user"]
+      },
+      "old-user": {
+        "id": "old-user",
+        "parent": "old-root",
+        "children": ["old-assistant"],
+        "message": {
+          "author": { "role": "user" },
+          "create_time": 1710000001,
+          "content": { "content_type": "text", "parts": ["這是較舊的 conversation。"] }
+        }
+      },
+      "old-assistant": {
+        "id": "old-assistant",
+        "parent": "old-user",
+        "children": [],
+        "message": {
+          "author": { "role": "assistant" },
+          "create_time": 1710000002,
+          "content": { "content_type": "text", "parts": ["這筆資料不應該被選中。"] }
+        }
+      }
+    }
+  },
+  {
+    "title": "ChatGPT 最新討論",
+    "create_time": 1710001000,
+    "update_time": 1710002000,
+    "current_node": "new-assistant",
+    "mapping": {
+      "new-root": {
+        "id": "new-root",
+        "message": null,
+        "parent": null,
+        "children": ["new-user"]
+      },
+      "new-user": {
+        "id": "new-user",
+        "parent": "new-root",
+        "children": ["new-assistant"],
+        "message": {
+          "author": { "role": "user" },
+          "create_time": 1710001001,
+          "content": { "content_type": "text", "parts": ["請把 ChatGPT JSON 匯入轉成 ConversationDoc。"] }
+        }
+      },
+      "new-assistant": {
+        "id": "new-assistant",
+        "parent": "new-user",
+        "children": [],
+        "message": {
+          "author": { "role": "assistant" },
+          "create_time": 1710001002,
+          "content": { "content_type": "text", "parts": ["可以先沿用 shared adapter module，並保留 plain text fallback。"] }
+        }
+      }
+    }
+  }
+]
