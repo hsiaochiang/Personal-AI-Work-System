@@ -4,13 +4,13 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 Change 4 review-ready — local-import-vscode-copilot
+- Name: V3 post-archive handoff — local-import-vscode-copilot complete
 - Owner agent: Codex
 - Last updated on: 2026-04-03
 
 ## Goal
-- 完成 `local-import-vscode-copilot` 的 executor 交付與主 spec sync
-- 保留下一位 agent / 人工接手 archive 所需的最小脈絡
+- 確認 `local-import-vscode-copilot` 已完成 sync / archive / git 收尾
+- 保留下一位 agent 接手 `source-attribution-in-memory` 所需的最小脈絡
 - 維持 `/extract` 的 Copilot / ChatGPT / plain text 三條入口一致
 
 ## Scope
@@ -62,24 +62,25 @@
   - `node tools/verify_plain_text_adapter.js`
 - **V3 Change 4 `#opsx-sync` 完成** ✅（`openspec/specs/local-import-vscode-copilot/spec.md`）
 - **V3 Change 4 git commit / push 完成** ✅（`bc3c0bd add copilot local import` → `origin/main`）
+- **V3 Change 4 `#opsx-archive` 完成** ✅（封存至 `openspec/changes/archive/2026-04-03-local-import-vscode-copilot/`）
 
 ## In Progress
-- 等待人工確認是否執行 `#opsx-archive`
+- 準備切換至 `source-attribution-in-memory`
 - 無 active blocker
 
 ## Next Step
 
 | 優先 | Change | 說明 |
 |:----:|--------|------|
-| 🔴 1 | `local-import-vscode-copilot` | 人工確認後執行 `#opsx-archive`，封存 active change |
-| 🟡 2 | `source-attribution-in-memory` | 待 local import 完成後，再補來源 badge 與 memory metadata |
-| 🟡 3 | `import-ui-multi-source` | 最後再做工具來源 selector 與 richer import UI |
+| 🔴 1 | `source-attribution-in-memory` | 開新 session 做 planner / executor，補 memory source metadata 與 badge |
+| 🟡 2 | `import-ui-multi-source` | 後續收斂 `/extract` 成工具 selector 與 richer import UI |
+| 🟡 3 | V3 收尾 | 視 Change 5、6 完成度，再更新 brief / roadmap 的版本狀態 |
 
 ## Files Touched（本 session）
-- openspec/changes/local-import-vscode-copilot/proposal.md
-- openspec/changes/local-import-vscode-copilot/design.md
-- openspec/changes/local-import-vscode-copilot/specs/local-import-vscode-copilot/spec.md
-- openspec/changes/local-import-vscode-copilot/tasks.md
+- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/proposal.md
+- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/design.md
+- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/specs/local-import-vscode-copilot/spec.md
+- openspec/changes/archive/2026-04-03-local-import-vscode-copilot/tasks.md
 - openspec/specs/local-import-vscode-copilot/spec.md
 - docs/planning/v3-brief.md
 - docs/roadmap.md
@@ -108,7 +109,7 @@
 - Plain-text regression verify：✅ PASS（`node tools/verify_plain_text_adapter.js`）
 - UI review：✅ PASS（`docs/uiux/2026-04-03_ui-review.md` addendum）
 - UX review：✅ PASS（`docs/uiux/2026-04-03_ux-review.md` addendum）
-- Review Gate：✅ PASS（唯一 brief/manual sync 漂移已修正，可進入 commit / push；archive 仍待人工確認）
+- Review Gate：✅ PASS（archive 前 blocker 已修正）
 - Git publish：✅ PASS（`git push origin main` → `bc3c0bd`）
 - OpenSpec sync：✅ PASS（main spec 已建立）
-- OpenSpec archive：⏸️ 待人工確認（不可逆）
+- OpenSpec archive：✅ PASS（`openspec archive local-import-vscode-copilot -y --skip-specs`）

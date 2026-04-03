@@ -81,6 +81,7 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-03 | V3 Change 4 archive | 完成 `local-import-vscode-copilot` archive，active change 已封存至 `openspec/changes/archive/2026-04-03-local-import-vscode-copilot/`，handoff 轉向下一個 V3 change | 無（No user-facing change；本次為治理收尾與交接切換，`/extract` 能力不變） |
 | 2026-04-03 | V3 Change 4 git publish | 完成 `add copilot local import` commit 與 `origin/main` push，handoff 改為僅待人工確認 `#opsx-archive` | 無（No user-facing change；僅同步發布狀態與交接資訊） |
 | 2026-04-03 | V3 Change 4 review-gate cleanup | 校正 `docs/planning/v3-brief.md` 的 Change 4 impact 文字，使 brief 與 `/extract` 實際能力、handoff、manual 同步一致 | 無（No user-facing change；僅治理文件對齊，功能仍為 Copilot local import + ChatGPT / plain text 共存） |
 | 2026-04-03 | V3 Change 4 executor | 完成 `local-import-vscode-copilot` 的 apply / verify / sync：`/extract` 新增 Copilot 本機 session list、path override 與單一 session 載入；既有 ChatGPT / plain text 路徑維持可用 | 有（使用者現在可在 `/extract` 直接刷新並載入本機 VS Code Copilot Chat JSONL session，再沿用既有 extraction / review / writeback 流程；尚無搜尋、多 session merge 或 source badge） |
