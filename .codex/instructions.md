@@ -1,6 +1,7 @@
-# Codex Instructions
+# Codex Instructions (GitHub Copilot Coding agent)
 
-> This file is auto-read by Codex at session start. Keep it as a thin entrypoint.
+> **本檔案由 GitHub Copilot Coding agent 自動讀取**（VS Code agent mode）。
+> OpenAI Codex CLI 使用者：可靠自動入口為 `AGENTS.md`，本檔案不在 Codex CLI 的 discovery chain 中。
 
 ## Startup Sequence
 
@@ -12,12 +13,13 @@
 
 ## Skills
 
-OpenSpec workflow skills are in `.codex/skills/`:
-- `.codex/skills/openspec-propose/SKILL.md` — propose a new change (`#opsx-new`)
-- `.codex/skills/openspec-apply-change/SKILL.md` — implement tasks (`#opsx-apply`)
-- `.codex/skills/openspec-archive-change/SKILL.md` — archive completed change (`#opsx-archive`)
-- `.codex/skills/openspec-explore/SKILL.md` — explore/clarify requirements (`#opsx-explore`)
+OpenSpec workflow skills canonical 位置在 `.github/skills/`：
+- `.github/skills/openspec-propose/SKILL.md` — propose a new change (`#opsx-new`)
+- `.github/skills/openspec-apply-change/SKILL.md` — implement tasks (`#opsx-apply`)
+- `.github/skills/openspec-archive-change/SKILL.md` — archive completed change (`#opsx-archive`)
+- `.github/skills/openspec-explore/SKILL.md` — explore/clarify requirements (`#opsx-explore`)
 
+`.codex/skills/` 為本地副本（內容相同），canonical source 以 `.github/skills/` 為準。
 Shared skills (code review, git, smoke): `.github/copilot/skills/`
 
 ## Handoff Update Policy

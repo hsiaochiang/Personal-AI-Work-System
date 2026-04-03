@@ -9,11 +9,13 @@
 - Project-owned files：模板不追蹤；完全由專案自行維護。
 
 ## Safe Upgrade
-- 升級前先跑 `bootstrap_copilot_workspace.py --upgrade-preview --root <target>`。
-- 若想查分類，可跑 `bootstrap_copilot_workspace.py --list-managed --root <target>`。
+> ⚠️ 以下指令從**模板 repo 目錄**執行（`D:\program\copilot-workspace-template`），不是在本專案目錄執行。
+- 升級前先跑 `python deploy/bootstrap.py --root <目標專案路徑> --upgrade-preview`。
+- 若想查分類，可跑 `python deploy/bootstrap.py --root <目標專案路徑> --list-managed`。
+- 或批次執行：`python deploy/orchestrate.py --dry-run`（從模板 repo 目錄）。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
-## Managed Files (61)
+## Managed Files (64)
 - .claude/skills/openspec-apply-change/SKILL.md
 - .claude/skills/openspec-archive-change/SKILL.md
 - .claude/skills/openspec-explore/SKILL.md
@@ -24,6 +26,7 @@
 - .github/agents/review-gate.agent.md
 - .github/copilot-instructions.md
 - .github/copilot/prompts/code-review.prompt.md
+- .github/copilot/prompts/codex-prompts-generate.prompt.md
 - .github/copilot/prompts/commit-push.prompt.md
 - .github/copilot/prompts/log-decision.prompt.md
 - .github/copilot/prompts/opsx-apply.prompt.md
@@ -59,10 +62,12 @@
 - .github/copilot/skills/ux-fullstack-engineer.md
 - .github/prompts/openspec-execute.prompt.md
 - AGENTS.md
+- CODEX.md
 - GEMINI.md
 - TEMPLATE-FILES.md
 - docs/agents/OPENSPEC_AGENT_GUIDE.zh-TW.md
 - docs/agents/agent-entrypoints.md
+- docs/agents/codex-cli-init.md
 - docs/agents/gemini-cli-init.md
 - docs/agents/platform-onboarding-checklist.md
 - docs/agents/platform-setup-guide.md
