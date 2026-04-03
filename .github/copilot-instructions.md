@@ -88,6 +88,10 @@
 | 狀態更新 | `#status` | — | — | roadmap + runlog 更新 |
 | 記錄決策 | `#log-decision` | — | — | `docs/decision-log.md` + `docs/decisions/` |
 | 歸檔 | `#opsx-archive` | — | — | change 歸檔 |
+| **布版準備** | `#deploy-prepare` | `rules/75-deploy-governance.md` | `skills/deploy-conductor.md` | 布版準備報告 |
+| **布版執行** | `#deploy-execute` | `rules/75-deploy-governance.md` | `skills/deploy-conductor.md` | git tag + GitHub Release + 布版結果 |
+| **布版驗證** | `#deploy-verify` | `rules/75-deploy-governance.md` | `skills/deploy-conductor.md` | 驗證報告 |
+| **模板升級**（目標專案） | `#template-upgrade` | `rules/75-deploy-governance.md` + `rules/80-template-boundary.md` | `skills/upgrade-advisor.md` | 個人化升級計畫 |
 | Agent/Skill/Rule 撰寫 | — | `rules/85-agent-skill-authoring.md` | — | `.agent.md` / `skills/*.md` / `rules/*.md` |
 | Session 結束 | `#session-close` | — | `skills/scribe.md` | `experience/<YYYY-MM>/slides_<date>.md` |
 

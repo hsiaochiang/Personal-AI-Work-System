@@ -122,22 +122,25 @@ openspec status --change...
 
 ## 目前 Codex CLI 支援程度
 
+> 更新於 2026-04-03（openspec init + config profile 安裝 expanded workflows 後）
+
 | 能力 | 狀態 | 說明 |
 |------|------|------|
 | AGENTS.md 自動載入 | ✅ 可靠 | 實測確認 |
 | 14 個 skills 可見 | ✅ 可靠 | 含 deploy-conductor + upgrade-advisor |
-| `.agents/skills/` native discovery | ✅ 目錄已建立 | 實測確認可見 |
+| `.agents/skills/` native discovery | ✅ 11 個 skills | 與 `.codex/skills/` 完整同步 |
 | `codex-prompts/v3/` 18 個提示詞 | ✅ 已生成 | 6 個 change × 3 角色 |
 | core slash commands | ✅ 已安裝 | `/opsx-propose/explore/apply/archive` |
-| expanded slash commands | ⚠️ 未安裝 | `/opsx-new/ff/verify/sync`，需另行安裝 |
-| CODEX.md 自動載入 | ⚠️ 需 config | per-machine `~/.codex/config.toml` 設定 |
+| expanded slash commands | ✅ **已安裝** | `/opsx-new/ff/verify/sync/continue/bulk-archive/onboard`（`openspec config profile` 全選後安裝） |
+| CODEX.md 自動載入 | ⚠️ 需 config | per-machine `~/.codex/config.toml` 設定（Known Limitation L1） |
 
 ---
 
 ## 後續待辦
 
-1. 若要啟用 expanded slash commands：`openspec config profile` 選 expanded → `openspec update`
-2. 模板層：下一版應將 `deploy-conductor.md` + `upgrade-advisor.md` 加入 `template_src/` managed files，避免再次升級遺漏（見 codex-known-limitations.md L2 的結構問題）
+1. ~~若要啟用 expanded slash commands：`openspec config profile` 選 expanded → `openspec update`~~ **✅ 已完成（2026-04-03）**：`openspec init` + `openspec config profile` 全選，11 個 workflows 已安裝
+2. 模板層：下一版應將 `deploy-conductor.md` + `upgrade-advisor.md` 加入 `template_src/` managed files，避免再次升級遺漏（見 codex-known-limitations.md L2）
+3. 重啟 IDE 讓 slash commands 生效（openspec 安裝後已提示）
 
 ---
 

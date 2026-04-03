@@ -20,5 +20,5 @@
 
 ## Agent 行為
 - 若任務要求修改 managed files，先停下來說明風險，再由使用者決定是否要改上游模板
-- 若不確定分類，執行 `bootstrap_copilot_workspace.py --list-managed --root <target>`
+- 若不確定分類，執行 `deploy/bootstrap.py --list-managed --root <target>`
 - Commit 前，應再次檢查本次改動是否包含 managed files

@@ -57,23 +57,28 @@
 ### Step 2：執行（Executor）
 
 讀取 `.github/agents/openspec-executor.agent.md`，依照其中的角色定義與前置檢查，
-使用 `openspec` CLI 完成以下生命週期（skill file 已定義完整步驟）：
+使用 `openspec` CLI 或 slash commands 完成以下生命週期：
 
+**方式 A：Slash commands（已安裝，推薦）**
 ```
-openspec new change "<change-name>"          # 建立 change 目錄與 artifacts
-openspec status --change "<change-name>"     # 確認 schema 與進度
+/opsx-new "<change-name>"
+/opsx-ff
+/opsx-apply "<change-name>"
+/opsx-verify "<change-name>"
+```
+
+**方式 B：openspec CLI（skill files 內的指令）**
+```
+openspec new change "<change-name>"
+openspec status --change "<change-name>"
 # 依 openspec apply 指令逐步推進 tasks
-# 完成後以 openspec archive 歸檔
 ```
 
-**參考 skill 路徑**：`.github/skills/openspec-apply-change/SKILL.md`（也可用 `.agents/skills/` 下的同份副本）
+**目前本機已安裝的 OpenSpec workflows（custom profile，`delivery: both`）**：
+- Core：`/opsx-propose`、`/opsx-explore`、`/opsx-apply`、`/opsx-archive`
+- Expanded：`/opsx-new`、`/opsx-ff`、`/opsx-verify`、`/opsx-sync`、`/opsx-continue`、`/opsx-bulk-archive`、`/opsx-onboard`
 
-> ⚠️ **關於 `/opsx-*` slash commands**：
-> - 目前本機 `$CODEX_HOME/prompts/` 只安裝了 **core profile**：
->   `/opsx-propose`、`/opsx-explore`、`/opsx-apply`、`/opsx-archive`
-> - **未安裝 expanded workflow**：`/opsx-new`、`/opsx-ff`、`/opsx-verify`、`/opsx-sync`
-> - 若想啟用 expanded commands，需執行 `openspec config profile` 選擇 expanded，再執行 `openspec update`
-> - **目前建議使用路線**：直接透過 `openspec` CLI + skill files 推進，不依賴 slash commands
+> 重啟 IDE 后 slash commands 生效（`openspec config profile` 安裝时已提示）。
 
 ### Step 3：把關（Review Gate）
 

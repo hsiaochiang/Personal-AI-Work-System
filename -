@@ -1,0 +1,8 @@
+The reliably auto-discovered repo instruction file here is `AGENTS.md` at the repo root.
+
+`CODEX.md` is not auto-active by default in this Codex CLI harness without extra setup or an explicit step to read/use it. So in this session:
+
+- `AGENTS.md` is active
+- `CODEX.md` should be treated as a repo convention, not guaranteed runtime instruction loading
+
+If you want, I can also spell out the practical precedence between `AGENTS.md`, `CODEX.md`, and direct prompt instructions in this repo.

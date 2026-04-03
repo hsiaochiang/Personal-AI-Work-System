@@ -149,7 +149,7 @@ Executor 沒有建立 change 目錄就直接改程式碼。
 
 ### ❌ 修改了 Agent/Skill/Rule 但沒有同步 bootstrap
 若檔案是 managed file，直接改 `.agent.md` 或 `rules/*.md` 會在下次 upgrade 時被覆蓋。
-→ 必須同步修改 `bootstrap_copilot_workspace.py` 中對應的 render 函式。
+→ 必須同步修改 `deploy/bootstrap.py` 中對應的 render 函式。
 
 ## 完成後的交付
 

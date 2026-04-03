@@ -63,32 +63,24 @@ Read AGENTS.md first. Then read CODEX.md for Codex-specific context.
 
 ---
 
-## L3：`.agents/skills/` 生效需要 Codex CLI 版本確認
+## ~~L3：`.agents/skills/` 生效需要 Codex CLI 版本確認~~ ✅ 已解決（2026-04-03）
 
-### 問題說明
-`.agents/skills/` 是 OpenAI Codex CLI 的 repo-native skills 掃描路徑，但這個路徑的實際生效行為（版本支援、掃描細節）需要在機器上以 `codex exec` 實測才能確認。
+**原問題**：`.agents/skills/` 是否真正被 Codex CLI native discovery 辨識，需要實測確認。
 
-**本次修補**：已建立 `.agents/skills/` 並放入 4 個 OpenSpec skill（與 `.github/skills/` 內容相同）。
+**已解決**：
+- `openspec init` + `openspec config profile`（全選 11 workflows）已完成安裝
+- `.codex/skills/` 現有 11 個 skills（official Codex tool path，openspec 維護）
+- `.agents/skills/` 已同步為 11 個 skills（手動同步自 `.codex/skills/`）
+- expanded slash commands（`/opsx-new/ff/verify/sync/continue/bulk-archive/onboard`）全部安裝完畢
 
-### 無法保證的部分
-- 不同版本的 Codex CLI 對 `.agents/skills/` 的支援可能不同
-- skill metadata（YAML frontmatter 的 `name`、`description`）必須符合 Codex CLI 的格式才能被辨識
-- **尚未在本機實際以 `codex exec` 驗證這 4 個 skill 的 native discovery 生效**
-
-### 建議驗證步驟
-```bash
-codex -C D:\program\Personal-AI-Work-System
-# 在 session 中輸入：
-# "List all available skills you can see in this repo"
-# 確認是否出現 openspec-propose, openspec-explore 等
-```
+**此 limitation 已關閉。**
 
 ---
 
 ## 總結
 
-| 編號 | 問題 | 無法解決的原因 | Workaround 已落地 |
-|------|------|----------------|-------------------|
-| L1 | `CODEX.md` 自動載入 | per-machine config，repo 層控制不到 | ✅ 提示詞已顯式要求讀 CODEX.md |
-| L2 | style-guide FROZEN 覆蓋 | managed/protected 設計邊界問題，需模板重構 | ✅ 本次手動恢復 FROZEN |
-| L3 | `.agents/skills/` native 生效確認 | 需實測，Codex CLI 版本差異 | ✅ 目錄已建立，待使用者實測 |
+| 編號 | 問題 | 無法解決的原因 | 狀態 |
+|------|------|----------------|------|
+| L1 | `CODEX.md` 自動載入 | per-machine config，repo 層控制不到 | ⚠️ 未解決；Workaround：提示詞顯式讀取 |
+| L2 | style-guide FROZEN 覆蓋 | managed/protected 設計邊界問題，需模板重構 | ⚠️ 立即修已做；結構問題待規劃 |
+| L3 | `.agents/skills/` native 生效確認 | 需實測 | ✅ 已解決（openspec 全量安裝後 .agents/skills/ 同步至 11 個 skills）|
