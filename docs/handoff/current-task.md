@@ -4,12 +4,12 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: Review Gate PASS — V4 Change 4 `cross-project-shared-knowledge`
+- Name: Archive complete — V4 Change 4 `cross-project-shared-knowledge`
 - Owner agent: Codex / Copilot
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `cross-project-shared-knowledge` 的 Review Gate，確認 shared candidate 品質、same-filename guard、snapshot / `/memory` 契約與 human-confirm 邊界可收尾
+- 完成 `cross-project-shared-knowledge` 的 commit / main spec sync / archive 收尾，讓 V4 Change 4 進入可追溯 archived 狀態
 - 維持 human-confirm 邊界：不自動搬移各專案 memory、不新增 shared writeback action、不延伸到 scheduler 或跨專案規則治理
 
 ## Scope
@@ -44,17 +44,20 @@
 - regression：`node tools/verify_memory_health_scoring.js`、`node tools/verify_memory_dedup_suggestions.js`：PASS ✅
 - local API smoke：PASS（`GET /api/memory?projectId=personal-ai`、`GET /api/memory?projectId=mock-test` 均回傳 `sharedKnowledge`，snapshot path 正常） ✅
 - Review Gate：PASS（未發現 blocking issue；可進入 commit / main spec sync / archive 決策） ✅
+- commit：✅ `e4b581d` `add cross-project shared knowledge suggestions`
+- main spec sync：✅ `openspec/specs/cross-project-shared-knowledge/spec.md` 已建立，`openspec validate cross-project-shared-knowledge --type spec --strict`：PASS
+- archive：✅ `openspec archive cross-project-shared-knowledge -y --skip-specs` → `openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/`
 
 ## In Progress
-- 無；Review Gate 已完成，待人工決定是否進入 commit / sync / archive 收尾
+- 無；Change 4 已完成 archive，待下一個 session 決定後續工作
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 由人決定是否依 Review Gate PASS 結論進入 commit / `#opsx-sync` / `#opsx-archive`；本 session **未**執行不可逆操作 |
-| 🟡 2 | 若進入 sync / archive，記得同步更新 `docs/planning/v4-brief.md`、`docs/roadmap.md` 與 active change 狀態 |
-| 🟡 3 | template verify blocker 仍獨立存在，不與本 change 綁定處理 |
+| 🔴 1 | 決定下一步先處理 `governance-scheduler`，或先解 template verify blocker |
+| 🟡 2 | 若推進 V4 Change 5，先更新 handoff / roadmap 為新的 active change，再開新 session |
+| 🟡 3 | template verify blocker 仍獨立存在，不與已 archive 的 Change 4 綁定處理 |
 
 ## Files Touched（本 session）
 - openspec/changes/cross-project-shared-knowledge/.openspec.yaml
@@ -62,6 +65,8 @@
 - openspec/changes/cross-project-shared-knowledge/design.md
 - openspec/changes/cross-project-shared-knowledge/specs/cross-project-shared-knowledge/spec.md
 - openspec/changes/cross-project-shared-knowledge/tasks.md
+- openspec/specs/cross-project-shared-knowledge/spec.md
+- openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/
 - web/server.js
 - web/public/memory.html
 - web/public/js/memory.js
@@ -90,4 +95,6 @@
 - Shared snapshot generator：✅ `node tools/generate_shared_knowledge_report.js`
 - Local API smoke：✅ `GET /api/memory?projectId=personal-ai`、`GET /api/memory?projectId=mock-test`
 - Review Gate rerun：✅ `openspec validate --changes cross-project-shared-knowledge --strict`、`node tools/verify_cross_project_shared_knowledge.js`、ephemeral local API smoke（`personal-ai` / `mock-test` 均回傳 `sharedKnowledge.summary.groupCount = 4`）
+- Main spec validate：✅ `openspec validate cross-project-shared-knowledge --type spec --strict`
+- Archive：✅ `openspec archive cross-project-shared-knowledge -y --skip-specs`
 - Change type：✅ UI change（依據：`design.md` 與實際異動涵蓋 `/memory` 頁面、樣式與使用流程）
