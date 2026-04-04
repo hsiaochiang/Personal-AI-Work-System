@@ -4,14 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V5 Change 3 — `chatgpt-api-auto-import` Review Gate PASS
+- Name: V5 Change 3 — `chatgpt-api-auto-import` Archive Complete
 - Owner agent: Codex
 - Last updated on: 2026-04-04
 
 ## Goal
 - 讓使用者可在 `/settings` 儲存 OpenAI API key，並在 `/extract` 的 ChatGPT 模式載入本工作台追蹤的 OpenAI platform conversations
 - 以 local tracked conversation index 補上「最近 sessions」能力，同時不宣稱可直接列出 ChatGPT 產品聊天歷史
-- 把 change 推進到可由人工決定 commit / main spec sync / archive 的 PASS-ready 狀態；本輪不做不可逆操作
+- 完成 implementation commit、main spec sync 與 archive，並把治理文件切到 archive complete 狀態
 
 ## Scope
 - In scope:
@@ -46,6 +46,9 @@
 - 已更新 `.gitignore` 排除 `web/api-keys.json` 與 `web/openai-conversation-index.json` ✅
 - 已修補 `web/server.js` 的 `/api/chatgpt/session` server-side guard：未先追蹤的 `conversationId` 不可 direct load，也不會再隱式寫入 tracked index ✅
 - 已更新 `tools/verify_chatgpt_api_auto_import.js`，覆蓋「未先追蹤的 conversationId 直接載入應被拒絕」案例 ✅
+- 已完成 main spec sync：新增 `openspec/specs/chatgpt-api-auto-import/spec.md`，並通過 spec strict validate ✅
+- 已完成 implementation commit：`734ef44` `feat: add chatgpt api auto import flow` ✅
+- 已完成 `openspec archive chatgpt-api-auto-import -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/` ✅
 - 已完成 targeted verify 與 regression：
   - `node tools/verify_chatgpt_api_auto_import.js`
   - `node tools/verify_chatgpt_adapter.js`
@@ -57,15 +60,15 @@
 - 已補 QA / UI / UX evidence，並同步治理文件到 Review Gate-ready 狀態 ✅
 
 ## In Progress
-- 無；Review Gate 已通過，待人工決定是否進 commit / main spec sync / archive
+- 無；本 change 已完成 commit / sync / archive
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 由人工決定是否接受目前 PASS 狀態並執行 implementation commit |
-| 🟡 2 | 若要正式收尾，補 `openspec/specs/chatgpt-api-auto-import/spec.md` main spec sync，並重跑 spec strict validate |
-| 🟢 3 | 經人工確認後，再決定是否執行 archive；若暫不收尾，可切到 `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md` |
+| 🔴 1 | 開新 session 執行 `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md`，規劃 V5 Change 4 `adapter-docs-update` |
+| 🟡 2 | 若暫不繼續 V5，可保留目前 archive complete 狀態，待人工決定下一個 change |
+| 🟢 3 | 若要做版本收尾，需先完成 `adapter-docs-update` 後再回來檢查 V5 brief 是否可 close |
 
 ## Files Touched（本 session）
 - .gitignore
@@ -80,6 +83,8 @@
 - docs/runlog/2026-04-04_README.md
 - docs/decision-log.md
 - openspec/changes/chatgpt-api-auto-import/
+- openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/
+- openspec/specs/chatgpt-api-auto-import/spec.md
 - tools/fixtures/openai-conversation.json
 - tools/fixtures/openai-conversation-items.json
 - tools/verify_chatgpt_api_auto_import.js
@@ -111,5 +116,9 @@
 - Review Gate：✅ PASS
   - resolved issue：`/api/chatgpt/session` 現已驗證 `conversationId` 是否已存在於目前 project 的 tracked index；未先追蹤的 direct load 會被 400 拒絕
   - rerun evidence：`openspec validate --changes chatgpt-api-auto-import --strict`、`node tools/verify_chatgpt_api_auto_import.js`、`node tools/verify_chatgpt_adapter.js`、`node tools/verify_import_ui_multi_source.js`、`node tools/verify_source_attribution_in_memory.js`
-- Governance sync：✅ `roadmap` / `brief` / `handoff` / `manual` / `runlog` 已對齊到 Review Gate PASS-ready 狀態
-- Dirty tree note：✅ 目前包含本 change 的實作、evidence 與既有治理文件修改；未執行 commit / sync / archive
+- Main spec sync：✅ `openspec/specs/chatgpt-api-auto-import/spec.md`
+- Spec strict validate：✅ `openspec validate chatgpt-api-auto-import --type spec --strict`
+- Implementation commit：✅ `734ef44` `feat: add chatgpt api auto import flow`
+- Archive：✅ `openspec archive chatgpt-api-auto-import -y --skip-specs`
+- Governance sync：✅ `roadmap` / `brief` / `handoff` / `manual` / `runlog` 已對齊到 archive complete 狀態
+- Dirty tree note：✅ `734ef44` 已提交 implementation；目前剩餘未提交變更為 archive / 治理收尾同步與 archive 目錄落盤結果
