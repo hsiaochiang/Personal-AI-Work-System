@@ -9,7 +9,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - **V1** — 單專案知識閉環工作台 ✅ 已完成
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
 - **V3** — 跨工具整合層 ✅ 已完成
-- **V4** — 治理、自動化、個人 AI 作業系統 🔄 進行中
+- **V4** — 治理、自動化、個人 AI 作業系統 ✅ 已完成
 
 ## 功能總覽
 
@@ -116,6 +116,8 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 complete | `governance-scheduler` 已完成 main spec sync 與 archive，V4 五個 planned changes 全數封存；已同步 brief / roadmap / handoff 為版本完成狀態，下一步轉向 template verify blocker 或下一版規劃 | 無（No user-facing change；本次為版本收尾與治理狀態更新，已上線功能不變） |
+| 2026-04-04 | V4 Change 5 archive | `governance-scheduler` 已完成 `openspec/specs/governance-scheduler/spec.md` sync 與 `openspec archive governance-scheduler -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-governance-scheduler/` | 無（No user-facing change；本次為治理收尾與封存狀態更新，Overview 治理待辦功能維持不變） |
 | 2026-04-04 | V4 Change 5 review gate pass | Review Gate 判定 `governance-scheduler` PASS；已重查 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與 local API smoke；同時校正 brief 的使用者影響描述，讓 Overview 治理待辦能力與規劃文件一致 | 無（No user-facing change；本次為收尾閘門判定與治理文件對齊，Overview / `/api/governance` 的可見功能維持不變） |
 | 2026-04-04 | V4 Change 5 executor verify | 完成 `governance-scheduler` 的 apply / verify：新增 `web/governance.json`、server startup due-check、`/api/governance` payload 與 Overview 治理待辦卡；已重跑 strict validate、targeted verify 與 local API smoke，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 Overview 直接看到治理待辦、例行巡檢與停用 / 空狀態；系統仍不會自動更新治理設定或改寫任何 knowledge source） |
 | 2026-04-04 | V4 Change 5 executor start | 啟動 `governance-scheduler` executor，已建立 `openspec/changes/governance-scheduler/` active change 骨架，並完成 proposal / design / spec / tasks 草稿；scope 固定為 `web/governance.json`、server startup due-check、`/api/governance` payload 與 Overview 治理待辦卡，下一步待 strict validate 與實作 | 無（No user-facing change；本次僅建立 active change artifacts 並切換 handoff / brief / manual 狀態，Overview / server 行為尚未改動） |

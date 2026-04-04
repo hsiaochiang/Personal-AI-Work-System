@@ -104,14 +104,14 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 
 ## 完成條件（Acceptance Criteria）
 
-| # | 驗收條件 | 驗收方式 |
-|:-:|---------|---------|
-| 1 | 記憶條目有健康度標記（🟢/🟡/🔴）| `/memory` 頁面顯示標記與健康度概覽 |
-| 2 | 相似記憶偵測後可建議合併 | 新增 2 條相似記憶 → 系統提示疑似重複 → 合併後確認只剩 1 條 |
-| 3 | 規則衝突偵測超越否定詞前綴 | 建立已知衝突規則 → `/decisions` 顯示衝突說明 |
-| 4 | 多專案掃描後可輸出共用主題建議 | 2 個專案有相同主題記憶 → 系統建議整合 → `docs/shared/` 產出 |
-| 5 | 排程掃描設定可讀，下次啟動後顯示治理待辦 | 設定每週掃描 → 重啟 server → 顯示待審核清單 |
-| 6 | 所有自動操作均有操作前備份 | 任一自動建議執行後 → `.backup/` 有對應備份 |
+| # | 驗收條件 | 驗收方式 | 狀態 |
+|:-:|---------|---------|:----:|
+| 1 | 記憶條目有健康度標記（🟢/🟡/🔴）| `/memory` 頁面顯示標記與健康度概覽 | ✅ |
+| 2 | 相似記憶偵測後可建議合併 | 新增 2 條相似記憶 → 系統提示疑似重複 → 合併後確認只剩 1 條 | ✅ |
+| 3 | 規則衝突偵測超越否定詞前綴 | 建立已知衝突規則 → `/decisions` 顯示衝突說明 | ✅ |
+| 4 | 多專案掃描後可輸出共用主題建議 | 2 個專案有相同主題記憶 → 系統建議整合 → `docs/shared/` 產出 | ✅ |
+| 5 | 排程掃描設定可讀，下次啟動後顯示治理待辦 | 設定每週掃描 → 重啟 server → 顯示待審核清單 | ✅ |
+| 6 | 所有自動操作均有操作前備份 | 任一自動建議執行後 → `.backup/` 有對應備份 | ✅ |
 
 ---
 
@@ -123,7 +123,7 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | `memory-dedup-suggestions` | 身為記憶庫越來越大的使用者，我想要系統主動告訴我哪些記憶內容重複或相似，以便我可以一次整理，而不是等到記憶庫混亂到難以使用 | ✅ 已 archive | 輕量啟發式關鍵詞重疊比對（無需 LLM）；`/memory` 頁面顯示「疑似重複」群組；支援「合併」與「刪除」，操作前自動 backup；merge action 已補上 server-side group membership 驗證，main spec sync 與 archive 已完成 | `/memory` → 「疑似重複」區塊 → 選擇合併或忽略 |
 | `rule-conflict-detection-v2` | 身為有很多偏好規則的使用者，我想要系統自動偵測規則間的矛盾並解釋為什麼衝突，以便我不需要自己記住所有規則的邏輯關係 | ✅ 已 archive | 超越 V1 否定詞前綴比對；偵測同類別互斥規則（如「偏好極簡」vs「需要詳細說明」）；本輪 scope 鎖定 `/decisions` conflict overview + explanation + targeted verify，不做 auto-fix / writeback；main spec sync 與 archive 已完成 | `/decisions` → 規則 tab 查看衝突摘要與原因說明 |
 | `cross-project-shared-knowledge` | 身為管理多個專案的使用者，我想要系統識別我在不同專案中重複記錄的相同偏好和模式，以便整合成一份共用的個人知識庫，不需要在每個專案重複維護 | ✅ 已 archive | 跨專案掃描 `docs/memory/` 找重複主題；`/api/memory` 附帶 `sharedKnowledge` payload；`/memory` 顯示 suggestion-only 的「共用知識候選」區塊；`docs/shared/` 產出 read-only snapshot；不自動搬移；main spec sync 與 archive 已完成 | `/memory` → 「共用知識候選」區塊；`node tools/generate_shared_knowledge_report.js` |
-| `governance-scheduler` | 身為不想手動定期維護知識庫的使用者，我想要設定工作台每隔一段時間自動掃描一次，然後在我開啟工作台時告訴我有哪些需要處理的治理待辦，以便在我不主動想到的時候也能維持知識庫的品質 | ✅ Review Gate PASS | 已完成 `web/governance.json`、server startup due-check、`/api/governance` payload、Overview 治理待辦與 strict validate / targeted verify / local API smoke；Review Gate 已確認 suggestion-only 邊界、empty/disabled state 與證據充分，待人決定是否進入 commit / sync / archive | `web/governance.json` 設定頻率 → 重啟 server → Overview 頁顯示待辦清單 |
+| `governance-scheduler` | 身為不想手動定期維護知識庫的使用者，我想要設定工作台每隔一段時間自動掃描一次，然後在我開啟工作台時告訴我有哪些需要處理的治理待辦，以便在我不主動想到的時候也能維持知識庫的品質 | ✅ 已 archive | 已完成 `web/governance.json`、server startup due-check、`/api/governance` payload、Overview 治理待辦、main spec sync 與 archive；active change 已封存至 `openspec/changes/archive/2026-04-04-governance-scheduler/` | `web/governance.json` 設定頻率 → 重啟 server → Overview 頁顯示待辦清單 |
 
 ---
 
@@ -165,6 +165,8 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | **依賴 V2** | 多專案資料源（V2 Change 2）— cross-project 掃描需要真正的多專案資料隔離 |
 | **依賴 V3** | source attribution（V3）— 健康度評分使用來源權重，需要 `source` 欄位 |
 | **依賴 V3** | `ConversationDoc` schema — 治理排程掃描的輸入格式標準化基礎 |
+| **留給後續版本** | governance scheduler 目前仍是 startup snapshot；若要自動刷新或 UI 內標記完成，需後續版本另建 writeback / background scheduling 邊界 |
+| **留給後續版本** | 多工具匯入目前仍缺 Gemini / Claude / Antigravity；V4 已完成治理基線，但多來源 coverage 仍可後續擴充 |
 
 ---
 
@@ -194,5 +196,5 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 ## 版本狀態
 
 - **開始日期**：2026/4/4
-- **完成日期**：
-- **狀態**：進行中
+- **完成日期**：2026/4/4
+- **狀態**：已完成

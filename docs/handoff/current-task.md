@@ -4,13 +4,13 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: Review Gate PASS — V4 Change 5 `governance-scheduler`
+- Name: Session Close — V4 complete after `governance-scheduler` archive
 - Owner agent: Codex / Copilot
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `governance-scheduler` 的 Review Gate，確認本 change 是否可進入 commit / main spec sync / archive
-- 維持 V4 brief 邊界：只做 read-only 的治理待辦與排程檢查，不自動寫回 memory / rules，也不把 template verify blocker 混入本 change
+- 完成 `governance-scheduler` 的 commit / main spec sync / archive，並把 V4 收尾到 completed 狀態
+- 保持 template verify blocker 獨立追蹤，不把 workspace 模板問題混入已完成的 V4 功能驗收
 
 ## Scope
 - In scope:
@@ -47,18 +47,21 @@
 - 已補 `docs/qa/2026-04-04_governance-scheduler-smoke.md`、`docs/uiux/2026-04-04_governance-scheduler-ui-review.md`、`docs/uiux/2026-04-04_governance-scheduler-ux-review.md` ✅
 - 已執行 Review Gate：重查 scope / spec / tasks / QA / UI / UX 證據，並重跑 strict validate、targeted verify、local API smoke；判定 PASS ✅
 - 已校正 `docs/planning/v4-brief.md` 的使用者影響描述，讓 brief 與實際 Overview 治理待辦能力一致 ✅
+- 已完成 implementation commit：`9db3afc` `add governance scheduler overview reminders` ✅
+- 已完成 main spec sync：新增 `openspec/specs/governance-scheduler/spec.md`，並通過 `openspec validate governance-scheduler --type spec --strict` ✅
+- 已執行 `openspec archive governance-scheduler -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-governance-scheduler/` ✅
+- 已確認 V4 五個 planned changes 全數 archive，並同步 `docs/planning/v4-brief.md`、`docs/roadmap.md`、`docs/system-manual.md` 為版本完成狀態 ✅
 
 ## In Progress
-- 無；Review Gate 已完成，待人決定是否進入 commit / main spec sync / archive
+- 無；V4 功能收尾已完成
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 由人決定是否讓 `governance-scheduler` 進入 commit / main spec sync / archive |
-| 🟡 2 | 若繼續收尾，先同步 main spec，並把 `docs/planning/v4-brief.md`、`docs/roadmap.md`、`docs/system-manual.md` 更新到 V4 最後一個 change ready-to-archive 狀態 |
-| 🟡 3 | 若要執行 archive，先確認 V4 所有 planned changes 均已完成，並補版本收尾所需的 brief / roadmap 檢查 |
-| 🟡 4 | template verify blocker 仍在 `docs/handoff/blockers.md` 獨立追蹤，不與 Change 5 收尾綁定 |
+| 🔴 1 | 先處理 `docs/handoff/blockers.md` 追蹤的 template verify blocker（缺少 `.github/prompts/openspec-execute.prompt.md`） |
+| 🟡 2 | 若要繼續產品推進，建立下一版 brief 或整理 V4 retrospective / decision log |
+| 🟡 3 | 若要發布目前治理收尾結果，再決定是否額外提交 sync / archive / version-closeout 的文件變更 |
 
 ## Files Touched（本 session）
 - docs/handoff/current-task.md
@@ -66,6 +69,8 @@
 - docs/roadmap.md
 - docs/system-manual.md
 - docs/runlog/2026-04-04_README.md
+- openspec/specs/governance-scheduler/spec.md
+- openspec/changes/archive/2026-04-04-governance-scheduler/
 - openspec/changes/governance-scheduler/proposal.md
 - openspec/changes/governance-scheduler/design.md
 - openspec/changes/governance-scheduler/specs/governance-scheduler/spec.md
@@ -92,4 +97,7 @@
 - Local API smoke：✅ startup log + `GET /api/governance` + `GET /`
 - Done gate evidence：✅ QA / UI review / UX review 已補齊
 - Review Gate：✅ PASS；startup snapshot 邊界、manual note 語意、Overview empty/disabled state 與 verify 證據均符合本 change scope
-- Executor boundary：✅ 本 session 尚未執行 commit / sync / archive 等不可逆操作
+- Commit：✅ `9db3afc add governance scheduler overview reminders`
+- Main spec sync：✅ `openspec/specs/governance-scheduler/spec.md` + `openspec validate governance-scheduler --type spec --strict`
+- Archive：✅ `openspec archive governance-scheduler -y --skip-specs`
+- Version closeout：✅ V4 brief / roadmap / system-manual 已同步為 completed 狀態
