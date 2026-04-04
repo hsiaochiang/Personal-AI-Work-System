@@ -4,28 +4,29 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V4 planning — 待使用者確認 V4 brief 後開始第一個 Change
-- Owner agent: Copilot / Codex
+- Name: V4 Change 1 — `memory-health-scoring`（sync / archive / git publish complete）
+- Owner agent: Codex / Copilot
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `import-ui-multi-source` archive 與 V3 brief 收尾
-- 保留下一位 agent 啟動 V4 或處理 template blocker 所需的最小脈絡
-- 維持 `/extract` 與 `/memory` 的 V3 多來源能力已封存完成的事實一致
+- 在 `/memory` 顯示 health summary 與每條記憶的健康標記，作為 V4 第一個治理入口
+- 保持 `/api/memory` 對既有 raw content consumers 相容，不破壞 V3 的 source attribution
+- 將 dedup / rule conflict / shared knowledge / scheduler 留給後續 V4 changes
 
 ## Scope
 - In scope:
-  - 建立 `openspec/changes/import-ui-multi-source/` active change artifacts
-  - 實作 `/extract` 的工具來源 selector 與 per-source UI / routing
-  - 在候選審核階段顯示來源 badge / source summary
-  - 補 verify、QA / UI / UX 證據與 handoff / manual / runlog 同步
+  - 建立 `openspec/changes/memory-health-scoring/` active change artifacts
+  - 定義以新鮮度 × 來源權重為核心的 health scoring model
+  - 更新 `/api/memory` payload，加入 per-item health metadata 與 top-level summary
+  - 更新 `/memory` 頁面，顯示過期比例、建議清理數量與 health badge / reason
+  - 補 strict validate、targeted verify、smoke / UI / UX 證據與 handoff / roadmap / manual 同步
 - Out of scope:
-  - 新增 Gemini / Claude / Antigravity adapter
-  - ChatGPT / Copilot parser 大改或新 server API 架構
-  - 多 session merge / 搜尋 / preview-rich picker
-  - 新的 metadata schema 或 memory writeback 格式
-  - release
-  - 新依賴 / 前端框架 / build tool
+  - 記憶 dedup / merge / delete action
+  - 規則衝突偵測升級
+  - 跨專案 shared knowledge
+  - governance scheduler
+  - release / archive 類不可逆操作
+  - 新 dependency / 前端框架 / build tool
 
 ## Constraints
 - 純靜態 HTML + vanilla JS（無框架、無 build）
@@ -35,66 +36,58 @@
 - `AGENTS.md` 規定：archive / release 類不可逆操作需人工確認
 
 ## Done
-- Phase 1–5：V1 全數完成 ✅
-- V2 Changes 1–4 全部完成並 archive ✅
-- V3 brief 使用者確認 ✅（2026-04-02）
-- V3 Change 1 `conversation-schema-definition` 已 archive ✅
-- V3 Change 2 `plain-text-adapter-refactor` 已 archive ✅
-- V3 Change 3 `chatgpt-adapter` 已 archive ✅
-- V3 Change 4 `local-import-vscode-copilot` 已 sync / archive / git 收尾 ✅
-- V3 Change 5 `source-attribution-in-memory` 已 sync / archive 收尾 ✅
-- `openspec new change import-ui-multi-source` 已完成，active change 目錄已建立 ✅
-- `import-ui-multi-source` proposal / design / spec / tasks 已建立並通過 strict validate ✅
-- `/extract` 既有能力基線已確認：
-  - VS Code Copilot 本機 session list / path override / 單一 session 載入
-  - ChatGPT transcript / JSON 匯入
-  - plain text fallback
-- `docs/planning/v3-brief.md` 已列出 `import-ui-multi-source` 的使用者故事、備註與使用方式 ✅
-- Planner scope gate 已完成：本 change 屬於 V3 brief In Scope D「Import UI（匯入入口改版）」✅
-- Executor preflight 已完成：`main` branch、`openspec/config.yaml`、V3 brief 使用者確認、無 active duplicate change ✅
-- `/extract` 已完成工具來源 selector、per-source controls 與 candidate source badge 實作 ✅
-- targeted verify `node tools/verify_import_ui_multi_source.js` PASS，plain / chatgpt / copilot regressions 全 PASS ✅
-- `docs/qa/2026-04-04_import-ui-multi-source-smoke.md`、`docs/uiux/2026-04-04_ui-review.md`、`docs/uiux/2026-04-04_ux-review.md` 已補齊 ✅
-- Review Gate：✅ PASS（無 blocking issue；可進入 `#opsx-sync`，archive 僅差人工確認）
-- `openspec/specs/import-ui-multi-source/spec.md` 已 sync ✅
-- `add multi-source import UI` 已 commit / push 至 `origin/main`（`335d338`）✅
-- `import-ui-multi-source` 已 archive 至 `openspec/changes/archive/2026-04-03-import-ui-multi-source/` ✅
-- V3 brief 六個 planned changes 全部 archive 完成 ✅
+- V1–V3 全部完成，V3 六個 changes 已 archive ✅
+- V4 brief 已有使用者確認（2026/4/4）✅
+- Executor preflight 已完成：`main` branch、`openspec/config.yaml`、V4 brief scope gate、無 active duplicate change ✅
+- `openspec new change memory-health-scoring` 已完成，active change 目錄已建立並已封存至 `openspec/changes/archive/2026-04-04-memory-health-scoring/` ✅
+- `memory-health-scoring` proposal / design / spec / tasks 已建立並通過 `openspec validate --changes memory-health-scoring --strict` ✅
+- `web/public/js/memory-health-utils.js` 已建立，供 server / verify 共用 health scoring 規則 ✅
+- `/api/memory` 已回傳既有 raw content + health summary / per-item health metadata ✅
+- `/memory` 已顯示健康度概覽、過期比例 / 建議清理 KPI、per-item health badge / reason，且保留 source badge 相容 ✅
+- `node tools/verify_memory_health_scoring.js`、`node tools/verify_source_attribution_in_memory.js` 與 local `GET /api/memory` smoke 全部 PASS ✅
+- `docs/qa/2026-04-04_memory-health-scoring-smoke.md`、`docs/uiux/2026-04-04_memory-health-scoring-ui-review.md`、`docs/uiux/2026-04-04_memory-health-scoring-ux-review.md` 已補齊 ✅
+- `openspec/specs/memory-health-scoring/spec.md` 已完成 main spec sync，且 `openspec validate memory-health-scoring --type spec --strict` PASS ✅
+- `openspec archive memory-health-scoring -y --skip-specs` 已完成，archive 路徑為 `openspec/changes/archive/2026-04-04-memory-health-scoring/` ✅
 
 ## In Progress
-- V4 brief 已草擬，使用者確認欄位（確認日期）尚未填寫，待確認後可開始第一個 V4 Change
+- 無 active change；`memory-health-scoring` 已完成 sync / archive / git publish，可交接到下一個工作項目
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 確認 `docs/planning/v4-brief.md`（填入確認日期），解除開工前置條件 |
-| 🟡 2 | 執行 `#opsx-new memory-health-scoring`（V4 第一個 Change） |
-| 🟡 3 | 若有新 template 升級，執行 `#template-upgrade` |
+| 🔴 1 | 決定優先啟動 `memory-dedup-suggestions`，或先處理 template verify blocker |
+| 🟡 2 | 若繼續 V4，從 `docs/agents/codex-prompts/v4/04-memory-dedup-suggestions-plan.md` 開始 |
+| 🟡 3 | 若先補治理缺口，處理 `.github/prompts/openspec-execute.prompt.md` 缺檔的 template verify blocker |
 
 ## Files Touched（本 session）
-- openspec/changes/archive/2026-04-03-import-ui-multi-source/proposal.md
-- openspec/changes/archive/2026-04-03-import-ui-multi-source/design.md
-- openspec/changes/archive/2026-04-03-import-ui-multi-source/specs/import-ui-multi-source/spec.md
-- openspec/changes/archive/2026-04-03-import-ui-multi-source/tasks.md
-- openspec/specs/import-ui-multi-source/spec.md
-- web/public/extract.html
-- web/public/js/extract.js
+- openspec/changes/archive/2026-04-04-memory-health-scoring/proposal.md
+- openspec/changes/archive/2026-04-04-memory-health-scoring/design.md
+- openspec/changes/archive/2026-04-04-memory-health-scoring/specs/memory-health-scoring/spec.md
+- openspec/changes/archive/2026-04-04-memory-health-scoring/tasks.md
+- openspec/specs/memory-health-scoring/spec.md
+- web/public/js/memory-health-utils.js
+- web/server.js
+- web/public/memory.html
+- web/public/js/memory.js
 - web/public/css/style.css
-- tools/verify_import_ui_multi_source.js
-- tools/verify_plain_text_adapter.js
-- docs/qa/2026-04-04_import-ui-multi-source-smoke.md
-- docs/uiux/2026-04-04_ui-review.md
-- docs/uiux/2026-04-04_ux-review.md
+- tools/verify_memory_health_scoring.js
+- docs/qa/2026-04-04_memory-health-scoring-smoke.md
+- docs/uiux/2026-04-04_memory-health-scoring-ui-review.md
+- docs/uiux/2026-04-04_memory-health-scoring-ux-review.md
+- docs/planning/v4-brief.md
 - docs/roadmap.md
-- docs/planning/v3-brief.md
-- docs/handoff/current-task.md
 - docs/system-manual.md
 - docs/runlog/2026-04-04_README.md
+- docs/handoff/current-task.md
+- docs/handoff/blockers.md
 
 ## Validation Status
-- V3 全 6 個 Changes：✅ 全部 archive
-- Roadmap 更新：✅ V2/V3 狀態、Current release、V3 進度表（2026-04-04）
-- Template verify：⚠️ copilot-workspace-template 路徑不在此機器（非阻塞）
-- `.github/prompts/openspec-execute.prompt.md` 缺檔問題：✅ 已在 `070b90f` commit 補建
-- Git：⏳ 本次 roadmap + handoff 更新尚未 commit/push
+- OpenSpec strict validate：✅ `openspec validate --changes memory-health-scoring --strict`
+- Targeted verify：✅ `node tools/verify_memory_health_scoring.js`
+- Regression verify：✅ `node tools/verify_source_attribution_in_memory.js`
+- Local API smoke：✅ `GET /api/memory` summary payload 正常
+- Review Gate：✅ PASS
+- Sync：✅ `openspec/specs/memory-health-scoring/spec.md`
+- Archive：✅ `openspec archive memory-health-scoring -y --skip-specs`
+- Git：✅ commit / push complete

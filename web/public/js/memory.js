@@ -26,10 +26,65 @@ function getMemorySourceUtilsAPI() {
   return window.MemorySourceUtils;
 }
 
+function getMemoryHealthUtilsAPI() {
+  if (!window.MemoryHealthUtils) {
+    throw new Error('MemoryHealthUtils 未載入');
+  }
+  return window.MemoryHealthUtils;
+}
+
+function formatPercent(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return '—';
+  }
+
+  return `${value % 1 === 0 ? value.toFixed(0) : value.toFixed(1)}%`;
+}
+
+function updateHealthOverview(summary) {
+  const overview = document.getElementById('memory-health-overview');
+  if (!overview) {
+    return;
+  }
+
+  overview.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'memory-health-overview-title';
+  title.textContent = '知識健康度概覽';
+  overview.appendChild(title);
+
+  const copy = document.createElement('div');
+  copy.className = 'memory-health-overview-copy';
+  copy.textContent = summary.totalItems
+    ? `目前共有 ${summary.totalItems} 條記憶，其中 ${summary.needsAttentionCount} 條建議優先檢查，${summary.staleCount} 條已進入過期風險。`
+    : '目前尚無可評分的記憶條目。';
+  overview.appendChild(copy);
+
+  const legend = document.createElement('div');
+  legend.className = 'memory-health-overview-legend';
+
+  ['healthy', 'review', 'stale'].forEach(status => {
+    const presentation = getMemoryHealthUtilsAPI().getMemoryHealthPresentation(status);
+    if (!presentation) {
+      return;
+    }
+
+    const badge = document.createElement('span');
+    badge.className = `health-badge ${presentation.className}`;
+    badge.textContent = presentation.label;
+    legend.appendChild(badge);
+  });
+
+  overview.appendChild(legend);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('memory-content');
   const kpiTotal = document.getElementById('kpi-total');
   const kpiFiles = document.getElementById('kpi-files');
+  const kpiStaleRatio = document.getElementById('kpi-stale-ratio');
+  const kpiCleanup = document.getElementById('kpi-cleanup');
 
   showLoading(container);
 
@@ -42,15 +97,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // KPIs
-    let totalItems = 0;
     const parsed = data.files.map(f => {
-      const entries = parseMemoryFile(f.content);
-      totalItems += entries.reduce((sum, g) => sum + g.items.length, 0);
-      return { filename: f.filename, groups: entries };
+      const groups = Array.isArray(f.groups) ? f.groups : parseMemoryFile(f.content);
+      return { filename: f.filename, groups };
     });
+    const summary = data.summary || getMemoryHealthUtilsAPI().buildMemoryApiPayload(data.files).summary;
 
     if (kpiFiles) kpiFiles.textContent = data.files.length;
-    if (kpiTotal) kpiTotal.textContent = totalItems;
+    if (kpiTotal) kpiTotal.textContent = summary.totalItems;
+    if (kpiStaleRatio) kpiStaleRatio.textContent = formatPercent(summary.staleRatio);
+    if (kpiCleanup) kpiCleanup.textContent = summary.needsAttentionCount;
+
+    updateHealthOverview(summary);
 
     renderMemory(container, parsed);
   } catch (err) {
@@ -113,18 +171,46 @@ function renderMemory(container, files) {
       group.items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'memory-item';
+        if (item.health && item.health.status) {
+          card.classList.add(`memory-item-${item.health.status}`);
+        }
 
         const sourcePresentation = getMemorySourceUtilsAPI().getMemorySourcePresentation(item.source);
-        if (sourcePresentation) {
+        const healthPresentation = item.health
+          ? getMemoryHealthUtilsAPI().getMemoryHealthPresentation(item.health.status)
+          : null;
+
+        if (sourcePresentation || healthPresentation) {
           const headerRow = document.createElement('div');
           headerRow.className = 'memory-item-header';
 
-          const badge = document.createElement('span');
-          badge.className = `source-badge ${sourcePresentation.className}`;
-          badge.textContent = sourcePresentation.label;
-          headerRow.appendChild(badge);
+          const badges = document.createElement('div');
+          badges.className = 'memory-item-badges';
+
+          if (healthPresentation) {
+            const healthBadge = document.createElement('span');
+            healthBadge.className = `health-badge ${healthPresentation.className}`;
+            healthBadge.textContent = healthPresentation.label;
+            badges.appendChild(healthBadge);
+          }
+
+          if (sourcePresentation) {
+            const badge = document.createElement('span');
+            badge.className = `source-badge ${sourcePresentation.className}`;
+            badge.textContent = sourcePresentation.label;
+            badges.appendChild(badge);
+          }
+
+          headerRow.appendChild(badges);
 
           card.appendChild(headerRow);
+        }
+
+        if (item.health && item.health.reason) {
+          const reason = document.createElement('div');
+          reason.className = 'memory-item-health-reason';
+          reason.textContent = item.health.reason;
+          card.appendChild(reason);
         }
 
         // Check for key: value pattern

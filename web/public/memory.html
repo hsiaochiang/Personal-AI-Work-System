@@ -76,14 +76,24 @@
           <div class="kpi-label">檔案數</div>
           <div class="kpi-value" id="kpi-files">—</div>
         </div>
+        <div class="kpi-card">
+          <div class="kpi-label">過期比例</div>
+          <div class="kpi-value" id="kpi-stale-ratio">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">建議清理</div>
+          <div class="kpi-value" id="kpi-cleanup">—</div>
+        </div>
       </div>
 
+      <div class="card memory-health-overview" id="memory-health-overview"></div>
       <div id="memory-content"></div>
     </main>
   </div>
 
   <script src="/js/app.js"></script>
   <script src="/js/memory-source-utils.js"></script>
+  <script src="/js/memory-health-utils.js"></script>
   <script src="/js/memory.js"></script>
 </body>
 </html>

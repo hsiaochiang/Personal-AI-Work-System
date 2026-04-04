@@ -7,6 +7,7 @@ const {
   resolveVSCodeCopilotSessionDir,
   summarizeVSCodeCopilotSession,
 } = require('./public/js/conversation-adapters.js');
+const memoryHealthUtils = require('./public/js/memory-health-utils.js');
 
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -102,14 +103,14 @@ function handleAPI(req, res) {
   if (url.pathname === '/api/memory') {
     fs.readdir(MEMORY_DIR, (err, files) => {
       if (err) {
-        sendJSON(res, 200, { files: [] }); // Directory might not exist yet
+        sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload([])); // Directory might not exist yet
         return;
       }
       const mdFiles = files.filter(f => f.endsWith('.md'));
       const results = [];
       let pending = mdFiles.length;
       if (pending === 0) {
-        sendJSON(res, 200, { files: [] });
+        sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload([]));
         return;
       }
       mdFiles.forEach(file => {
@@ -121,7 +122,7 @@ function handleAPI(req, res) {
           pending--;
           if (pending === 0) {
             results.sort((a, b) => a.filename.localeCompare(b.filename));
-            sendJSON(res, 200, { files: results });
+            sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload(results));
           }
         });
       });

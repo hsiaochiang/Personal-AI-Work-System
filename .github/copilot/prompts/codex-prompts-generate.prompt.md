@@ -10,10 +10,12 @@ description: "確認 v{N}-brief.md 後，為每個 Change 生成帶序號的 Cod
 2. **讀取版本 brief**：讀取 `docs/planning/v{N}-brief.md`，依照「預計拆分的 Changes」表格的順序，取得所有 change 名稱與重點提示
 3. **確認 brief 狀態**：若 brief 尚未由使用者確認（確認日期欄位為空），停下回報，不繼續生成
 4. **建立輸出目錄**：`docs/agents/codex-prompts/v{N}/`（不存在則建立）
-5. **為每個 Change 依序生成三個檔案**（若已存在則跳過，除非使用者明確要求覆寫）
+5. **為每個 Change 依序生成三個檔案**
    - 序號規則：按 Changes 表順序，第 i 個 change（從 1 起算）的序號為：plan=(i-1)×3+1、execute=(i-1)×3+2、review=(i-1)×3+3
    - 命名格式：`{序號:02d}-{change-name}-{plan|execute|review}.md`（例：`01-my-change-plan.md`）
-6. **在 brief 新增「Codex 執行 Prompt 清單」區段**（若已存在則跳過）
+   - **存在性檢查**：只檢查帶序號的新格式（`01-my-change-plan.md`）。目錄中若有舊格式（如 `my-change-planner.md`、`my-change-executor.md`，即無序號前綴的同名 change 檔案），**不視為已存在**，仍必須建立帶序號的新格式檔案。
+   - 若帶序號的新格式檔案已存在，則跳過（除非使用者明確要求覆寫）
+6. **在 brief 新增「Codex 執行 Prompt 清單」區段**（若已存在 `## Codex 執行 Prompt 清單` 標題行則跳過；否則必須插入）
 
 ---
 

@@ -34,9 +34,10 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V3 Change 6）：`/extract` 新增工具來源 selector 與 per-source import controls；候選審核卡片與 summary 會顯示來源 badge / source summary
 
 ### 專案記憶（/memory）
-- 能力描述：讀取 `docs/memory/*.md` 並以分類卡片呈現專案記憶
+- 能力描述：讀取 `docs/memory/*.md`，以分類卡片呈現專案記憶，並顯示 health summary 與每條記憶的健康狀態
 - 操作方式：瀏覽器開啟 http://localhost:3000/memory
 - 改善（V3 Change 5）：若記憶條目含 `<!-- source: ... -->` metadata，頁面會顯示對應來源 badge；舊條目沒有 metadata 仍可正常顯示
+- 改善（V4 Change 1）：`/api/memory` 會先計算記憶健康度摘要，`/memory` 頁面新增過期比例、建議清理數量與每條記憶的健康 badge / reason；第一版採新鮮度 × 來源權重
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
@@ -72,11 +73,13 @@ npm start        # 或 node server.js
 - Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
 - `/extract` 的工具來源 selector 目前只涵蓋 `plain` / `chatgpt` / `copilot`；尚未支援 Gemini / Claude / Antigravity
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
+- memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V4 Change 1 | 2026-04-04 | `/memory` 健康度概覽、過期比例 / 建議清理 KPI 與 per-item health badge |
 | V3 Change 6 | 2026-04-04 | `/extract` 工具來源 selector、per-source import controls 與 candidate source badge |
 | V3 Change 5 | 2026-04-03 | memory source metadata 寫回與 `/memory` 來源 badge |
 | V3 Change 4 | 2026-04-03 | VS Code Copilot 本機 session JSONL 匯入、path override 與 `/extract` local import UI |
@@ -92,6 +95,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 Change 1 archive | `memory-health-scoring` 已完成 main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-memory-health-scoring/`；下一步可切到 `memory-dedup-suggestions` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，使用者可見能力已在 apply / verify 階段上線） |
+| 2026-04-04 | V4 Change 1 review gate pass | `memory-health-scoring` 已修補 missing source / missing date guard，Review Gate 重新判定 PASS；下一步可進入 commit / sync，archive 仍待人工確認 | 無（No user-facing change；本次為收尾品質修補與治理狀態更新，`/memory` 的可見功能不變） |
+| 2026-04-04 | V4 Change 1 review gate fail | Review Gate 發現 `memory-health-scoring` 的 blocking mismatch：近期但無 source metadata 的條目仍可能被標成 `healthy`；下一步需修補 scoring 規則與 targeted verify，完成後才能進入 commit / sync / archive | 無（No user-facing change；已實作的 `/memory` 健康度 UI 仍可操作，但本 change 尚未通過收尾閘門） |
+| 2026-04-04 | V4 Change 1 executor verify | 完成 `memory-health-scoring` 的 apply / verify：`/api/memory` 現在會回傳 health summary 與 per-item health metadata，`/memory` 已顯示健康度概覽與健康 badge；下一步待 Review Gate 判定是否進入 commit / sync / archive | 有（使用者現在可在 `/memory` 先看到過期比例與建議清理數量，再依每條記憶的 `健康 / 待確認 / 過期風險` 標記決定是否整理） |
 | 2026-04-04 | V3 Change 6 archive | `import-ui-multi-source` 已 archive 至 `openspec/changes/archive/2026-04-03-import-ui-multi-source/`，V3 六個 planned changes 全數完成；下一步轉向 template blocker 與 V4 規劃 | 無（No user-facing change；本次為治理收尾，使用者可見能力已在 apply / verify / sync 階段上線） |
 | 2026-04-04 | V3 Change 6 review gate + sync | `import-ui-multi-source` Review Gate 判定 PASS，main spec 已同步到 `openspec/specs/import-ui-multi-source/spec.md`，目前只剩 archive 需人工確認 | 無（No user-facing change；使用者可見能力已在 executor verify 階段上線，本次是治理收尾與 spec 同步） |
 | 2026-04-04 | V3 Change 6 executor verify | 完成 `import-ui-multi-source` apply / verify：`/extract` 新增工具來源 selector、per-source import controls 與 candidate source badge；下一步待 Review Gate 判定是否進入 sync / archive | 有（使用者現在可在 `/extract` 先選 `plain` / `chatgpt` / `copilot`，再使用對應入口匯入內容；候選審核階段可直接看到來源 badge） |
