@@ -123,7 +123,7 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | `memory-dedup-suggestions` | 身為記憶庫越來越大的使用者，我想要系統主動告訴我哪些記憶內容重複或相似，以便我可以一次整理，而不是等到記憶庫混亂到難以使用 | ✅ 已 archive | 輕量啟發式關鍵詞重疊比對（無需 LLM）；`/memory` 頁面顯示「疑似重複」群組；支援「合併」與「刪除」，操作前自動 backup；merge action 已補上 server-side group membership 驗證，main spec sync 與 archive 已完成 | `/memory` → 「疑似重複」區塊 → 選擇合併或忽略 |
 | `rule-conflict-detection-v2` | 身為有很多偏好規則的使用者，我想要系統自動偵測規則間的矛盾並解釋為什麼衝突，以便我不需要自己記住所有規則的邏輯關係 | ✅ 已 archive | 超越 V1 否定詞前綴比對；偵測同類別互斥規則（如「偏好極簡」vs「需要詳細說明」）；本輪 scope 鎖定 `/decisions` conflict overview + explanation + targeted verify，不做 auto-fix / writeback；main spec sync 與 archive 已完成 | `/decisions` → 規則 tab 查看衝突摘要與原因說明 |
 | `cross-project-shared-knowledge` | 身為管理多個專案的使用者，我想要系統識別我在不同專案中重複記錄的相同偏好和模式，以便整合成一份共用的個人知識庫，不需要在每個專案重複維護 | ✅ 已 archive | 跨專案掃描 `docs/memory/` 找重複主題；`/api/memory` 附帶 `sharedKnowledge` payload；`/memory` 顯示 suggestion-only 的「共用知識候選」區塊；`docs/shared/` 產出 read-only snapshot；不自動搬移；main spec sync 與 archive 已完成 | `/memory` → 「共用知識候選」區塊；`node tools/generate_shared_knowledge_report.js` |
-| `governance-scheduler` | 身為不想手動定期維護知識庫的使用者，我想要設定工作台每隔一段時間自動掃描一次，然後在我開啟工作台時告訴我有哪些需要處理的治理待辦，以便在我不主動想到的時候也能維持知識庫的品質 | 未開始 | `web/governance.json` 定義掃描頻率；server 啟動時檢查是否到期；掃描結果以「治理待辦」清單形式在 Overview 頁顯示；不主動寫檔，使用者確認才執行 | `web/governance.json` 設定頻率 → 重啟 server → Overview 頁顯示待辦清單 |
+| `governance-scheduler` | 身為不想手動定期維護知識庫的使用者，我想要設定工作台每隔一段時間自動掃描一次，然後在我開啟工作台時告訴我有哪些需要處理的治理待辦，以便在我不主動想到的時候也能維持知識庫的品質 | ✅ Review Gate PASS | 已完成 `web/governance.json`、server startup due-check、`/api/governance` payload、Overview 治理待辦與 strict validate / targeted verify / local API smoke；Review Gate 已確認 suggestion-only 邊界、empty/disabled state 與證據充分，待人決定是否進入 commit / sync / archive | `web/governance.json` 設定頻率 → 重啟 server → Overview 頁顯示待辦清單 |
 
 ---
 
@@ -151,9 +151,9 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | 10 | `docs/agents/codex-prompts/v4/10-cross-project-shared-knowledge-plan.md` | Planner | cross-project-shared-knowledge | — |
 | 11 | `docs/agents/codex-prompts/v4/11-cross-project-shared-knowledge-execute.md` | Executor | cross-project-shared-knowledge | ✅ 完成 |
 | 12 | `docs/agents/codex-prompts/v4/12-cross-project-shared-knowledge-review.md` | Review Gate | cross-project-shared-knowledge | ✅ PASS |
-| 13 | `docs/agents/codex-prompts/v4/13-governance-scheduler-plan.md` | Planner | governance-scheduler | — |
-| 14 | `docs/agents/codex-prompts/v4/14-governance-scheduler-execute.md` | Executor | governance-scheduler | — |
-| 15 | `docs/agents/codex-prompts/v4/15-governance-scheduler-review.md` | Review Gate | governance-scheduler | — |
+| 13 | `docs/agents/codex-prompts/v4/13-governance-scheduler-plan.md` | Planner | governance-scheduler | ✅ 完成 |
+| 14 | `docs/agents/codex-prompts/v4/14-governance-scheduler-execute.md` | Executor | governance-scheduler | ✅ 完成 |
+| 15 | `docs/agents/codex-prompts/v4/15-governance-scheduler-review.md` | Review Gate | governance-scheduler | ✅ PASS |
 
 ---
 
@@ -171,7 +171,7 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 ## 使用者影響與 Manual Sync
 
 - **使用者可見影響**：有
-- **影響摘要**：`/memory` 頁面新增健康度標記、去重建議與跨專案 shared knowledge 候選；`docs/shared/` 可產生 read-only snapshot；Overview 頁未變動，治理排程仍待後續 change
+- **影響摘要**：`/memory` 頁面新增健康度標記、去重建議與跨專案 shared knowledge 候選；`/decisions` 規則 tab 新增 conflict overview；`docs/shared/` 可產生 read-only snapshot；Overview 頁新增治理待辦摘要與 startup snapshot 語意
 - **需同步更新的 `docs/system-manual.md` 區段**：
   - 「知識提取與寫回（/extract）」— 補充去重與合併操作說明
   - 「決策與規則檢視（/decisions）」— 說明升級後的衝突偵測

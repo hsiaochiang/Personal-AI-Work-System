@@ -73,10 +73,10 @@
 
 ---
 
-## 3. 當前版本：V4 啟動 — Change 4 已 archive
+## 3. 當前版本：V4 啟動 — Change 5 Review Gate PASS
 
 > **Current release：V3**
-> **Release status：V4 Change 4 `cross-project-shared-knowledge` 已完成 main spec sync / archive（2026-04-04）**
+> **Release status：V4 Change 5 `governance-scheduler` 已通過 Review Gate，待人工決定 commit / sync / archive（2026-04-04）**
 > **可用程度：** `node web/server.js` → http://localhost:3000
 
 ### V1 Phase 進度
@@ -92,7 +92,7 @@
 
 ### 下一步
 
-V1–V3 全數完成；V4 已啟動，第四個治理 change 已完成 main spec sync / archive；下一步可切到 `governance-scheduler`，或先處理 template blocker。
+V1–V3 全數完成；V4 已啟動，`governance-scheduler` 已通過 Review Gate；下一步由人決定是否進入 commit / main spec sync / archive，或另行先處理 template verify blocker。
 
 - V2 Change 1（writeback safety hardening）✅ 已完成（`5658def`）
 - V2 Change 2（multi-project true switching）✅ 已完成（`b5eea82`）
@@ -104,7 +104,7 @@ V1–V3 全數完成；V4 已啟動，第四個治理 change 已完成 main spec
 - V3 Change 4（`local-import-vscode-copilot`）✅ 已完成並 archive（2026-04-03）；`/extract` 可從本機 Copilot session JSONL 載入單一對話。
 - V3 Change 5（`source-attribution-in-memory`）✅ 已完成並 archive（2026-04-03）；新寫回的 memory 條目可保留來源 metadata，`/memory` 會顯示來源 badge。
 - V3 Change 6（`import-ui-multi-source`）✅ 已完成並 archive（2026-04-04）；`/extract` 的多來源匯入入口、來源 badge 與 main spec sync 全數收尾完成。
-- **下一步：啟動 `governance-scheduler`，或先處理 template verify blocker**
+- **下一步：由人決定是否讓 `governance-scheduler` 進入 commit / main spec sync / archive，或先處理 template verify blocker**
 
 ### V4 Change 進度
 
@@ -114,7 +114,7 @@ V1–V3 全數完成；V4 已啟動，第四個治理 change 已完成 main spec
 | 2 | memory-dedup-suggestions | ✅ 已 archive | `/api/memory` dedup summary、`/memory` 疑似重複建議與 merge/delete action 已完成 verify；server-side duplicate group validation、main spec sync 與 archive 全數完成 |
 | 3 | rule-conflict-detection-v2 | ✅ 已 archive | `/decisions` conflict overview、signal-based detection、main spec sync 與 archive 已完成 |
 | 4 | cross-project-shared-knowledge | ✅ 已 archive | `/api/memory` sharedKnowledge payload、`/memory` 共用知識候選與 `docs/shared/` snapshot generator 已上線；main spec sync 與 archive 已完成 |
-| 5 | governance-scheduler | ⏳ 未開始 | — |
+| 5 | governance-scheduler | ✅ Review Gate PASS | `web/governance.json`、server startup due-check、`/api/governance` 與 Overview 治理待辦已完成 strict validate / targeted verify / local smoke；Review Gate 已確認 suggestion-only 邊界與 evidence 充分，待人工決定 commit / sync / archive |
 
 ### 已知缺口（V2 → V3 之間）
 
@@ -122,7 +122,7 @@ V1–V3 全數完成；V4 已啟動，第四個治理 change 已完成 main spec
 |------|------|:--------:|
 | ~~V2 驗證未完整~~ | ✅ 已解決：補足完整工作流情境驗證與 UI 狀態處理 | V2 |
 | 多工具匯入尚未涵蓋 Gemini / Claude / Antigravity | 目前已支援 plain / ChatGPT / VS Code Copilot；其他來源仍待後續版本 | V4 |
-| 無自動化治理 | 規則衝突偵測、記憶品質檢查仍需手動 | V4 |
+| 治理排程仍為 startup snapshot | 目前僅在 server 啟動時計算治理待辦，尚無 background daemon、cron 或自動更新 `lastReviewedOn` | V4 |
 
 ### V2 Change 進度
 
@@ -316,6 +316,9 @@ V1–V3 全數完成；V4 已啟動，第四個治理 change 已完成 main spec
 - 2026-04-04：**V4 Change 4 executor verify 完成** — `cross-project-shared-knowledge` 已完成 strict validate、shared utility / snapshot generator、`/api/memory` sharedKnowledge payload、`/memory` 共用知識候選與 local API smoke；下一步待 Review Gate
 - 2026-04-04：**V4 Change 4 Review Gate PASS** — `cross-project-shared-knowledge` 已確認 shared candidate 品質、same-filename guard、snapshot / `/memory` 契約與 human-confirm 邊界均符合本輪 scope；目前可進入 commit / main spec sync / archive，是否執行仍待人工確認
 - 2026-04-04：**V4 Change 4 archive complete** — `cross-project-shared-knowledge` 已完成 main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/`；下一步可切到 `governance-scheduler` 或先處理 template blocker
+- 2026-04-04：**V4 Change 5 planner** — 啟動 `governance-scheduler` 的 Planner scope gate，確認 V4 brief 已有人類確認、repo 無 active duplicate change，且目前尚無 `web/governance.json`、governance API 或 Overview 治理待辦卡；下一步待 Executor session 建立 artifacts 與最小 scheduler pipeline
+- 2026-04-04：**V4 Change 5 executor verify** — 已完成 `web/governance.json`、server startup due-check、`/api/governance` 與 Overview 治理待辦卡；重跑 strict validate、`verify_governance_scheduler` 與 local API smoke 全數 PASS，下一步待 Review Gate
+- 2026-04-04：**V4 Change 5 Review Gate PASS** — 已重查 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與 local API smoke；確認 startup snapshot、manual-only 邊界與 Overview empty/disabled state 均符合本輪 scope，目前可進入 commit / main spec sync / archive，是否執行仍待人工確認
 - 2026-04-04：修正 roadmap.md：版本表 V2 狀態、Section 3 標題與 Current release、補 V3 Change 進度表
 - 2026-03-27：Phase 5 (V3) 全部完成並 archive（`phase11-v3-multi-tool-integration-mvp`）
 - 2026-03-27：Phase 4 (V2.5) 全部完成並 archive（`phase10-v2.5-multi-project-shared-capability-mvp`）

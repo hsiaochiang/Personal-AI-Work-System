@@ -9,11 +9,21 @@ const {
 } = require('./public/js/conversation-adapters.js');
 const memoryHealthUtils = require('./public/js/memory-health-utils.js');
 const memoryDedupUtils = require('./public/js/memory-dedup-utils.js');
+const ruleConflictUtils = require('./public/js/rule-conflict-utils.js');
 const sharedKnowledgeUtils = require('./public/js/shared-knowledge-utils.js');
+const governanceSchedulerUtils = require('./public/js/governance-scheduler-utils.js');
 
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const GOVERNANCE_CONFIG_PATH = path.join(__dirname, 'governance.json');
+const GOVERNANCE_CONFIG_RELATIVE_PATH = 'web/governance.json';
+const RULE_FILE_LABELS = {
+  'output-patterns.md': '輸出模式',
+  'preference-rules.md': '偏好規則',
+  'task-patterns.md': '任務模式',
+};
+const RULE_MEMORY_FILES = Object.keys(RULE_FILE_LABELS);
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -40,6 +50,12 @@ const WRITABLE_MEMORY_FILES = [
   'skill-candidates.md',
   'task-patterns.md',
 ];
+
+let governanceSnapshotState = {
+  checkedAt: '',
+  config: governanceSchedulerUtils.parseGovernanceConfig({}, { configPath: GOVERNANCE_CONFIG_RELATIVE_PATH }),
+  projects: {},
+};
 
 function sendJSON(res, statusCode, data) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -181,6 +197,119 @@ function buildMemoryPayloadForProjectRoot(projectRoot) {
   );
 }
 
+function parseRuleFileForGovernance(filename, content) {
+  const category = RULE_FILE_LABELS[filename] || filename;
+  const results = [];
+  const lines = String(content || '').split('\n');
+  let currentTitle = '';
+  let currentBody = [];
+  let inSection = false;
+
+  const flush = () => {
+    if (!currentTitle || currentTitle.startsWith('使用原則') || currentTitle.startsWith('觀察中')) {
+      return;
+    }
+
+    results.push({
+      id: `${filename}-${results.length}`,
+      filename,
+      category,
+      title: currentTitle,
+      body: currentBody.join('\n').trim(),
+    });
+    currentTitle = '';
+    currentBody = [];
+  };
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (/^### /.test(trimmed)) {
+      flush();
+      currentTitle = trimmed.replace(/^### /, '');
+      inSection = true;
+      return;
+    }
+
+    if (/^## /.test(trimmed)) {
+      flush();
+      inSection = false;
+      return;
+    }
+
+    if (inSection && trimmed) {
+      currentBody.push(trimmed);
+    }
+  });
+
+  flush();
+  return results;
+}
+
+function buildRuleConflictSummaryForProjectRoot(projectRoot) {
+  const memoryDir = path.join(projectRoot, 'docs', 'memory');
+  const parsedRules = [];
+
+  RULE_MEMORY_FILES.forEach(filename => {
+    try {
+      const content = fs.readFileSync(path.join(memoryDir, filename), 'utf8');
+      parsedRules.push(...parseRuleFileForGovernance(filename, content));
+    } catch (error) {
+      // Missing rule files are allowed in smaller fixture projects.
+    }
+  });
+
+  if (parsedRules.length === 0) {
+    return {
+      pairCount: 0,
+      conflictRuleCount: 0,
+      byCategory: [],
+    };
+  }
+
+  return ruleConflictUtils.enrichRulesWithConflicts(parsedRules).summary;
+}
+
+function listGovernanceProjects() {
+  const configuredProjects = readProjectsConfig().map(project => ({
+    id: project.id,
+    name: project.name,
+    path: path.resolve(project.path),
+  }));
+  const defaultProject = getDefaultProjectConfig(configuredProjects);
+  const projectList = defaultProject
+    ? configuredProjects
+    : configuredProjects.concat([{
+        id: 'personal-ai',
+        name: '個人 AI 工作系統',
+        path: DEFAULT_PROJECT_ROOT,
+      }]);
+
+  const uniqueProjects = new Map();
+  projectList.forEach(project => {
+    if (!uniqueProjects.has(project.id)) {
+      uniqueProjects.set(project.id, project);
+    }
+  });
+
+  return Array.from(uniqueProjects.values());
+}
+
+function readGovernanceConfig() {
+  try {
+    const raw = fs.readFileSync(GOVERNANCE_CONFIG_PATH, 'utf8');
+    return governanceSchedulerUtils.parseGovernanceConfig(raw, {
+      configPath: GOVERNANCE_CONFIG_RELATIVE_PATH,
+    });
+  } catch (error) {
+    const config = governanceSchedulerUtils.parseGovernanceConfig({}, {
+      configPath: GOVERNANCE_CONFIG_RELATIVE_PATH,
+    });
+    config.enabled = false;
+    config.warnings = (config.warnings || []).concat(`無法讀取 ${GOVERNANCE_CONFIG_RELATIVE_PATH}：${error.message}`);
+    return config;
+  }
+}
+
 function buildSharedKnowledgeForProject(projectContext) {
   const projectCatalog = projectContext.projects.map(project => ({
     projectId: project.id,
@@ -199,6 +328,58 @@ function buildSharedKnowledgeForProject(projectContext) {
   return sharedKnowledgeUtils.buildSharedKnowledgePayload(projectCatalog, {
     currentProjectId: projectContext.currentProject.id,
   });
+}
+
+function buildGovernanceSnapshotForProject(project, projects, config, now) {
+  const projectRoot = path.resolve(project.path);
+  const memoryPayload = buildMemoryPayloadForProjectRoot(projectRoot);
+  const sharedKnowledge = buildSharedKnowledgeForProject({
+    projects,
+    currentProject: {
+      id: project.id,
+      name: project.name,
+      path: projectRoot,
+    },
+  });
+
+  return governanceSchedulerUtils.buildGovernanceProjectSnapshot(config, {
+    projectId: project.id,
+    projectName: project.name,
+    memorySummary: memoryPayload.summary || {},
+    dedupSummary: memoryPayload.dedup && memoryPayload.dedup.summary ? memoryPayload.dedup.summary : {},
+    sharedKnowledgeSummary: sharedKnowledge.summary || {},
+    ruleConflictSummary: buildRuleConflictSummaryForProjectRoot(projectRoot),
+  }, {
+    now,
+    configPath: GOVERNANCE_CONFIG_RELATIVE_PATH,
+  });
+}
+
+function refreshGovernanceSnapshots(now = new Date()) {
+  const projects = listGovernanceProjects();
+  const config = readGovernanceConfig();
+  const snapshotProjects = {};
+
+  projects.forEach(project => {
+    snapshotProjects[project.id] = buildGovernanceSnapshotForProject(project, projects, config, now);
+  });
+
+  governanceSnapshotState = {
+    checkedAt: new Date(now).toISOString(),
+    config,
+    projects: snapshotProjects,
+  };
+
+  return governanceSnapshotState;
+}
+
+function getGovernanceSnapshotForProject(projectContext) {
+  const projectId = projectContext.currentProject.id;
+  if (governanceSnapshotState.projects[projectId]) {
+    return governanceSnapshotState.projects[projectId];
+  }
+
+  return buildGovernanceSnapshotForProject(projectContext.currentProject, listGovernanceProjects(), governanceSnapshotState.config, governanceSnapshotState.checkedAt || new Date());
 }
 
 function handleAPI(req, res) {
@@ -232,6 +413,11 @@ function handleAPI(req, res) {
       ...payload,
       sharedKnowledge: buildSharedKnowledgeForProject(projectContext),
     });
+    return true;
+  }
+
+  if (url.pathname === '/api/governance') {
+    sendJSON(res, 200, getGovernanceSnapshotForProject(projectContext));
     return true;
   }
 
@@ -339,14 +525,9 @@ function handleAPI(req, res) {
 
   // Rules endpoint (preference-rules + output-patterns + task-patterns)
   if (url.pathname === '/api/rules') {
-    const ruleFiles = [
-      'preference-rules.md',
-      'output-patterns.md',
-      'task-patterns.md',
-    ];
     const results = [];
-    let pending = ruleFiles.length;
-    ruleFiles.forEach(file => {
+    let pending = RULE_MEMORY_FILES.length;
+    RULE_MEMORY_FILES.forEach(file => {
       fs.readFile(path.join(MEMORY_DIR, file), 'utf-8', (err, content) => {
         results.push({ filename: file, content: err ? '' : content });
         pending--;
@@ -466,9 +647,29 @@ function logServerStartup(port) {
   console.log(`    總覽     http://localhost:${port}/`);
   console.log(`    當前任務  http://localhost:${port}/task`);
   console.log(`    專案記憶  http://localhost:${port}/memory\n`);
+
+  const defaultProject = getDefaultProjectConfig(listGovernanceProjects()) || { id: 'personal-ai' };
+  const governanceSnapshot = governanceSnapshotState.projects[defaultProject.id];
+  if (!governanceSnapshot) {
+    return;
+  }
+
+  if (!governanceSnapshot.enabled) {
+    console.log(`  治理排程：已停用（${GOVERNANCE_CONFIG_RELATIVE_PATH}）\n`);
+    return;
+  }
+
+  const summary = governanceSnapshot.summary || { dueCount: 0, attentionCount: 0, routineCount: 0 };
+  if (summary.dueCount > 0) {
+    console.log(`  治理待辦：${summary.dueCount} 項到期（${summary.attentionCount} 項需優先確認）`);
+  } else {
+    console.log(`  治理待辦：目前沒有到期項目`);
+  }
+  console.log(`  設定檔：${GOVERNANCE_CONFIG_RELATIVE_PATH}\n`);
 }
 
 function startServer(port = PORT, callback) {
+  refreshGovernanceSnapshots();
   return server.listen(port, () => {
     logServerStartup(port);
     if (typeof callback === 'function') {
@@ -483,6 +684,8 @@ if (require.main === module) {
 
 module.exports = {
   PORT,
+  getGovernanceSnapshotForProject,
+  refreshGovernanceSnapshots,
   server,
   startServer,
 };

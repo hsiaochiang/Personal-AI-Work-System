@@ -4,27 +4,25 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: Archive complete — V4 Change 4 `cross-project-shared-knowledge`
+- Name: Review Gate PASS — V4 Change 5 `governance-scheduler`
 - Owner agent: Codex / Copilot
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `cross-project-shared-knowledge` 的 commit / main spec sync / archive 收尾，讓 V4 Change 4 進入可追溯 archived 狀態
-- 維持 human-confirm 邊界：不自動搬移各專案 memory、不新增 shared writeback action、不延伸到 scheduler 或跨專案規則治理
+- 完成 `governance-scheduler` 的 Review Gate，確認本 change 是否可進入 commit / main spec sync / archive
+- 維持 V4 brief 邊界：只做 read-only 的治理待辦與排程檢查，不自動寫回 memory / rules，也不把 template verify blocker 混入本 change
 
 ## Scope
 - In scope:
-  - 建立 `openspec/changes/cross-project-shared-knowledge/` artifacts 並通過 strict validate
-  - 新增 shared knowledge utility，跨專案掃描相同 memory filename 的重複 / 高度相似條目
-  - 更新 `/api/memory`，附帶目前 project 相關的 `sharedKnowledge` summary / groups
-  - 更新 `/memory`，顯示 read-only 的「共用知識候選」區塊與 empty state
-  - 建立 `docs/shared/shared-knowledge-candidates.md` snapshot 與 `tools/generate_shared_knowledge_report.js`
-  - 補 targeted verify、local API smoke、UI / UX / QA / runlog / manual evidence
+  - 定義 `web/governance.json` 的最小設定契約，涵蓋 enable / frequency / due-check 所需欄位
+  - 定義 server 啟動時的 scheduler 檢查邊界，產生治理待辦 snapshot / summary
+  - 定義 Overview 頁如何顯示治理待辦、empty state 與人工確認語意
+  - 定義 Executor 需要補的 OpenSpec artifacts、verify、smoke 與治理證據
 - Out of scope:
-  - 自動搬移、合併或刪除任何專案 `docs/memory/*.md`
-  - `/shared` 獨立頁面、shared accept/reject action、scheduler、governance todo
-  - LLM / embeddings / 向量搜尋 / 新 dependency
-  - commit / sync / archive 等需人工確認的不可逆操作
+  - 背景 daemon、cron、OS-level scheduler 或長駐任務
+  - 自動 merge / delete / writeback 任一 `docs/memory/*.md` 或 rules 檔
+  - 新 dependency、LLM / embeddings、跨專案 shared writeback
+  - template verify blocker 修補、commit / sync / archive 等不可逆操作
 
 ## Constraints
 - 純靜態 HTML + vanilla JS（無框架、無 build）
@@ -33,68 +31,65 @@
 - `AGENTS.md` 規定：archive / release 類不可逆操作需人工確認
 
 ## Done
-- `openspec new change cross-project-shared-knowledge` 已建立 active change，並補齊 `proposal.md` / `design.md` / `specs/.../spec.md` / `tasks.md` ✅
-- `openspec validate --changes cross-project-shared-knowledge --strict`：PASS ✅
-- 新增 `web/public/js/shared-knowledge-utils.js`，支援 cross-project flatten、same-filename grouping、current-project filtering 與 shared markdown report ✅
-- 新增 `tools/generate_shared_knowledge_report.js`，產出 `docs/shared/shared-knowledge-candidates.md`；`docs/shared/README.md` 已建立 ✅
-- `/api/memory` 已附帶 `sharedKnowledge` payload，且既有 `files` / `summary` / `dedup` contract 維持相容 ✅
-- `/memory` 已新增 read-only 的「共用知識候選」區塊與 suggestion-only 文案 ✅
-- `temp-mock/docs/memory/` 已補最小 shared fixture，讓跨專案掃描可在本 repo 直接驗證 ✅
-- `node tools/verify_cross_project_shared_knowledge.js`：PASS ✅
-- regression：`node tools/verify_memory_health_scoring.js`、`node tools/verify_memory_dedup_suggestions.js`：PASS ✅
-- local API smoke：PASS（`GET /api/memory?projectId=personal-ai`、`GET /api/memory?projectId=mock-test` 均回傳 `sharedKnowledge`，snapshot path 正常） ✅
-- Review Gate：PASS（未發現 blocking issue；可進入 commit / main spec sync / archive 決策） ✅
-- commit：✅ `e4b581d` `add cross-project shared knowledge suggestions`
-- main spec sync：✅ `openspec/specs/cross-project-shared-knowledge/spec.md` 已建立，`openspec validate cross-project-shared-knowledge --type spec --strict`：PASS
-- archive：✅ `openspec archive cross-project-shared-knowledge -y --skip-specs` → `openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/`
+- 已確認 `docs/planning/v4-brief.md` 的使用者確認日期為 `2026/4/4`，可進入 V4 Change 5 規劃 ✅
+- 已確認 `governance-scheduler` 已存在於 V4 brief 的 Changes 表，且仍在版本 scope 內 ✅
+- 已確認 `openspec/changes/` 目前只有 `archive/`，沒有同名或同目的的 active duplicate change ✅
+- 已盤點目前基線：
+  - `web/governance.json` 尚不存在 ✅
+  - `web/server.js` 目前只有 roadmap / task / memory / decisions / rules / projects / copilot 相關 API，沒有 governance endpoint 或 startup due-check ✅
+  - `web/public/index.html` + `web/public/js/overview.js` 目前只顯示 roadmap KPI / phase table，沒有治理待辦卡或排程摘要 ✅
+- 已收斂本 change 最小方向：以 server startup due-check + Overview 治理待辦為主，不做自動執行 action ✅
+- 已確認 template verify blocker 仍獨立存在，這一輪不納入 `governance-scheduler` scope ✅
+- 已執行 `openspec new change governance-scheduler`，建立 active change 骨架 ✅
+- 已補齊 `proposal.md`、`design.md`、`specs/governance-scheduler/spec.md` 與 `tasks.md`，並通過 `openspec validate --changes governance-scheduler --strict` ✅
+- 已完成最小 scheduler pipeline：`web/governance.json` → startup due-check snapshot → `/api/governance` → Overview 治理待辦卡 ✅
+- 已新增 `tools/verify_governance_scheduler.js`，並通過 targeted verify + local API smoke ✅
+- 已補 `docs/qa/2026-04-04_governance-scheduler-smoke.md`、`docs/uiux/2026-04-04_governance-scheduler-ui-review.md`、`docs/uiux/2026-04-04_governance-scheduler-ux-review.md` ✅
+- 已執行 Review Gate：重查 scope / spec / tasks / QA / UI / UX 證據，並重跑 strict validate、targeted verify、local API smoke；判定 PASS ✅
+- 已校正 `docs/planning/v4-brief.md` 的使用者影響描述，讓 brief 與實際 Overview 治理待辦能力一致 ✅
 
 ## In Progress
-- 無；Change 4 已完成 archive，待下一個 session 決定後續工作
+- 無；Review Gate 已完成，待人決定是否進入 commit / main spec sync / archive
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 決定下一步先處理 `governance-scheduler`，或先解 template verify blocker |
-| 🟡 2 | 若推進 V4 Change 5，先更新 handoff / roadmap 為新的 active change，再開新 session |
-| 🟡 3 | template verify blocker 仍獨立存在，不與已 archive 的 Change 4 綁定處理 |
+| 🔴 1 | 由人決定是否讓 `governance-scheduler` 進入 commit / main spec sync / archive |
+| 🟡 2 | 若繼續收尾，先同步 main spec，並把 `docs/planning/v4-brief.md`、`docs/roadmap.md`、`docs/system-manual.md` 更新到 V4 最後一個 change ready-to-archive 狀態 |
+| 🟡 3 | 若要執行 archive，先確認 V4 所有 planned changes 均已完成，並補版本收尾所需的 brief / roadmap 檢查 |
+| 🟡 4 | template verify blocker 仍在 `docs/handoff/blockers.md` 獨立追蹤，不與 Change 5 收尾綁定 |
 
 ## Files Touched（本 session）
-- openspec/changes/cross-project-shared-knowledge/.openspec.yaml
-- openspec/changes/cross-project-shared-knowledge/proposal.md
-- openspec/changes/cross-project-shared-knowledge/design.md
-- openspec/changes/cross-project-shared-knowledge/specs/cross-project-shared-knowledge/spec.md
-- openspec/changes/cross-project-shared-knowledge/tasks.md
-- openspec/specs/cross-project-shared-knowledge/spec.md
-- openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/
-- web/server.js
-- web/public/memory.html
-- web/public/js/memory.js
-- web/public/js/shared-knowledge-utils.js
-- web/public/css/style.css
-- tools/generate_shared_knowledge_report.js
-- tools/verify_cross_project_shared_knowledge.js
-- docs/shared/README.md
-- docs/shared/shared-knowledge-candidates.md
-- temp-mock/docs/memory/preference-rules.md
-- temp-mock/docs/memory/task-patterns.md
-- docs/qa/2026-04-04_cross-project-shared-knowledge-smoke.md
-- docs/uiux/2026-04-04_cross-project-shared-knowledge-ui-review.md
-- docs/uiux/2026-04-04_cross-project-shared-knowledge-ux-review.md
+- docs/handoff/current-task.md
 - docs/planning/v4-brief.md
 - docs/roadmap.md
 - docs/system-manual.md
 - docs/runlog/2026-04-04_README.md
-- docs/handoff/current-task.md
+- openspec/changes/governance-scheduler/proposal.md
+- openspec/changes/governance-scheduler/design.md
+- openspec/changes/governance-scheduler/specs/governance-scheduler/spec.md
+- openspec/changes/governance-scheduler/tasks.md
+- web/governance.json
+- web/server.js
+- web/public/index.html
+- web/public/js/overview.js
+- web/public/js/governance-scheduler-utils.js
+- web/public/css/style.css
+- tools/verify_governance_scheduler.js
+- docs/qa/2026-04-04_governance-scheduler-smoke.md
+- docs/uiux/2026-04-04_governance-scheduler-ui-review.md
+- docs/uiux/2026-04-04_governance-scheduler-ux-review.md
 
 ## Validation Status
-- Strict validate：✅ `openspec validate --changes cross-project-shared-knowledge --strict`
-- Apply instructions / tasks readiness：✅ `openspec instructions apply --change "cross-project-shared-knowledge" --json`
-- Targeted verify：✅ `node tools/verify_cross_project_shared_knowledge.js`
-- Regression：✅ `node tools/verify_memory_health_scoring.js`、`node tools/verify_memory_dedup_suggestions.js`
-- Shared snapshot generator：✅ `node tools/generate_shared_knowledge_report.js`
-- Local API smoke：✅ `GET /api/memory?projectId=personal-ai`、`GET /api/memory?projectId=mock-test`
-- Review Gate rerun：✅ `openspec validate --changes cross-project-shared-knowledge --strict`、`node tools/verify_cross_project_shared_knowledge.js`、ephemeral local API smoke（`personal-ai` / `mock-test` 均回傳 `sharedKnowledge.summary.groupCount = 4`）
-- Main spec validate：✅ `openspec validate cross-project-shared-knowledge --type spec --strict`
-- Archive：✅ `openspec archive cross-project-shared-knowledge -y --skip-specs`
-- Change type：✅ UI change（依據：`design.md` 與實際異動涵蓋 `/memory` 頁面、樣式與使用流程）
+- Brief confirmation：✅ `docs/planning/v4-brief.md` 已有人類確認
+- Scope gate：✅ `governance-scheduler` 屬於 V4 brief In Scope（例行治理排程）
+- Duplicate change check：✅ `openspec/changes/` 目前無 active change
+- Baseline inspection：✅ `web/server.js`、`web/public/index.html`、`web/public/js/overview.js`、`web/projects.json`
+- OpenSpec new：✅ `openspec new change governance-scheduler`
+- Strict validate：✅ `openspec validate --changes governance-scheduler --strict`
+- Targeted verify：✅ `node tools/verify_governance_scheduler.js`
+- Local API smoke：✅ startup log + `GET /api/governance` + `GET /`
+- Done gate evidence：✅ QA / UI review / UX review 已補齊
+- Review Gate：✅ PASS；startup snapshot 邊界、manual note 語意、Overview empty/disabled state 與 verify 證據均符合本 change scope
+- Executor boundary：✅ 本 session 尚未執行 commit / sync / archive 等不可逆操作

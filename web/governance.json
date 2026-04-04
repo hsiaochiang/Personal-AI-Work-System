@@ -1,0 +1,50 @@
+{
+  "enabled": true,
+  "dueCheck": "startup",
+  "checks": [
+    {
+      "id": "memory-health",
+      "enabled": true,
+      "frequency": "weekly",
+      "lastReviewedOn": "2026-03-20",
+      "dueCheck": {
+        "source": "memory",
+        "metric": "needsAttentionCount",
+        "attentionThreshold": 1
+      }
+    },
+    {
+      "id": "memory-dedup",
+      "enabled": true,
+      "frequency": "weekly",
+      "lastReviewedOn": "2026-03-18",
+      "dueCheck": {
+        "source": "dedup",
+        "metric": "groupCount",
+        "attentionThreshold": 1
+      }
+    },
+    {
+      "id": "rules-conflict",
+      "enabled": true,
+      "frequency": "monthly",
+      "lastReviewedOn": "2026-03-01",
+      "dueCheck": {
+        "source": "rulesConflict",
+        "metric": "pairCount",
+        "attentionThreshold": 1
+      }
+    },
+    {
+      "id": "shared-knowledge",
+      "enabled": true,
+      "frequency": "monthly",
+      "lastReviewedOn": "2026-03-03",
+      "dueCheck": {
+        "source": "sharedKnowledge",
+        "metric": "groupCount",
+        "attentionThreshold": 1
+      }
+    }
+  ]
+}

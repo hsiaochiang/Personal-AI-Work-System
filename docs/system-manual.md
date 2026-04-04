@@ -14,9 +14,15 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 ## 功能總覽
 
 ### 專案總覽（Overview）
-- 能力描述：顯示 roadmap 進度與當前任務狀態
+- 能力描述：顯示 roadmap 進度、當前任務狀態與治理待辦摘要
 - 操作方式：瀏覽器開啟 http://localhost:3000/
 - 限制：僅讀取，不可在 UI 編輯
+- 改善（V4 Change 5）：Overview 會讀取 `/api/governance` 的 startup snapshot，顯示治理待辦、空狀態或停用狀態，並提供前往 `/memory` / `/decisions` 的導向入口
+
+### 治理排程（`web/governance.json` + `/api/governance`）
+- 能力描述：用靜態設定檔定義治理巡檢頻率，server 啟動時做 due-check，將到期待辦以 suggestion-only 方式回傳給 Overview
+- 操作方式：修改 `web/governance.json` → 重啟 `node web/server.js` → 開啟 http://localhost:3000/ 查看治理待辦
+- 限制：第一版只在 startup 建立 snapshot；不自動更新 `lastReviewedOn`，也不執行任何 writeback action
 
 ### Handoff Builder（/handoff）
 - 能力描述：選擇 handoff 類型（規劃/實作/整合），編輯欄位，產生 markdown，一鍵複製
@@ -84,11 +90,13 @@ npm start        # 或 node server.js
 - memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
 - memory dedup suggestion 第一版只處理同一 memory 檔案內的重複 / 高度相似條目，不做跨檔案或跨專案合併
 - cross-project shared knowledge 第一版只處理不同 projectId、相同 memory filename 的重複主題；目前沒有 `/shared` 獨立頁面，也沒有 accept / writeback action
-- 無自動化治理（V4 改善目標）
+- governance scheduler 第一版只在 server startup 建立 snapshot；若不重啟 server，到期資訊不會自動刷新
+- governance scheduler 目前沒有「標記已完成」或直接更新 `web/governance.json` 的 UI
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V4 Change 5 | 2026-04-04 | `web/governance.json`、server startup due-check、`/api/governance` 與 Overview 治理待辦摘要 |
 | V4 Change 4 | 2026-04-04 | `/memory` 共用知識候選、`/api/memory` sharedKnowledge payload 與 `docs/shared/` snapshot generator |
 | V4 Change 3 | 2026-04-04 | `/decisions` conflict overview、signal-based rule conflict detection 與 per-rule explanation（archive complete） |
 | V4 Change 2 | 2026-04-04 | `/memory` 疑似重複建議、dedup summary 與 merge/delete action（archive complete） |
@@ -108,6 +116,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 Change 5 review gate pass | Review Gate 判定 `governance-scheduler` PASS；已重查 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與 local API smoke；同時校正 brief 的使用者影響描述，讓 Overview 治理待辦能力與規劃文件一致 | 無（No user-facing change；本次為收尾閘門判定與治理文件對齊，Overview / `/api/governance` 的可見功能維持不變） |
+| 2026-04-04 | V4 Change 5 executor verify | 完成 `governance-scheduler` 的 apply / verify：新增 `web/governance.json`、server startup due-check、`/api/governance` payload 與 Overview 治理待辦卡；已重跑 strict validate、targeted verify 與 local API smoke，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 Overview 直接看到治理待辦、例行巡檢與停用 / 空狀態；系統仍不會自動更新治理設定或改寫任何 knowledge source） |
+| 2026-04-04 | V4 Change 5 executor start | 啟動 `governance-scheduler` executor，已建立 `openspec/changes/governance-scheduler/` active change 骨架，並完成 proposal / design / spec / tasks 草稿；scope 固定為 `web/governance.json`、server startup due-check、`/api/governance` payload 與 Overview 治理待辦卡，下一步待 strict validate 與實作 | 無（No user-facing change；本次僅建立 active change artifacts 並切換 handoff / brief / manual 狀態，Overview / server 行為尚未改動） |
+| 2026-04-04 | V4 Change 5 planner | 啟動 `governance-scheduler` 的 Planner scope gate，確認 V4 brief 已有人類確認、repo 無 active duplicate change，且目前基線尚無 `web/governance.json`、governance API 或 Overview 治理待辦卡；下一步待 Executor session 建立 artifacts 並實作最小 scheduler pipeline | 無（No user-facing change；本次僅完成規劃、handoff 切換與基線盤點，Overview / server 行為尚未改動） |
 | 2026-04-04 | V4 Change 4 archive | `cross-project-shared-knowledge` 已完成 `openspec/specs/cross-project-shared-knowledge/spec.md` sync 與 `openspec archive cross-project-shared-knowledge -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-cross-project-shared-knowledge/`，下一步可切到 `governance-scheduler` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/memory` 與 `docs/shared/` 的可見功能不變） |
 | 2026-04-04 | V4 Change 4 review gate pass | Review Gate 判定 `cross-project-shared-knowledge` PASS；已重查 strict validate、targeted verify、ephemeral local API smoke 與 shared candidate / contract 邊界，確認本輪可進入 commit / main spec sync / archive；本 session 仍未執行不可逆操作 | 無（No user-facing change；本次為收尾閘門判定與治理狀態更新，`/memory` 與 `docs/shared/` 的可見功能不變） |
 | 2026-04-04 | V4 Change 4 executor verify | 完成 `cross-project-shared-knowledge` 的 apply / verify：`/api/memory` 現在會回傳目前 project 相關的 `sharedKnowledge` summary / groups，`/memory` 已顯示 read-only 的共用知識候選，並可透過 `node tools/generate_shared_knowledge_report.js` 生成 `docs/shared/shared-knowledge-candidates.md`；下一步待 Review Gate 判定是否可進入 sync / archive | 有（使用者現在可在 `/memory` 直接看到跨專案重複的偏好 / 模式候選，並到 `docs/shared/` 查看 snapshot；本輪仍無 shared writeback action） |
