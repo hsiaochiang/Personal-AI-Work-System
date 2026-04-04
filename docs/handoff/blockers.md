@@ -44,6 +44,7 @@
 | P2 | 治理文件狀態漂移（roadmap/handoff/runlog 不一致） | 中 | 中 | 以 `docs/roadmap.md` 為真源做收尾比對 | 同一階段在不同文件出現互斥狀態 | 暫停交接；完成一致性修補與 decision-log 留痕後解除 |
 
 ## Resolved Blockers
+- 2026-04-04：`gemini-adapter` Review Gate 曾因 `docs/system-manual.md` 已知限制仍宣稱 `/extract` 尚未支援 Gemini 而 FAIL；現已修正文案為支援 `plain` / `chatgpt` / `gemini` / `copilot`、Claude / Antigravity 尚未支援，並重跑 strict validate、Gemini targeted verify、import UI smoke 與 source attribution verify，全數 PASS 後解除
 - 2026-04-04：`memory-dedup-suggestions` Review Gate 曾因 `/api/memory/dedup` merge action 未驗證 `primaryItemId` 屬於本次 duplicate group 而 FAIL；現已在 `web/public/js/memory-dedup-utils.js` 補 server-side group membership 驗證，並更新 `tools/verify_memory_dedup_suggestions.js` 覆蓋 malformed merge payload / non-duplicate delete guard，重跑 targeted verify、regression 與 local API smoke 後解除
 - 2026-04-04：`memory-health-scoring` Review Gate 曾因近期但無 source metadata 的條目被誤判為 `healthy` 而 FAIL；現已修補 `web/public/js/memory-health-utils.js`，並擴充 `tools/verify_memory_health_scoring.js` 覆蓋 missing source / missing date guard，重跑 strict validate / targeted verify / regression / local API smoke 後解除
 - 2026-04-03：`plain-text-adapter-refactor` Review Gate 曾因 shared validator 未嚴格檢查 ISO 8601、且缺少 `docs/uiux/2026-04-03_ui-review.md` 而 FAIL；現已補強 `web/public/js/conversation-adapters.js` 驗證、更新 `tools/verify_plain_text_adapter.js`，並新增 UI review 證據後解除

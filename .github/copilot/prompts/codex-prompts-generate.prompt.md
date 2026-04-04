@@ -2,6 +2,13 @@
 agent: agent
 description: "確認 v{N}-brief.md 後，為每個 Change 生成帶序號的 Codex 三角色提示詞 MD 檔案，並在 brief 新增 Prompt 清單區段"
 ---
+
+> ⚠️ **格式強制聲明（執行前必讀）**
+> - 輸出檔名**必須**以兩位數序號開頭：`01-my-change-plan.md`
+> - 後綴**必須**是 `-plan.md` / `-execute.md` / `-review.md`
+> - 命名為 `<change>-planner.md` / `<change>-executor.md` 者為**舊格式，絕對不可產出**
+> - brief 中**必須**存在「Codex 執行 Prompt 清單」區段，無論舊版是否存在
+
 請依照以下步驟，為當前版本的每個 Change 生成帶序號的 Codex 三角色提示詞 MD 檔案，並在 brief 新增執行清單。
 
 ## 步驟
@@ -10,12 +17,48 @@ description: "確認 v{N}-brief.md 後，為每個 Change 生成帶序號的 Cod
 2. **讀取版本 brief**：讀取 `docs/planning/v{N}-brief.md`，依照「預計拆分的 Changes」表格的順序，取得所有 change 名稱與重點提示
 3. **確認 brief 狀態**：若 brief 尚未由使用者確認（確認日期欄位為空），停下回報，不繼續生成
 4. **建立輸出目錄**：`docs/agents/codex-prompts/v{N}/`（不存在則建立）
-5. **為每個 Change 依序生成三個檔案**
-   - 序號規則：按 Changes 表順序，第 i 個 change（從 1 起算）的序號為：plan=(i-1)×3+1、execute=(i-1)×3+2、review=(i-1)×3+3
-   - 命名格式：`{序號:02d}-{change-name}-{plan|execute|review}.md`（例：`01-my-change-plan.md`）
-   - **存在性檢查**：只檢查帶序號的新格式（`01-my-change-plan.md`）。目錄中若有舊格式（如 `my-change-planner.md`、`my-change-executor.md`，即無序號前綴的同名 change 檔案），**不視為已存在**，仍必須建立帶序號的新格式檔案。
-   - 若帶序號的新格式檔案已存在，則跳過（除非使用者明確要求覆寫）
-6. **在 brief 新增「Codex 執行 Prompt 清單」區段**（若已存在 `## Codex 執行 Prompt 清單` 標題行則跳過；否則必須插入）
+5. **先計算並輸出完整預期檔名清單（強制步驟，不可跳過）**
+
+   在建立任何檔案之前，**必須先輸出以下表格**（依 brief 中 Changes 表順序）：
+
+   | i | change-name | plan 檔名 | execute 檔名 | review 檔名 |
+   |---|-------------|-----------|--------------|-------------|
+   | 1 | `<name-1>` | `01-<name-1>-plan.md` | `02-<name-1>-execute.md` | `03-<name-1>-review.md` |
+   | 2 | `<name-2>` | `04-<name-2>-plan.md` | `05-<name-2>-execute.md` | `06-<name-2>-review.md` |
+   | … | … | … | … | … |
+
+   序號規則：第 i 個 change（從 1 起算）的 plan = `(i-1)×3+1`，execute = `(i-1)×3+2`，review = `(i-1)×3+3`
+
+   > 這個表格是唯一的真實來源。後續只依此表格的路徑建立或跳過檔案，不依目錄瀏覽結果判斷。
+
+6. **依步驟 5 的表格逐一建立檔案**
+
+   - 逐行掃描表格中的每個路徑
+   - **跳過條件**：該行的完整路徑（含序號前綴）已存在 → 跳過
+   - **必須建立**：該路徑不存在，**或**目錄中只有舊格式檔案（無序號前綴）→ 必須建立新格式
+   - 不得因目錄中存在任何「名稱含 change-name 的檔案」而跳過——跳過只認步驟 5 表格中的精確路徑
+
+7. **確保 brief 的「Codex 執行 Prompt 清單」區段存在且完整**
+
+   - 搜尋 brief 中是否有 `## Codex 執行 Prompt 清單` 標題
+   - **若不存在** → 在 Changes 表後插入完整區段（含使用說明 + 表格）
+   - **若已存在但表格列數不符** → 更新表格使其包含步驟 5 所有路徑
+   - 最終 brief 中此區段的表格列數必須等於 N×3（N = changes 數量）
+
+8. **自我驗證（強制，不可跳過）**
+
+   完成後輸出驗證清單，每項必須勾選才算完成：
+
+   ```
+   ## 生成驗證
+   - [ ] 已輸出步驟 5 的完整預期檔名表格
+   - [ ] 所有 change 均有 3 個新格式檔案（共 N×3 個），全部存在於目錄中
+   - [ ] 每個檔名均符合 `^\d{2}-.+-(plan|execute|review)\.md$` 格式
+   - [ ] 無任何輸出為 `-planner.md` / `-executor.md` 後綴
+   - [ ] brief「Codex 執行 Prompt 清單」區段存在且表格有 N×3 列
+   ```
+
+   若任何項目未勾選 → 立即補齊，不得結束。
 
 ---
 

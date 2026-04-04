@@ -63,7 +63,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>知識提取</h2>
-        <p class="description">先選擇對話來源工具，再用對應入口載入 Copilot / ChatGPT / 純文字內容，系統會以正確 adapter 正規化為 `ConversationDoc`，再進入既有提取、審核與寫回流程。</p>
+        <p class="description">先選擇對話來源工具，再用對應入口載入 Copilot / ChatGPT / Gemini / 純文字內容，系統會以正確 adapter 正規化為 `ConversationDoc`，再進入既有提取、審核與寫回流程。</p>
       </div>
 
       <!-- Step 1: Input -->
@@ -82,6 +82,7 @@
           <select class="extract-source-select" id="import-source-select">
             <option value="plain">純文字</option>
             <option value="chatgpt">ChatGPT</option>
+            <option value="gemini">Gemini</option>
             <option value="copilot">VS Code Copilot</option>
           </select>
         </div>
@@ -127,6 +128,19 @@
           </div>
         </div>
 
+        <div class="source-panel gemini-import-panel hidden" id="source-panel-gemini">
+          <div class="source-panel-header">
+            <div>
+              <h3>Gemini 匯入</h3>
+              <p>支援貼上 Gemini 對話 transcript；系統會明確走 Gemini adapter，保留 `gemini` 來源標記。</p>
+            </div>
+          </div>
+          <div class="extract-status">
+            <span class="material-symbols-outlined">star</span>
+            <span>請貼上包含 `You` / `Gemini` turns 的 Gemini 對話全文；本輪不支援 API 載入或檔案上傳。</span>
+          </div>
+        </div>
+
         <div class="source-panel plain-import-panel" id="source-panel-plain">
           <div class="source-panel-header">
             <div>
@@ -136,7 +150,7 @@
           </div>
           <div class="extract-status">
             <span class="material-symbols-outlined">notes</span>
-            <span>這個模式不做 ChatGPT / Copilot 偵測，會直接以純文字來源提取。</span>
+            <span>這個模式不做 ChatGPT / Gemini / Copilot 偵測，會直接以純文字來源提取。</span>
           </div>
         </div>
 

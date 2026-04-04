@@ -100,6 +100,12 @@ const IMPORT_SOURCE_CONFIG = {
     statusMessage: 'ChatGPT 模式已就緒，可貼上 transcript 或上傳 JSON / TXT。',
     statusIcon: 'forum',
   },
+  gemini: {
+    hint: '貼上 Gemini 對話 transcript，系統會明確走 Gemini adapter，保留來源標記。',
+    placeholder: '將 Gemini transcript 貼在這裡…\n\n支援輸入：\n• Gemini 網頁複製的對話全文\n• 具有 You / Gemini turn 標頭的 transcript\n\n提取引擎會使用 GeminiAdapter，而不是 plain text fallback。',
+    statusMessage: 'Gemini 模式已就緒，可直接貼上 Gemini transcript。',
+    statusIcon: 'star',
+  },
   copilot: {
     hint: '先從本機 session 清單載入一筆 Copilot 對話，再進入既有 extraction 流程。',
     placeholder: '先從上方載入一筆 VS Code Copilot session…\n\n載入後這裡會顯示對話預覽；若你手動編輯內容，系統會退出 Copilot 匯入模式。',
@@ -226,11 +232,15 @@ function getManualEditResetMessage() {
     return '已切回手動編輯的 ChatGPT 內容；系統會依 ChatGPT 模式重新解析 textarea。';
   }
 
+  if (selectedImportSource === 'gemini') {
+    return '已切回手動編輯的 Gemini 內容；系統會依 Gemini 模式重新解析 textarea。';
+  }
+
   return '純文字模式會直接使用你目前貼上的內容。';
 }
 
 function renderSourcePanels() {
-  ['plain', 'chatgpt', 'copilot'].forEach((source) => {
+  ['plain', 'chatgpt', 'gemini', 'copilot'].forEach((source) => {
     const panel = document.getElementById(`source-panel-${source}`);
     if (!panel) {
       return;
@@ -423,6 +433,14 @@ async function runExtraction() {
         metadata.inputFormatHint = 'chatgpt-json';
       }
       conversationDoc = adapterApi.adaptChatGPTConversation(text, metadata);
+    } else if (selectedImportSource === 'gemini') {
+      if (!text) {
+        alert('請先貼上 Gemini transcript。');
+        return;
+      }
+      conversationDoc = adapterApi.adaptGeminiConversation(text, {
+        inputFormatHint: 'gemini-text',
+      });
     } else {
       if (!text) {
         alert('請先貼上要提取的純文字對話。');

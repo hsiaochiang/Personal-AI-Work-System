@@ -1,0 +1,11 @@
+You
+請幫我整理 Gemini adapter 這一輪的最小 scope。
+
+Gemini
+先在共享 adapter 模組加入 Gemini transcript parser，並讓 `/extract` 的來源 selector 多一個 Gemini 選項。
+
+You
+還有哪些事情這一輪不要做？
+
+Gemini 2.5 Pro
+不要在這一輪加入 Gemini API、自動抓取歷史、Claude adapter，或新的 runtime dependency。

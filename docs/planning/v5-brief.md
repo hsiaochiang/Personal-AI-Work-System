@@ -116,10 +116,37 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 
 | Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
 |---|---|---|---|---|
-| `gemini-adapter` | 身為使用 Google Gemini 的使用者，我想要把 Gemini 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Gemini 的思考結果存進記憶 | 未開始 | 實作 `GeminiAdapter`：解析 Gemini 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `gemini`） | `/extract` → 選工具來源「Gemini」→ 貼上 → 提取候選 |
+| `gemini-adapter` | 身為使用 Google Gemini 的使用者，我想要把 Gemini 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Gemini 的思考結果存進記憶 | ✅ 已 archive | 實作 `GeminiAdapter`：解析 Gemini 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `gemini`）；main spec sync 與 archive 已完成 | `/extract` → 選工具來源「Gemini」→ 貼上 → 提取候選 |
 | `claude-adapter` | 身為使用 Claude 的使用者，我想要把 Claude 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Claude 的分析結果存進記憶 | 未開始 | 實作 `ClaudeAdapter`：解析 Claude Human/Assistant 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `claude`） | `/extract` → 選工具來源「Claude」→ 貼上 → 提取候選 |
 | `chatgpt-api-auto-import` | 身為重度使用 ChatGPT 的使用者，我想要直接透過 API key 從 ChatGPT 帳號自動載入最近的對話，以便不需要在官方網站手動操作匯出就能把對話知識帶進工作台 | 未開始 | settings 頁 API key 設定；server `/api/chatgpt/sessions`；`/extract` ChatGPT 選項新增 API 載入按鈕；`web/api-keys.json` 不 commit（.gitignore 追加） | settings → 填入 API key → `/extract` → 選 ChatGPT → 點「API 載入」→ 選 session → 提取候選 |
 | `adapter-docs-update` | 身為需要了解工具支援狀況的使用者，我想要在 import 頁面看到每個工具的支援格式說明，以便知道應該複製哪段文字、可以上傳哪種格式，不需要試錯 | 未開始 | 更新 `docs/workflows/conversation-schema.md` 補齊 V5 adapter 說明；`/extract` 各工具選項下方顯示格式提示文字 | `/extract` → 選工具 → 看到「支援格式：...」提示 |
+
+---
+
+## Codex 執行 Prompt 清單
+
+> 使用方式：複製下方路徑，於 Codex CLI terminal 執行：
+> ```powershell
+> codex --yolo < docs/agents/codex-prompts/v5/<filename>.md
+> ```
+> 角色切換（Planner → Executor → Review）**必須開新 session**，不可 resume。
+>
+> 狀態說明：`—` 未執行 ｜ `🔄 執行中` ｜ `✅ 完成`
+
+| # | 路徑 | 角色 | Change | 狀態 |
+|---|------|------|--------|------|
+| 01 | `docs/agents/codex-prompts/v5/01-gemini-adapter-plan.md` | Planner | gemini-adapter | ✅ 完成 |
+| 02 | `docs/agents/codex-prompts/v5/02-gemini-adapter-execute.md` | Executor | gemini-adapter | ✅ 完成 |
+| 03 | `docs/agents/codex-prompts/v5/03-gemini-adapter-review.md` | Review Gate | gemini-adapter | ✅ PASS |
+| 04 | `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` | Planner | claude-adapter | — |
+| 05 | `docs/agents/codex-prompts/v5/05-claude-adapter-execute.md` | Executor | claude-adapter | — |
+| 06 | `docs/agents/codex-prompts/v5/06-claude-adapter-review.md` | Review Gate | claude-adapter | — |
+| 07 | `docs/agents/codex-prompts/v5/07-chatgpt-api-auto-import-plan.md` | Planner | chatgpt-api-auto-import | — |
+| 08 | `docs/agents/codex-prompts/v5/08-chatgpt-api-auto-import-execute.md` | Executor | chatgpt-api-auto-import | — |
+| 09 | `docs/agents/codex-prompts/v5/09-chatgpt-api-auto-import-review.md` | Review Gate | chatgpt-api-auto-import | — |
+| 10 | `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md` | Planner | adapter-docs-update | — |
+| 11 | `docs/agents/codex-prompts/v5/11-adapter-docs-update-execute.md` | Executor | adapter-docs-update | — |
+| 12 | `docs/agents/codex-prompts/v5/12-adapter-docs-update-review.md` | Review Gate | adapter-docs-update | — |
 
 ---
 
@@ -147,15 +174,15 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 
 ## 使用者確認
 
-- **確認日期**：（待確認）
-- **確認人**：
-- **確認範圍**：
+- **確認日期**：2026/4/4
+- **確認人**：Wilson
+- **確認範圍**：全部
 - **備註**：
 
 ---
 
 ## 版本狀態
 
-- **開始日期**：
+- **開始日期**：2026-04-04
 - **完成日期**：
-- **狀態**：規劃中
+- **狀態**：執行中

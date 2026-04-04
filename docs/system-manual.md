@@ -30,14 +30,15 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 限制：範本結構硬編碼在前端 JS，不支援自訂範本
 
 ### 知識提取與寫回（/extract）
-- 能力描述：在 `/extract` 先選擇工具來源（純文字 / ChatGPT / VS Code Copilot），再用對應入口貼上文字、上傳 ChatGPT JSON / TXT，或載入 Copilot session；內容會先正規化為 `ConversationDoc`，再進入候選提取、審核與寫回 `docs/memory/`
-- 操作方式：開啟 `/extract` → 選擇工具來源 → 依模式貼上文字、上傳 ChatGPT 檔案，或刷新並載入 Copilot session → 點「提取候選知識」→ 審核候選（可看到來源 badge）→ 點「寫回」
+- 能力描述：在 `/extract` 先選擇工具來源（純文字 / ChatGPT / Gemini / VS Code Copilot），再用對應入口貼上文字、上傳 ChatGPT JSON / TXT，貼上 Gemini transcript，或載入 Copilot session；內容會先正規化為 `ConversationDoc`，再進入候選提取、審核與寫回 `docs/memory/`
+- 操作方式：開啟 `/extract` → 選擇工具來源 → 依模式貼上文字、上傳 ChatGPT 檔案、貼上 Gemini transcript，或刷新並載入 Copilot session → 點「提取候選知識」→ 審核候選（可看到來源 badge）→ 點「寫回」
 - 改善（V2）：寫回前自動 backup（`.backup/` 機制），不再整檔覆蓋
 - 改善（V3 Change 2）：既有純文字入口已接上 `ConversationDoc` adapter 基線，為後續多來源匯入保留共同介面
 - 改善（V3 Change 3）：新增 `ChatGPTAdapter`，支援分享頁 transcript 貼上與 ChatGPT conversation JSON 匯入；若內容不符合 ChatGPT 偵測條件，系統會自動退回 `PlainTextAdapter`
 - 改善（V3 Change 4）：新增 Copilot 本機 session 匯入；`/extract` 可直接讀取最近的 VS Code Copilot JSONL session，並支援覆寫 session 路徑
 - 改善（V3 Change 5）：寫回 memory 條目時會自動保存來源 metadata（`plain` / `chatgpt` / `copilot`），供 `/memory` 顯示來源 badge
 - 改善（V3 Change 6）：`/extract` 新增工具來源 selector 與 per-source import controls；候選審核卡片與 summary 會顯示來源 badge / source summary
+- 改善（V5 Change 1）：新增 `GeminiAdapter` 與 `/extract` 的 Gemini 來源選項；可直接貼上 Gemini transcript，並在候選審核與 writeback 保留 `gemini` 來源標記
 
 ### 專案記憶（/memory）
 - 能力描述：讀取 `docs/memory/*.md`，以分類卡片呈現專案記憶，並顯示 health summary 與每條記憶的健康狀態
@@ -85,7 +86,8 @@ npm start        # 或 node server.js
 ## 已知限制
 - ChatGPT JSON 若包含多筆 conversation，現階段僅 deterministic 選擇最近更新的一筆；尚無 picker UI
 - Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
-- `/extract` 的工具來源 selector 目前只涵蓋 `plain` / `chatgpt` / `copilot`；尚未支援 Gemini / Claude / Antigravity
+- `/extract` 的工具來源 selector 目前涵蓋 `plain` / `chatgpt` / `gemini` / `copilot`；尚未支援 Claude / Antigravity
+- Gemini 匯入目前只支援貼上 transcript；尚未支援 API 載入、檔案上傳或多 conversation picker
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
 - memory dedup suggestion 第一版只處理同一 memory 檔案內的重複 / 高度相似條目，不做跨檔案或跨專案合併
@@ -96,6 +98,7 @@ npm start        # 或 node server.js
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V5 Change 1 | 2026-04-04 | `GeminiAdapter`、`/extract` Gemini 來源選項、Gemini source badge 與 main spec sync / archive |
 | V4 Change 5 | 2026-04-04 | `web/governance.json`、server startup due-check、`/api/governance` 與 Overview 治理待辦摘要 |
 | V4 Change 4 | 2026-04-04 | `/memory` 共用知識候選、`/api/memory` sharedKnowledge payload 與 `docs/shared/` snapshot generator |
 | V4 Change 3 | 2026-04-04 | `/decisions` conflict overview、signal-based rule conflict detection 與 per-rule explanation（archive complete） |
@@ -116,6 +119,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V5 Change 1 archive | `gemini-adapter` 已完成 implementation commit、`openspec/specs/gemini-adapter/spec.md` sync 與 `openspec archive gemini-adapter -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-gemini-adapter/`，下一步可切到 `claude-adapter` | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/extract` 的 Gemini 能力維持不變） |
+| 2026-04-04 | V5 Change 1 review gate pass | `gemini-adapter` Review Gate 已通過；補修 `docs/system-manual.md` 的已知限制文案，讓 manual 與實作、QA / UI / UX evidence、brief / roadmap / handoff 狀態一致；目前可進入 commit / sync / archive 決策，但本輪未執行不可逆操作 | 無（No user-facing change；本次僅修正治理文件與 Review Gate 狀態，不改變 `/extract` 已上線的 Gemini 能力） |
+| 2026-04-04 | V5 Change 1 executor verify | 完成 `gemini-adapter` 的 apply / verify：`/extract` 現在新增 `Gemini` 來源選項、`GeminiAdapter` transcript 解析與 `Gemini` source badge；已重跑 strict validate、Gemini targeted verify 與既有來源 regression，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 `/extract` 直接選 `Gemini` 並貼上 transcript，後續候選審核與 writeback 會保留 `gemini` 來源標記；本輪仍不支援 Gemini API 或檔案匯入） |
+| 2026-04-04 | V5 Change 1 executor start | 啟動 `gemini-adapter` executor，已建立 `openspec/changes/gemini-adapter/` active change 骨架並補 proposal / design / spec / tasks 草稿；同時切換 `v5-brief`、`roadmap`、`handoff` 與 runlog 到 V5 active change 狀態 | 無（No user-facing change；本次僅建立 active change artifacts 與治理同步，`/extract` 尚未新增 Gemini 匯入能力） |
 | 2026-04-04 | V4 complete | `governance-scheduler` 已完成 main spec sync 與 archive，V4 五個 planned changes 全數封存；已同步 brief / roadmap / handoff 為版本完成狀態，下一步轉向 template verify blocker 或下一版規劃 | 無（No user-facing change；本次為版本收尾與治理狀態更新，已上線功能不變） |
 | 2026-04-04 | V4 Change 5 archive | `governance-scheduler` 已完成 `openspec/specs/governance-scheduler/spec.md` sync 與 `openspec archive governance-scheduler -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-governance-scheduler/` | 無（No user-facing change；本次為治理收尾與封存狀態更新，Overview 治理待辦功能維持不變） |
 | 2026-04-04 | V4 Change 5 review gate pass | Review Gate 判定 `governance-scheduler` PASS；已重查 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與 local API smoke；同時校正 brief 的使用者影響描述，讓 Overview 治理待辦能力與規劃文件一致 | 無（No user-facing change；本次為收尾閘門判定與治理文件對齊，Overview / `/api/governance` 的可見功能維持不變） |

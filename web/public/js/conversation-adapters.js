@@ -8,7 +8,7 @@
   root.ConversationAdapters = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const CONVERSATION_SCHEMA_VERSION = 'v1';
-  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'copilot']);
+  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'gemini', 'copilot']);
   const ALLOWED_ROLES = new Set(['user', 'assistant', 'system', 'tool']);
   const ISO_8601_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/;
   const COPILOT_EXCLUDED_RESPONSE_KINDS = new Set([
@@ -16,9 +16,23 @@
     'thinking',
     'toolInvocationSerialized',
   ]);
-  const TRANSCRIPT_ROLE_ALIASES = {
-    user: new Set(['you', 'you said', 'user', 'human', '你', '你說', '使用者', '提問']),
-    assistant: new Set(['chatgpt', 'chatgpt said', 'assistant', '助理', '回答', '回覆']),
+  const SHARED_USER_TRANSCRIPT_ALIASES = {
+    exact: new Set(['you', 'you said', 'user', 'human', '你', '你說', '使用者', '提問']),
+    prefixes: [],
+  };
+  const CHATGPT_TRANSCRIPT_ROLE_ALIASES = {
+    user: SHARED_USER_TRANSCRIPT_ALIASES,
+    assistant: {
+      exact: new Set(['chatgpt', 'chatgpt said', 'assistant', '助理', '回答', '回覆']),
+      prefixes: ['chatgpt'],
+    },
+  };
+  const GEMINI_TRANSCRIPT_ROLE_ALIASES = {
+    user: SHARED_USER_TRANSCRIPT_ALIASES,
+    assistant: {
+      exact: new Set(['gemini', 'google gemini']),
+      prefixes: ['gemini', 'google gemini'],
+    },
   };
   const NODE_FS = safeNodeRequire('fs');
   const NODE_PATH = safeNodeRequire('path');
@@ -108,17 +122,33 @@
       .toLowerCase();
   }
 
-  function detectTranscriptRole(line) {
+  function matchesTranscriptAlias(normalized, aliasConfig) {
+    if (!aliasConfig) {
+      return false;
+    }
+
+    if (aliasConfig.exact && aliasConfig.exact.has(normalized)) {
+      return true;
+    }
+
+    if (Array.isArray(aliasConfig.prefixes)) {
+      return aliasConfig.prefixes.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix} `));
+    }
+
+    return false;
+  }
+
+  function detectTranscriptRole(line, roleAliases) {
     const normalized = normalizeTranscriptLabel(line);
-    if (!normalized || normalized.length > 32) {
+    if (!normalized || normalized.length > 64) {
       return null;
     }
 
-    if (TRANSCRIPT_ROLE_ALIASES.user.has(normalized)) {
+    if (matchesTranscriptAlias(normalized, roleAliases && roleAliases.user)) {
       return 'user';
     }
 
-    if (TRANSCRIPT_ROLE_ALIASES.assistant.has(normalized)) {
+    if (matchesTranscriptAlias(normalized, roleAliases && roleAliases.assistant)) {
       return 'assistant';
     }
 
@@ -609,9 +639,9 @@
     ], stripControlMetadata(metadata));
   }
 
-  function adaptChatGPTSharedConversation(input, metadata) {
+  function adaptRoleHeadingTranscript(input, options) {
     if (typeof input !== 'string' || input.trim().length === 0) {
-      throw new Error('ChatGPTAdapter 需要非空文字輸入');
+      throw new Error(`${options.adapterName} 需要非空文字輸入`);
     }
 
     const lines = input.replace(/\r\n?/g, '\n').split('\n');
@@ -635,7 +665,7 @@
     }
 
     lines.forEach((line) => {
-      const detectedRole = detectTranscriptRole(line);
+      const detectedRole = detectTranscriptRole(line, options.roleAliases);
       if (detectedRole) {
         flushCurrent();
         currentRole = detectedRole;
@@ -650,10 +680,41 @@
     flushCurrent();
 
     if (messages.length < 2 || !rolesSeen.has('user') || !rolesSeen.has('assistant')) {
-      throw new Error('無法辨識為 ChatGPT 分享頁 transcript');
+      throw new Error(options.invalidMessage);
     }
 
-    return createConversationDoc(messages, stripControlMetadata(metadata));
+    return createConversationDoc(messages.map((message) => ({
+      ...message,
+      source: options.source,
+    })), stripControlMetadata(options.metadata));
+  }
+
+  function adaptChatGPTSharedConversation(input, metadata) {
+    return adaptRoleHeadingTranscript(input, {
+      adapterName: 'ChatGPTAdapter',
+      invalidMessage: '無法辨識為 ChatGPT 分享頁 transcript',
+      metadata,
+      roleAliases: CHATGPT_TRANSCRIPT_ROLE_ALIASES,
+      source: 'chatgpt',
+    });
+  }
+
+  function adaptGeminiTranscriptConversation(input, metadata) {
+    return adaptRoleHeadingTranscript(input, {
+      adapterName: 'GeminiAdapter',
+      invalidMessage: '無法辨識為 Gemini transcript',
+      metadata,
+      roleAliases: GEMINI_TRANSCRIPT_ROLE_ALIASES,
+      source: 'gemini',
+    });
+  }
+
+  function adaptGeminiConversation(input, metadata) {
+    if (typeof input !== 'string' || input.trim().length === 0) {
+      throw new Error('GeminiAdapter 需要非空文字輸入');
+    }
+
+    return adaptGeminiTranscriptConversation(input, metadata);
   }
 
   function adaptChatGPTJsonConversation(input, metadata) {
@@ -700,6 +761,10 @@
       return adaptChatGPTSharedConversation(input, metadata);
     }
 
+    if (hint === 'gemini-text') {
+      return adaptGeminiTranscriptConversation(input, metadata);
+    }
+
     if (isLikelyJsonString(input)) {
       try {
         return adaptChatGPTJsonConversation(input, metadata);
@@ -713,7 +778,11 @@
     try {
       return adaptChatGPTSharedConversation(input, metadata);
     } catch (error) {
-      return adaptPlainTextConversation(input, metadata);
+      try {
+        return adaptGeminiTranscriptConversation(input, metadata);
+      } catch (geminiError) {
+        return adaptPlainTextConversation(input, metadata);
+      }
     }
   }
 
@@ -729,6 +798,7 @@
     CONVERSATION_SCHEMA_VERSION,
     adaptChatGPTConversation,
     adaptChatGPTJsonConversation,
+    adaptGeminiConversation,
     adaptConversationInput,
     adaptVSCodeCopilotConversation,
     adaptPlainTextConversation,

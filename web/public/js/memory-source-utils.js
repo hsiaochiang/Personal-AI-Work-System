@@ -104,6 +104,10 @@
       return { label: 'ChatGPT', className: 'source-chatgpt' };
     }
 
+    if (normalizedSource === 'gemini') {
+      return { label: 'Gemini', className: 'source-gemini' };
+    }
+
     if (normalizedSource === 'copilot') {
       return { label: 'Copilot', className: 'source-copilot' };
     }
