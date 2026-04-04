@@ -3,11 +3,13 @@
 > 只記錄會影響接手或需要人工決策的阻塞，避免流水帳。
 
 ## Active Blockers
-- 2026-04-03：template verify FAIL，缺少 `.github/prompts/openspec-execute.prompt.md`
+- 目前無 active blockers
 
-| 項目 | 狀態 | 影響 | 已排查 | 解除條件 |
-|---|---|---|---|---|
-| `tools/bootstrap_copilot_workspace.py --verify-only --root D:/program/Personal-AI-Work-System` | ACTIVE | 無法在 planner handoff 後取得綠燈 workspace verify；下一位 agent 可能誤判為 Change 6 規劃內容有問題 | `docs/agents/commands.md` 既有指令指向不存在的 template repo script；改用 repo 內 `tools/bootstrap_copilot_workspace.py` 後，verify 真正失敗原因為缺少 `.github/prompts/openspec-execute.prompt.md`；目前 `.github/prompts/` 只存在 `opsx-*.prompt.md` | 補齊缺少的 prompt 或確認模板規格已改名，並讓 `--verify-only` 重跑 PASS |
+## 已解除 Blocker（2026-04-04）
+
+| 項目 | 狀態 | 解除說明 |
+|---|---|---|
+| `template verify` 缺少 `.github/prompts/openspec-execute.prompt.md` | ✅ RESOLVED | `070b90f` 已補建該檔案，`Test-Path` 確認存在 |
 
 ## Clean-room Replay Blocker（2026-03-26）
 

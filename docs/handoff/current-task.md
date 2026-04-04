@@ -4,13 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: Session Close — V4 complete after `governance-scheduler` archive
-- Owner agent: Codex / Copilot
+- Name: V5 planning — 待使用者確認 V5 brief 後開始第一個 Change
+- Owner agent: Copilot / Codex
 - Last updated on: 2026-04-04
 
 ## Goal
-- 完成 `governance-scheduler` 的 commit / main spec sync / archive，並把 V4 收尾到 completed 狀態
-- 保持 template verify blocker 獨立追蹤，不把 workspace 模板問題混入已完成的 V4 功能驗收
+- V4 全 5 個 Changes 已 archive，版本收尾完成
+- V5 brief 草擬完成（`docs/planning/v5-brief.md`），等待使用者確認
+- template verify blocker 已解除（`openspec-execute.prompt.md` 已補建於 `070b90f`）
 
 ## Scope
 - In scope:
@@ -53,15 +54,15 @@
 - 已確認 V4 五個 planned changes 全數 archive，並同步 `docs/planning/v4-brief.md`、`docs/roadmap.md`、`docs/system-manual.md` 為版本完成狀態 ✅
 
 ## In Progress
-- 無；V4 功能收尾已完成
+- 無；V4 功能收尾已完成，V5 brief 已草擬待確認
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 先處理 `docs/handoff/blockers.md` 追蹤的 template verify blocker（缺少 `.github/prompts/openspec-execute.prompt.md`） |
-| 🟡 2 | 若要繼續產品推進，建立下一版 brief 或整理 V4 retrospective / decision log |
-| 🟡 3 | 若要發布目前治理收尾結果，再決定是否額外提交 sync / archive / version-closeout 的文件變更 |
+| 🔴 1 | 確認 `docs/planning/v5-brief.md`（填入確認日期），解除 V5 開工前置條件 |
+| 🟡 2 | 確認後執行 `#codex-prompts-generate` 產出 V5 四個 Change 的三角色提示詞 |
+| 🟡 3 | 執行 `#opsx-new gemini-adapter`（V5 第一個 Change） |
 
 ## Files Touched（本 session）
 - docs/handoff/current-task.md
