@@ -120,7 +120,7 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | `gemini-adapter` | 身為使用 Google Gemini 的使用者，我想要把 Gemini 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Gemini 的思考結果存進記憶 | ✅ 已 archive | 實作 `GeminiAdapter`：解析 Gemini 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `gemini`）；main spec sync 與 archive 已完成 | `/extract` → 選工具來源「Gemini」→ 貼上 → 提取候選 |
 | `claude-adapter` | 身為使用 Claude 的使用者，我想要把 Claude 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Claude 的分析結果存進記憶 | ✅ 已 archive | `ClaudeAdapter`、`/extract` Claude source option、Claude source badge、main spec sync、archive 與收尾驗證已完成；active change 已封存後，下一步可切到 `chatgpt-api-auto-import` | `/extract` → 選工具來源「Claude」→ 貼上 → 提取候選 |
 | `chatgpt-api-auto-import` | 身為重度使用 ChatGPT 的使用者，我想要在 ChatGPT 匯入模式中直接透過 API key 載入工作台建立或追蹤的 OpenAI 對話，以便不需要每次都手動匯出同一批對話內容 | ✅ 已 archive | 已完成 `/settings` OpenAI API key 設定、server `/api/settings/openai` + `/api/chatgpt/sessions*`、local conversation index、`/extract` ChatGPT API import UI、tracked-only guard、main spec sync、implementation commit `734ef44` 與 archive；active change 已封存至 `openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/` | settings → 填入 API key → `/extract` → 選 ChatGPT → 點「API 載入」→ 追蹤 / 選 session → 提取候選 |
-| `adapter-docs-update` | 身為需要了解工具支援狀況的使用者，我想要在 import 頁面看到每個工具的支援格式說明，以便知道應該複製哪段文字、可以上傳哪種格式，不需要試錯 | 未開始 | 更新 `docs/workflows/conversation-schema.md` 補齊 V5 adapter 說明；`/extract` 各工具選項下方顯示格式提示文字 | `/extract` → 選工具 → 看到「支援格式：...」提示 |
+| `adapter-docs-update` | 身為需要了解工具支援狀況的使用者，我想要在 import 頁面看到每個工具的支援格式說明，以便知道應該複製哪段文字、可以上傳哪種格式，不需要試錯 | ✅ 已 archive | 已完成 `conversation-schema.md` 支援矩陣、`/extract` 一致化「支援格式」提示、targeted verify、QA / UI / UX evidence、main spec sync 與 archive；active change 已封存至 `openspec/changes/archive/2026-04-04-adapter-docs-update/`，下一步可檢查 V5 是否進入版本收尾 | `/extract` → 選工具 → 看到「支援格式：...」提示 |
 
 ---
 
@@ -145,9 +145,9 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | 07 | `docs/agents/codex-prompts/v5/07-chatgpt-api-auto-import-plan.md` | Planner | chatgpt-api-auto-import | ✅ 完成 |
 | 08 | `docs/agents/codex-prompts/v5/08-chatgpt-api-auto-import-execute.md` | Executor | chatgpt-api-auto-import | ✅ 完成 |
 | 09 | `docs/agents/codex-prompts/v5/09-chatgpt-api-auto-import-review.md` | Review Gate | chatgpt-api-auto-import | ✅ PASS |
-| 10 | `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md` | Planner | adapter-docs-update | — |
-| 11 | `docs/agents/codex-prompts/v5/11-adapter-docs-update-execute.md` | Executor | adapter-docs-update | — |
-| 12 | `docs/agents/codex-prompts/v5/12-adapter-docs-update-review.md` | Review Gate | adapter-docs-update | — |
+| 10 | `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md` | Planner | adapter-docs-update | ✅ 完成 |
+| 11 | `docs/agents/codex-prompts/v5/11-adapter-docs-update-execute.md` | Executor | adapter-docs-update | ✅ 完成 |
+| 12 | `docs/agents/codex-prompts/v5/12-adapter-docs-update-review.md` | Review Gate | adapter-docs-update | ✅ PASS |
 
 ---
 

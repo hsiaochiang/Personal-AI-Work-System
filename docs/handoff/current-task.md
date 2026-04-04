@@ -4,121 +4,77 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V5 Change 3 — `chatgpt-api-auto-import` Archive Complete
+- Name: V5 Change 4 — `adapter-docs-update` Archive Complete
 - Owner agent: Codex
 - Last updated on: 2026-04-04
 
 ## Goal
-- 讓使用者可在 `/settings` 儲存 OpenAI API key，並在 `/extract` 的 ChatGPT 模式載入本工作台追蹤的 OpenAI platform conversations
-- 以 local tracked conversation index 補上「最近 sessions」能力，同時不宣稱可直接列出 ChatGPT 產品聊天歷史
-- 完成 implementation commit、main spec sync 與 archive，並把治理文件切到 archive complete 狀態
+- 完成 `adapter-docs-update` 的 main spec sync、commit 與 archive，讓 V5 四個 planned changes 全數完成
+- 收斂本輪只處理 adapter 文件補齊與 `/extract` 支援格式提示，不擴張到新 adapter / API 能力
+- 同步 handoff / roadmap / brief / system manual / runlog，讓下一步明確切到 V5 版本收尾判定
 
 ## Scope
 - In scope:
-  - 使用 OpenAI API key 與官方 Conversations / Responses conversation state，載入本工作台建立或追蹤的 OpenAI platform conversations
-  - `/settings` 最小 API Keys 設定入口、server-side key storage、`/extract` ChatGPT 模式下的 API 載入 / session 選擇流程
-  - 必要的 local conversation index / tracking，讓「最近 N 筆 sessions」可由工作台在官方支援範圍內成立
-  - `.gitignore` 排除 local-only secrets / tracking files，並保留既有 `plain` / `chatgpt` transcript / `gemini` / `claude` / `copilot` 流程不回歸
+  - 更新 `docs/workflows/conversation-schema.md`，補齊 Gemini / Claude / ChatGPT API 匯入的支援格式、來源命名與限制說明
+  - 在 `/extract` 各工具來源面板補齊一致的「支援格式」提示文案
+  - 保持既有 `plain` / `chatgpt` / `gemini` / `claude` / `copilot` 匯入流程與 adapter 行為不變
 - Out of scope:
-  - 直接讀取使用者在 ChatGPT 產品網站 / app 既有聊天歷史
-  - OAuth、雲端同步、background polling、Gemini / Claude API auto-import
+  - 新增或修改 `GeminiAdapter` / `ClaudeAdapter` / ChatGPT API server flow
+  - 新增 API、檔案上傳能力、session picker 或新的 source type
   - commit / sync / archive 等不可逆操作
 
 ## Constraints
 - 純靜態 HTML + vanilla JS（無框架、無 build）
 - Node.js `http` server（無 Express）
 - 禁止新增 runtime dependency
-- `AGENTS.md` 規定：scope 變更需人確認；本輪以使用者「請繼續」視為同意採用官方支援 scope
-- `AGENTS.md` 規定：archive / release 類不可逆操作需人工確認
+- `AGENTS.md` 規定：scope 變更需人確認；本輪僅做 brief 既有範圍內的 docs/UI copy 補齊
 
 ## Done
-- 已建立 `openspec/changes/chatgpt-api-auto-import/` 的 `proposal.md`、`design.md`、delta spec 與 `tasks.md`，並通過 `openspec validate --changes chatgpt-api-auto-import --strict` ✅
-- 已新增 `/settings` 頁面、sidebar navigation entry 與 `web/public/js/settings.js`，可在 local-only 範圍內儲存 / 清除 OpenAI API key；client 只看到 `configured` / `maskedKey` 摘要 ✅
-- 已在 `web/server.js` 新增：
-  - `web/api-keys.json` server-side key storage
-  - `web/openai-conversation-index.json` local tracked conversation index
-  - `/api/settings/openai`
-  - `/api/chatgpt/sessions`
-  - `/api/chatgpt/sessions/track`
-  - `/api/chatgpt/session`
-- 已在 `web/public/js/conversation-adapters.js` 新增 OpenAI conversation items → `ConversationDoc` parser，並把 API 匯入來源標記為 `chatgpt-api`；`memory-source-utils` / `memory-health-utils` / CSS badge 已同步 ✅
-- 已更新 `/extract` 的 ChatGPT panel，加入 API import status、manual `conversationId` tracking、tracked session picker 與 load flow；手動 transcript / JSON / TXT 匯入仍保留 ✅
-- 已更新 `.gitignore` 排除 `web/api-keys.json` 與 `web/openai-conversation-index.json` ✅
-- 已修補 `web/server.js` 的 `/api/chatgpt/session` server-side guard：未先追蹤的 `conversationId` 不可 direct load，也不會再隱式寫入 tracked index ✅
-- 已更新 `tools/verify_chatgpt_api_auto_import.js`，覆蓋「未先追蹤的 conversationId 直接載入應被拒絕」案例 ✅
-- 已完成 main spec sync：新增 `openspec/specs/chatgpt-api-auto-import/spec.md`，並通過 spec strict validate ✅
-- 已完成 implementation commit：`734ef44` `feat: add chatgpt api auto import flow` ✅
-- 已完成 `openspec archive chatgpt-api-auto-import -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/` ✅
-- 已完成 targeted verify 與 regression：
-  - `node tools/verify_chatgpt_api_auto_import.js`
-  - `node tools/verify_chatgpt_adapter.js`
-  - `node tools/verify_plain_text_adapter.js`
-  - `node tools/verify_gemini_adapter.js`
-  - `node tools/verify_claude_adapter.js`
-  - `node tools/verify_import_ui_multi_source.js`
-  - `node tools/verify_source_attribution_in_memory.js`
-- 已補 QA / UI / UX evidence，並同步治理文件到 Review Gate-ready 狀態 ✅
+- 已建立 active change `openspec/changes/adapter-docs-update/`，完成 `proposal.md`、`design.md`、`specs/adapter-docs-update/spec.md`、`tasks.md`，並通過 `openspec validate --changes adapter-docs-update --strict` ✅
+- 已更新 `docs/workflows/conversation-schema.md`，補齊 `chatgpt-api` / `gemini` / `claude` / `copilot` 的 V5 支援來源矩陣、來源命名與限制說明 ✅
+- 已更新 `/extract` 的 selector hint 與各來源 panel 文案，加入一致格式的「支援格式：...」提示，不改變既有按鈕與匯入流程 ✅
+- 已新增 `tools/verify_adapter_docs_update.js`，並重跑 `verify_import_ui_multi_source`、plain / chatgpt / chatgpt-api / gemini / claude / copilot regression，全數 PASS ✅
+- 已補 `docs/qa/2026-04-04_adapter-docs-update-smoke.md`、`docs/uiux/2026-04-04_adapter-docs-update-ui-review.md`、`docs/uiux/2026-04-04_adapter-docs-update-ux-review.md` ✅
+- 已完成 Review Gate 重查：scope / spec / tasks / QA / UI / UX evidence 與 docs/UI copy 均對齊，`adapter-docs-update` 判定 PASS，可進入 commit / main spec sync / archive 決策 ✅
+- 已建立 `openspec/specs/adapter-docs-update/spec.md`，並通過 `openspec validate adapter-docs-update --type spec --strict`，完成 main spec sync ✅
+- 已完成 implementation commit 與 `openspec archive adapter-docs-update -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-adapter-docs-update/` ✅
 
 ## In Progress
-- 無；本 change 已完成 commit / sync / archive
+- 無；`adapter-docs-update` 已 archive，待下一步決定是否進入 V5 版本收尾
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 開新 session 執行 `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md`，規劃 V5 Change 4 `adapter-docs-update` |
-| 🟡 2 | 若暫不繼續 V5，可保留目前 archive complete 狀態，待人工決定下一個 change |
-| 🟢 3 | 若要做版本收尾，需先完成 `adapter-docs-update` 後再回來檢查 V5 brief 是否可 close |
+| 🔴 1 | 檢查 `docs/planning/v5-brief.md` 的 Changes 表已全數 archive，並決定是否執行 V5 版本收尾 |
+| 🟡 2 | 若要收尾 V5，補 version status / completed date 與 roadmap 對應狀態更新 |
+| 🟢 3 | 若暫不做版本收尾，維持 `adapter-docs-update` archive complete 狀態作為下一個 session 起點 |
 
 ## Files Touched（本 session）
-- .gitignore
-- docs/handoff/blockers.md
-- docs/handoff/current-task.md
+- docs/workflows/conversation-schema.md
+- web/public/extract.html
+- web/public/js/extract.js
+- tools/verify_adapter_docs_update.js
+- openspec/specs/adapter-docs-update/spec.md
+- openspec/changes/archive/2026-04-04-adapter-docs-update/proposal.md
+- openspec/changes/archive/2026-04-04-adapter-docs-update/design.md
+- openspec/changes/archive/2026-04-04-adapter-docs-update/specs/adapter-docs-update/spec.md
+- openspec/changes/archive/2026-04-04-adapter-docs-update/tasks.md
+- docs/qa/2026-04-04_adapter-docs-update-smoke.md
+- docs/uiux/2026-04-04_adapter-docs-update-ui-review.md
+- docs/uiux/2026-04-04_adapter-docs-update-ux-review.md
 - docs/planning/v5-brief.md
-- docs/qa/2026-04-04_chatgpt-api-auto-import-smoke.md
+- docs/handoff/current-task.md
 - docs/roadmap.md
 - docs/system-manual.md
-- docs/uiux/2026-04-04_chatgpt-api-auto-import-ui-review.md
-- docs/uiux/2026-04-04_chatgpt-api-auto-import-ux-review.md
 - docs/runlog/2026-04-04_README.md
-- docs/decision-log.md
-- openspec/changes/chatgpt-api-auto-import/
-- openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/
-- openspec/specs/chatgpt-api-auto-import/spec.md
-- tools/fixtures/openai-conversation.json
-- tools/fixtures/openai-conversation-items.json
-- tools/verify_chatgpt_api_auto_import.js
-- web/public/css/style.css
-- web/public/extract.html
-- web/public/index.html
-- web/public/js/conversation-adapters.js
-- web/public/js/extract.js
-- web/public/js/memory-health-utils.js
-- web/public/js/memory-source-utils.js
-- web/public/js/settings.js
-- web/public/settings.html
-- web/public/task.html
-- web/public/memory.html
-- web/public/decisions.html
-- web/public/handoff.html
-- web/public/projects.html
-- web/public/search.html
-- web/server.js
 
 ## Validation Status
 - Brief confirmation：✅ `docs/planning/v5-brief.md` 已有人類確認
-- OpenSpec artifacts：✅ `openspec/changes/chatgpt-api-auto-import/` 已補齊 proposal / design / spec / tasks
-- Strict validate：✅ `openspec validate --changes chatgpt-api-auto-import --strict`
-- Targeted verify：✅ `node tools/verify_chatgpt_api_auto_import.js`
-- Regressions：✅ `verify_chatgpt_adapter` / `verify_plain_text_adapter` / `verify_gemini_adapter` / `verify_claude_adapter` / `verify_import_ui_multi_source` / `verify_source_attribution_in_memory`
-- UI review：✅ `docs/uiux/2026-04-04_chatgpt-api-auto-import-ui-review.md`
-- UX review：✅ `docs/uiux/2026-04-04_chatgpt-api-auto-import-ux-review.md`
-- Review Gate：✅ PASS
-  - resolved issue：`/api/chatgpt/session` 現已驗證 `conversationId` 是否已存在於目前 project 的 tracked index；未先追蹤的 direct load 會被 400 拒絕
-  - rerun evidence：`openspec validate --changes chatgpt-api-auto-import --strict`、`node tools/verify_chatgpt_api_auto_import.js`、`node tools/verify_chatgpt_adapter.js`、`node tools/verify_import_ui_multi_source.js`、`node tools/verify_source_attribution_in_memory.js`
-- Main spec sync：✅ `openspec/specs/chatgpt-api-auto-import/spec.md`
-- Spec strict validate：✅ `openspec validate chatgpt-api-auto-import --type spec --strict`
-- Implementation commit：✅ `734ef44` `feat: add chatgpt api auto import flow`
-- Archive：✅ `openspec archive chatgpt-api-auto-import -y --skip-specs`
-- Governance sync：✅ `roadmap` / `brief` / `handoff` / `manual` / `runlog` 已對齊到 archive complete 狀態
-- Dirty tree note：✅ `734ef44` 已提交 implementation；目前剩餘未提交變更為 archive / 治理收尾同步與 archive 目錄落盤結果
+- Scope gate：✅ `adapter-docs-update` 屬於 V5 In Scope，未擴張到新 adapter / API 功能
+- OpenSpec validate：✅ `openspec validate --changes adapter-docs-update --strict`
+- Targeted verify：✅ `node tools/verify_adapter_docs_update.js`
+- Regression verify：✅ `verify_import_ui_multi_source`、`verify_plain_text_adapter`、`verify_chatgpt_adapter`、`verify_chatgpt_api_auto_import`、`verify_gemini_adapter`、`verify_claude_adapter`、`verify_local_import_vscode_copilot`
+- Main spec sync：✅ `openspec/specs/adapter-docs-update/spec.md` + `openspec validate adapter-docs-update --type spec --strict`
+- Archive：✅ `openspec archive adapter-docs-update -y --skip-specs`
+- Evidence sync：✅ `handoff` / `roadmap` / `brief` / `system-manual` / `runlog` / `docs/qa` / `docs/uiux` 已切到 archive complete / V5 close-ready 狀態

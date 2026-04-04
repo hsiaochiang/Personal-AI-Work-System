@@ -81,7 +81,7 @@
         <div class="extract-source-selector">
           <div class="extract-source-copy">
             <div class="extract-source-label">工具來源</div>
-            <p class="extract-source-hint" id="import-source-hint">選擇要匯入的工具來源，再使用對應控制載入內容。</p>
+            <p class="extract-source-hint" id="import-source-hint">選擇要匯入的工具來源；每個來源面板都會標示「支援格式」與目前限制。</p>
           </div>
           <select class="extract-source-select" id="import-source-select">
             <option value="plain">純文字</option>
@@ -110,6 +110,10 @@
             <span class="material-symbols-outlined">folder</span>
             <span>尚未讀取 Copilot session 清單。</span>
           </div>
+          <div class="extract-status">
+            <span class="material-symbols-outlined">info</span>
+            <span>支援格式：本機 VS Code Copilot Chat session JSONL。限制：需先從清單載入單筆 session，不能直接貼上 transcript。</span>
+          </div>
           <div class="copilot-session-list" id="copilot-session-list"></div>
         </div>
 
@@ -119,6 +123,10 @@
               <h3>ChatGPT 匯入</h3>
               <p>支援貼上分享頁 transcript、上傳官方 conversation JSON / TXT，或透過 OpenAI API 載入本工作台追蹤的 conversations。</p>
             </div>
+          </div>
+          <div class="extract-status">
+            <span class="material-symbols-outlined">info</span>
+            <span>支援格式：ChatGPT 分享頁 transcript、官方 conversation JSON / TXT，或已追蹤的 OpenAI platform conversation API session。限制：API 載入不會直接列出 ChatGPT 產品聊天歷史，需先設定 API key 並追蹤 `conversationId`。</span>
           </div>
           <div class="extract-import-row">
             <button class="btn btn-secondary" id="btn-upload-file" type="button">
@@ -166,7 +174,7 @@
           </div>
           <div class="extract-status">
             <span class="material-symbols-outlined">star</span>
-            <span>請貼上包含 `You` / `Gemini` turns 的 Gemini 對話全文；本輪不支援 API 載入或檔案上傳。</span>
+            <span>支援格式：Gemini 網頁複製的 transcript 全文，或包含 `You` / `Gemini` turns 的貼上文字。限制：本輪不支援 API 載入、檔案上傳或多 conversation picker。</span>
           </div>
         </div>
 
@@ -179,7 +187,7 @@
           </div>
           <div class="extract-status">
             <span class="material-symbols-outlined">psychology</span>
-            <span>請貼上包含 `Human` / `Assistant` 或 `Claude` 標頭的 Claude 對話全文；本輪不支援 API 載入或檔案上傳。</span>
+            <span>支援格式：Claude.ai 網頁複製的 transcript 全文，或包含 `Human` / `Assistant` / `Claude` 標頭的貼上文字。限制：本輪不支援 API 載入、檔案上傳或多 conversation picker。</span>
           </div>
         </div>
 
@@ -192,7 +200,7 @@
           </div>
           <div class="extract-status">
             <span class="material-symbols-outlined">notes</span>
-            <span>這個模式不做 ChatGPT / Gemini / Claude / Copilot 偵測，會直接以純文字來源提取。</span>
+            <span>支援格式：一般對話或人工整理後的純文字貼上。限制：這個模式不做 ChatGPT / Gemini / Claude / Copilot 偵測，會直接以純文字來源提取。</span>
           </div>
         </div>
 

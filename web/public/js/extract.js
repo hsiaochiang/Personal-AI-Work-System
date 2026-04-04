@@ -96,31 +96,31 @@ let selectedImportSource = 'plain';
 
 const IMPORT_SOURCE_CONFIG = {
   plain: {
-    hint: '直接貼上一般對話或整理後的文字內容，系統會以 plain text source 提取。',
+    hint: '支援格式：一般對話或人工整理後的純文字貼上。限制：不做 ChatGPT / Gemini / Claude / Copilot 格式偵測，直接走 plain text adapter。',
     placeholder: '將一般對話內容貼在這裡…\n\n這個模式會直接使用 PlainTextAdapter。\n\n提取引擎會依內容嘗試識別：\n• 專案背景資訊 → project-context.md\n• 偏好與規則 → preference-rules.md\n• 任務模式 → task-patterns.md\n• 決策記錄 → decision-log.md\n• 輸出模式 → output-patterns.md\n• 技能候選 → skill-candidates.md',
     statusMessage: '純文字模式已就緒，可直接貼上一般對話內容。',
     statusIcon: 'notes',
   },
   chatgpt: {
-    hint: '貼上 ChatGPT transcript、上傳官方 JSON / TXT，或從 tracked OpenAI conversations 載入 API session。',
+    hint: '支援格式：ChatGPT transcript、官方 conversation JSON / TXT，或已追蹤的 OpenAI platform conversation API session。限制：API 載入前需先在 /settings 設定 key 並追蹤 conversationId。',
     placeholder: '將 ChatGPT transcript 貼在這裡，或先上傳官方 JSON / TXT 檔案…\n\n支援輸入：\n• ChatGPT 分享頁 transcript（You / ChatGPT turns）\n• ChatGPT conversation JSON 匯出內容\n• 已追蹤的 OpenAI platform conversation API 載入結果\n\n提取引擎會使用 ChatGPTAdapter 或已載入的 API ConversationDoc。',
     statusMessage: 'ChatGPT 模式已就緒，可貼上 transcript、上傳 JSON / TXT，或載入 API session。',
     statusIcon: 'forum',
   },
   gemini: {
-    hint: '貼上 Gemini 對話 transcript，系統會明確走 Gemini adapter，保留來源標記。',
+    hint: '支援格式：Gemini 網頁複製的 transcript 全文或含 You / Gemini turn 標頭的貼上文字。限制：本輪不支援 API 載入或檔案上傳。',
     placeholder: '將 Gemini transcript 貼在這裡…\n\n支援輸入：\n• Gemini 網頁複製的對話全文\n• 具有 You / Gemini turn 標頭的 transcript\n\n提取引擎會使用 GeminiAdapter，而不是 plain text fallback。',
     statusMessage: 'Gemini 模式已就緒，可直接貼上 Gemini transcript。',
     statusIcon: 'star',
   },
   claude: {
-    hint: '貼上 Claude 對話 transcript，系統會明確走 Claude adapter，保留來源標記。',
+    hint: '支援格式：Claude.ai transcript 全文或含 Human / Assistant / Claude 標頭的貼上文字。限制：本輪不支援 API 載入或檔案上傳。',
     placeholder: '將 Claude transcript 貼在這裡…\n\n支援輸入：\n• Claude.ai 網頁複製的對話全文\n• 具有 Human / Assistant / Claude 標頭的 transcript\n\n提取引擎會使用 ClaudeAdapter，而不是 plain text fallback。',
     statusMessage: 'Claude 模式已就緒，可直接貼上 Claude transcript。',
     statusIcon: 'psychology',
   },
   copilot: {
-    hint: '先從本機 session 清單載入一筆 Copilot 對話，再進入既有 extraction 流程。',
+    hint: '支援格式：本機 VS Code Copilot Chat session JSONL。限制：需先從 session 清單載入一筆對話，不能直接手動貼上當成 Copilot source。',
     placeholder: '先從上方載入一筆 VS Code Copilot session…\n\n載入後這裡會顯示對話預覽；若你手動編輯內容，系統會退出 Copilot 匯入模式。',
     statusMessage: 'Copilot 模式已就緒，請先載入一筆本機 session。',
     statusIcon: 'hub',

@@ -42,6 +42,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V5 Change 1）：新增 `GeminiAdapter` 與 `/extract` 的 Gemini 來源選項；可直接貼上 Gemini transcript，並在候選審核與 writeback 保留 `gemini` 來源標記
 - 改善（V5 Change 2）：新增 `ClaudeAdapter` 與 `/extract` 的 Claude 來源選項；可直接貼上 Claude transcript，並在候選審核與 writeback 保留 `claude` 來源標記
 - 改善（V5 Change 3）：ChatGPT 來源新增 API import flow；使用者可先到 `/settings` 儲存 OpenAI API key，再於 ChatGPT panel 追蹤 `conversationId`、載入 tracked OpenAI platform conversations，並在候選審核與 writeback 保留 `chatgpt-api` 來源標記
+- 改善（V5 Change 4）：`/extract` 各來源 panel 新增一致的「支援格式」提示，清楚標示 transcript / JSON / TXT / tracked API session / local JSONL 的可用入口與限制；`docs/workflows/conversation-schema.md` 也同步補齊 V5 支援來源矩陣
 
 ### 設定（/settings）
 - 能力描述：管理 local-only API Keys；第一版提供 OpenAI API key 的儲存 / 清除入口，供 `/extract` 的 ChatGPT API import flow 使用
@@ -109,6 +110,7 @@ npm start        # 或 node server.js
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V5 Change 4 | 2026-04-04 | `conversation-schema.md` 補齊 V5 支援來源矩陣，`/extract` 各來源 panel 新增一致的「支援格式」提示文案 |
 | V5 Change 3 | 2026-04-04 | `/settings` OpenAI API key storage、local tracked conversation index、`/api/chatgpt/sessions*`、`/extract` ChatGPT API import flow 與 `chatgpt-api` source attribution |
 | V5 Change 2 | 2026-04-04 | `ClaudeAdapter`、`/extract` Claude 來源選項、Claude source badge 與 targeted verify evidence |
 | V5 Change 1 | 2026-04-04 | `GeminiAdapter`、`/extract` Gemini 來源選項、Gemini source badge 與 main spec sync / archive |
@@ -132,6 +134,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V5 Change 4 archive | `adapter-docs-update` 已完成 main spec sync、`openspec validate adapter-docs-update --type spec --strict` 與 `openspec archive adapter-docs-update -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-adapter-docs-update/`，下一步可檢查 V5 是否進入版本收尾 | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/extract` 與文件可見能力維持不變） |
+| 2026-04-04 | V5 Change 4 review gate pass | Review Gate 已重查 `adapter-docs-update` 的 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與關鍵 import regression；確認 `conversation-schema.md` 與 `/extract` 的「支援格式」提示只描述已上線能力，無 blocking mismatch，目前可進入 commit / sync / archive 決策 | 無（No user-facing change；本次僅更新治理狀態與收尾判定，`/extract` 與文件可見能力維持 executor verify 後的同一版本） |
+| 2026-04-04 | V5 Change 4 executor verify | 完成 `adapter-docs-update` 的 apply / verify：建立 `openspec/changes/adapter-docs-update/` active change、更新 `docs/workflows/conversation-schema.md` 的 V5 支援來源矩陣、在 `/extract` 各來源 panel 與 selector hint 補上一致的「支援格式」提示，並新增 `tools/verify_adapter_docs_update.js`；重跑 strict validate、targeted verify 與多來源 regression 全數 PASS，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 `/extract` 直接看到每個來源支援的 transcript / JSON / TXT / tracked API session / local session 格式與限制，不必靠試錯判斷；本輪沒有新增新 adapter 或 API 能力） |
+| 2026-04-04 | V5 Change 4 planner | 已完成 `adapter-docs-update` 的 Planner scope gate：確認 V5 brief 已有人類確認、change 屬於 In Scope、`openspec/changes/` 無 active duplicate，並盤點目前 `docs/workflows/conversation-schema.md` 仍停留在 V3 schema 說明、`/extract` 雖有各來源說明但尚未形成一致的「支援格式」提示層；下一步可切到 `docs/agents/codex-prompts/v5/11-adapter-docs-update-execute.md` | 無（No user-facing change；本次僅完成規劃、handoff / roadmap / brief 同步與基線缺口盤點，尚未改動 `/extract` UI 或 conversation docs） |
 | 2026-04-04 | V5 Change 3 archive | `chatgpt-api-auto-import` 已完成 main spec sync、implementation commit `734ef44` 與 archive；active change 已封存至 `openspec/changes/archive/2026-04-04-chatgpt-api-auto-import/`，下一步可切到 `adapter-docs-update` | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/settings` 與 `/extract` 的可見能力維持不變） |
 | 2026-04-04 | V5 Change 3 review gate pass | 已修補 `chatgpt-api-auto-import` 的 tracked-only server-side guard：`/api/chatgpt/session` 現在會拒絕未先追蹤的 `conversationId` direct load，並更新 targeted verify 覆蓋此邊界；同步 brief / roadmap / handoff / blockers / runlog 為 PASS-ready 狀態 | 無（No user-facing change；本次僅修補收尾品質與治理狀態，既有 `/settings` / `/extract` 可見能力不變） |
 | 2026-04-04 | V5 Change 3 review gate fail | Review Gate 重查 `chatgpt-api-auto-import` 後，確認 `/api/chatgpt/session` 尚未驗證 `conversationId` 是否已存在於目前 project 的 tracked index，導致 direct load 可繞過「先追蹤、再載入」的 server-side 邊界；已同步 brief / roadmap / handoff / blockers / runlog，待修補 guard 與 targeted verify 後再重跑 Review Gate | 無（No user-facing change；本次僅更新閘門判定與治理文件，尚未新增或移除任何可見功能） |
