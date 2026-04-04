@@ -82,7 +82,14 @@ let memorySnapshot = {};
 let selectedImportFile = null;
 let selectedConversationDoc = null;
 let selectedCopilotSession = null;
+let selectedChatGPTApiSession = null;
 let copilotSessions = [];
+let chatgptApiSessions = [];
+let openAISettings = {
+  configured: false,
+  maskedKey: '',
+  updatedAt: null,
+};
 let hydratingInputFromFile = false;
 let copilotPathWasEdited = false;
 let selectedImportSource = 'plain';
@@ -95,9 +102,9 @@ const IMPORT_SOURCE_CONFIG = {
     statusIcon: 'notes',
   },
   chatgpt: {
-    hint: '貼上 ChatGPT transcript，或上傳官方 conversation JSON / TXT，系統會明確走 ChatGPT adapter。',
-    placeholder: '將 ChatGPT transcript 貼在這裡，或先上傳官方 JSON / TXT 檔案…\n\n支援輸入：\n• ChatGPT 分享頁 transcript（You / ChatGPT turns）\n• ChatGPT conversation JSON 匯出內容\n\n提取引擎會使用 ChatGPTAdapter，而不是 plain text fallback。',
-    statusMessage: 'ChatGPT 模式已就緒，可貼上 transcript 或上傳 JSON / TXT。',
+    hint: '貼上 ChatGPT transcript、上傳官方 JSON / TXT，或從 tracked OpenAI conversations 載入 API session。',
+    placeholder: '將 ChatGPT transcript 貼在這裡，或先上傳官方 JSON / TXT 檔案…\n\n支援輸入：\n• ChatGPT 分享頁 transcript（You / ChatGPT turns）\n• ChatGPT conversation JSON 匯出內容\n• 已追蹤的 OpenAI platform conversation API 載入結果\n\n提取引擎會使用 ChatGPTAdapter 或已載入的 API ConversationDoc。',
+    statusMessage: 'ChatGPT 模式已就緒，可貼上 transcript、上傳 JSON / TXT，或載入 API session。',
     statusIcon: 'forum',
   },
   gemini: {
@@ -143,6 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('input-file');
   const copilotPathInput = document.getElementById('copilot-session-path');
   const refreshCopilotButton = document.getElementById('btn-refresh-copilot');
+  const refreshChatGPTSessionsButton = document.getElementById('btn-refresh-chatgpt-sessions');
+  const trackChatGPTSessionButton = document.getElementById('btn-track-chatgpt-session');
 
   inputEl.addEventListener('input', () => {
     charCount.textContent = inputEl.value.length + ' 字';
@@ -161,6 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
   uploadButton.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', handleImportFile);
   refreshCopilotButton.addEventListener('click', refreshCopilotSessions);
+  refreshChatGPTSessionsButton.addEventListener('click', refreshChatGPTApiSessions);
+  trackChatGPTSessionButton.addEventListener('click', trackChatGPTConversation);
   document.getElementById('btn-extract').addEventListener('click', runExtraction);
   document.getElementById('btn-writeback').addEventListener('click', runWriteback);
   document.getElementById('btn-back').addEventListener('click', goBack);
@@ -168,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setImportSource(selectedImportSource, { clearImportedState: false });
   refreshCopilotSessions();
+  refreshOpenAISettings();
+  refreshChatGPTApiSessions();
 });
 
 async function handleImportFile(event) {
@@ -188,6 +201,7 @@ async function handleImportFile(event) {
 
     selectedConversationDoc = null;
     selectedCopilotSession = null;
+    selectedChatGPTApiSession = null;
     selectedImportFile = {
       name: file.name,
       type: file.type || '',
@@ -211,6 +225,11 @@ function updateImportStatus(message, icon) {
 
 function updateCopilotStatus(message, icon) {
   const statusEl = document.getElementById('copilot-status');
+  statusEl.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
+}
+
+function updateChatGPTApiStatus(message, icon) {
+  const statusEl = document.getElementById('chatgpt-api-status');
   statusEl.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
 }
 
@@ -278,6 +297,11 @@ function refreshImportStatusForSource() {
     return;
   }
 
+  if (selectedImportSource === 'chatgpt' && selectedChatGPTApiSession && selectedConversationDoc) {
+    updateImportStatus(`已載入 ChatGPT API session「${selectedChatGPTApiSession.title || selectedChatGPTApiSession.conversationId}」，可直接按「提取候選知識」。`, 'cloud_download');
+    return;
+  }
+
   if (selectedImportSource === 'chatgpt' && selectedImportFile) {
     updateImportStatus(`已載入 ${selectedImportFile.name}，可直接按「提取候選知識」。`, 'upload_file');
     return;
@@ -307,7 +331,9 @@ function clearImportedContentState(message, icon) {
   selectedImportFile = null;
   selectedConversationDoc = null;
   selectedCopilotSession = null;
+  selectedChatGPTApiSession = null;
   renderCopilotSessions();
+  renderChatGPTApiSessions();
   updateImportStatus(message, icon);
 }
 
@@ -381,6 +407,156 @@ function renderCopilotSessions() {
   });
 }
 
+async function refreshOpenAISettings() {
+  try {
+    openAISettings = await apiFetch('/api/settings/openai');
+  } catch (error) {
+    openAISettings = {
+      configured: false,
+      maskedKey: '',
+      updatedAt: null,
+      error: error.message,
+    };
+  }
+
+  renderChatGPTApiSessions();
+}
+
+async function refreshChatGPTApiSessions() {
+  const listEl = document.getElementById('chatgpt-session-list');
+  showLoading(listEl);
+  updateChatGPTApiStatus('讀取 tracked OpenAI conversations 中…', 'sync');
+
+  try {
+    const data = await apiFetch('/api/chatgpt/sessions');
+    openAISettings = data.settings || openAISettings;
+    chatgptApiSessions = Array.isArray(data.sessions) ? data.sessions : [];
+
+    if (!openAISettings.configured) {
+      updateChatGPTApiStatus('尚未設定 OpenAI API key，請先前往 /settings。', 'vpn_key_off');
+    } else if (chatgptApiSessions.length > 0) {
+      updateChatGPTApiStatus(`找到 ${chatgptApiSessions.length} 筆 tracked OpenAI conversations。`, 'check_circle');
+    } else {
+      updateChatGPTApiStatus('目前沒有 tracked sessions；請先追蹤一個 conversationId。', 'bookmark_add');
+    }
+
+    renderChatGPTApiSessions();
+  } catch (error) {
+    chatgptApiSessions = [];
+    if (/API key|\/settings/.test(error.message)) {
+      updateChatGPTApiStatus('尚未設定 OpenAI API key，請先前往 /settings。', 'vpn_key_off');
+    } else {
+      updateChatGPTApiStatus(`讀取 tracked sessions 失敗：${error.message}`, 'error');
+    }
+    showError(listEl, error.message);
+  }
+}
+
+function renderChatGPTApiSessions() {
+  const listEl = document.getElementById('chatgpt-session-list');
+  if (!listEl) {
+    return;
+  }
+
+  listEl.innerHTML = '';
+
+  if (!openAISettings.configured) {
+    showEmpty(listEl, 'vpn_key_off', '尚未設定 OpenAI API key。請先到 /settings 儲存，再回來刷新 API sessions。');
+    return;
+  }
+
+  if (chatgptApiSessions.length === 0) {
+    showEmpty(listEl, 'bookmark_add', '目前沒有 tracked sessions。請先輸入一個 OpenAI conversationId 並按「追蹤 Conversation」。');
+    return;
+  }
+
+  chatgptApiSessions.forEach((session) => {
+    const item = document.createElement('div');
+    const isSelected = selectedChatGPTApiSession && selectedChatGPTApiSession.conversationId === session.conversationId;
+    item.className = `copilot-session-item${isSelected ? ' is-selected' : ''}`;
+
+    const updatedAt = session.updatedAt
+      ? new Date(session.updatedAt).toLocaleString('zh-TW', { hour12: false })
+      : '未知時間';
+    const title = session.title || session.conversationId || 'Tracked OpenAI Conversation';
+    const preview = session.preview || '尚無預覽內容';
+    const meta = session.error
+      ? `${updatedAt} · ${session.conversationId} · ${session.error}`
+      : `${updatedAt} · ${session.conversationId} · ${String(session.messageCount || 0)} messages`;
+
+    item.innerHTML = `
+      <div class="copilot-session-copy">
+        <div class="copilot-session-title">${escapeHTML(title)}</div>
+        <div class="copilot-session-meta">${escapeHTML(meta)}</div>
+        <div class="copilot-session-preview">${escapeHTML(preview)}</div>
+      </div>
+      <button class="btn btn-secondary" type="button" ${session.error ? 'disabled' : ''}>
+        <span class="material-symbols-outlined">cloud_download</span>
+        載入
+      </button>
+    `;
+
+    item.querySelector('button').addEventListener('click', () => loadChatGPTApiSession(session));
+    listEl.appendChild(item);
+  });
+}
+
+async function trackChatGPTConversation() {
+  const inputEl = document.getElementById('chatgpt-conversation-id');
+  const conversationId = inputEl.value.trim();
+  if (!conversationId) {
+    alert('請先輸入要追蹤的 OpenAI conversationId。');
+    return;
+  }
+
+  updateChatGPTApiStatus(`追蹤 ${conversationId} 中…`, 'bookmark_add');
+
+  try {
+    const data = await apiPost('/api/chatgpt/sessions/track', { conversationId });
+    selectedChatGPTApiSession = null;
+    inputEl.value = '';
+    chatgptApiSessions = Array.isArray(data.sessions) ? data.sessions : chatgptApiSessions;
+    updateChatGPTApiStatus(`已追蹤 ${data.summary.title || data.summary.conversationId}。`, 'check_circle');
+    await refreshChatGPTApiSessions();
+  } catch (error) {
+    updateChatGPTApiStatus(`追蹤失敗：${error.message}`, 'error');
+  }
+}
+
+async function loadChatGPTApiSession(session) {
+  if (!session || !session.conversationId) {
+    return;
+  }
+
+  updateChatGPTApiStatus(`載入 ${session.title || session.conversationId} 中…`, 'cloud_download');
+
+  try {
+    const endpoint = new URL('/api/chatgpt/session', location.origin);
+    endpoint.searchParams.set('conversationId', session.conversationId);
+    const data = await apiFetch(endpoint.pathname + endpoint.search);
+    const inputEl = document.getElementById('input-text');
+    const charCount = document.getElementById('char-count');
+    const previewText = data.previewText || getConversationAdapterAPI().conversationDocToText(data.conversationDoc);
+
+    hydratingInputFromFile = true;
+    inputEl.value = previewText;
+    charCount.textContent = `${previewText.length} 字`;
+    hydratingInputFromFile = false;
+
+    selectedImportFile = null;
+    selectedCopilotSession = null;
+    selectedConversationDoc = data.conversationDoc;
+    selectedChatGPTApiSession = data.summary || session;
+
+    renderChatGPTApiSessions();
+    updateImportStatus(`已載入 ChatGPT API session「${selectedChatGPTApiSession.title || selectedChatGPTApiSession.conversationId}」，可直接按「提取候選知識」。`, 'cloud_download');
+    updateChatGPTApiStatus(`已載入 ${selectedChatGPTApiSession.title || selectedChatGPTApiSession.conversationId}。`, 'check_circle');
+  } catch (error) {
+    hydratingInputFromFile = false;
+    updateChatGPTApiStatus(`載入 API session 失敗：${error.message}`, 'error');
+  }
+}
+
 async function loadCopilotSession(session) {
   if (!session || !session.fileName) {
     return;
@@ -434,15 +610,19 @@ async function runExtraction() {
       }
       conversationDoc = selectedConversationDoc;
     } else if (selectedImportSource === 'chatgpt') {
-      if (!text) {
-        alert('請先貼上 ChatGPT transcript，或上傳 ChatGPT JSON / TXT。');
-        return;
+      if (selectedConversationDoc && selectedChatGPTApiSession) {
+        conversationDoc = selectedConversationDoc;
+      } else {
+        if (!text) {
+          alert('請先貼上 ChatGPT transcript，或上傳 ChatGPT JSON / TXT。');
+          return;
+        }
+        const metadata = {};
+        if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
+          metadata.inputFormatHint = 'chatgpt-json';
+        }
+        conversationDoc = adapterApi.adaptChatGPTConversation(text, metadata);
       }
-      const metadata = {};
-      if (selectedImportFile && /\.json$/i.test(selectedImportFile.name)) {
-        metadata.inputFormatHint = 'chatgpt-json';
-      }
-      conversationDoc = adapterApi.adaptChatGPTConversation(text, metadata);
     } else if (selectedImportSource === 'gemini') {
       if (!text) {
         alert('請先貼上 Gemini transcript。');
@@ -759,11 +939,14 @@ function restart() {
   selectedImportFile = null;
   selectedConversationDoc = null;
   selectedCopilotSession = null;
+  selectedChatGPTApiSession = null;
   hydratingInputFromFile = false;
   document.getElementById('input-text').value = '';
   document.getElementById('input-file').value = '';
   document.getElementById('char-count').textContent = '0 字';
+  document.getElementById('chatgpt-conversation-id').value = '';
   renderCopilotSessions();
+  renderChatGPTApiSessions();
   setImportSource('plain', { clearImportedState: false });
   document.getElementById('step-result').classList.add('hidden');
   document.getElementById('step-input').classList.remove('hidden');

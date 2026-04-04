@@ -2,7 +2,9 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const {
+  adaptOpenAIConversationItems,
   adaptVSCodeCopilotConversation,
+  conversationDocToText,
   listVSCodeCopilotSessionsFromDirectory,
   resolveVSCodeCopilotSessionDir,
   summarizeVSCodeCopilotSession,
@@ -16,8 +18,12 @@ const governanceSchedulerUtils = require('./public/js/governance-scheduler-utils
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const API_KEYS_FILE = path.join(__dirname, 'api-keys.json');
+const OPENAI_CONVERSATION_INDEX_FILE = path.join(__dirname, 'openai-conversation-index.json');
 const GOVERNANCE_CONFIG_PATH = path.join(__dirname, 'governance.json');
 const GOVERNANCE_CONFIG_RELATIVE_PATH = 'web/governance.json';
+const OPENAI_API_BASE_URL = String(process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1').replace(/\/+$/, '');
+const OPENAI_TRACKED_SESSION_LIMIT = 10;
 const RULE_FILE_LABELS = {
   'output-patterns.md': '輸出模式',
   'preference-rules.md': '偏好規則',
@@ -60,6 +66,358 @@ let governanceSnapshotState = {
 function sendJSON(res, statusCode, data) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(data));
+}
+
+function readJsonFile(filePath, fallbackValue) {
+  try {
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    return fallbackValue;
+  }
+}
+
+function writeJsonFile(filePath, value) {
+  fs.writeFileSync(filePath, JSON.stringify(value, null, 2) + '\n', 'utf8');
+}
+
+function normalizeIsoTimestamp(value) {
+  if (value === null || typeof value === 'undefined' || value === '') {
+    return null;
+  }
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const milliseconds = value > 1e12 ? value : value * 1000;
+    const date = new Date(milliseconds);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  }
+
+  const text = String(value).trim();
+  if (!text) {
+    return null;
+  }
+
+  const numeric = Number(text);
+  if (Number.isFinite(numeric)) {
+    return normalizeIsoTimestamp(numeric);
+  }
+
+  const date = new Date(text);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function maskApiKey(value) {
+  const text = String(value || '').trim();
+  if (!text) {
+    return '';
+  }
+
+  if (text.length <= 8) {
+    return `${text.slice(0, 2)}••••`;
+  }
+
+  return `${text.slice(0, 4)}••••${text.slice(-4)}`;
+}
+
+function readOpenAIKeyStore() {
+  const parsed = readJsonFile(API_KEYS_FILE, {});
+  const record = parsed && typeof parsed === 'object' ? parsed.openai : null;
+  const apiKey = record && typeof record.apiKey === 'string' ? record.apiKey.trim() : '';
+  const updatedAt = normalizeIsoTimestamp(record && record.updatedAt);
+
+  return {
+    openai: {
+      apiKey,
+      updatedAt,
+    },
+  };
+}
+
+function saveOpenAIApiKey(apiKey) {
+  const normalized = String(apiKey || '').trim();
+  if (!normalized) {
+    throw new Error('OpenAI API key 不可為空');
+  }
+
+  const nextStore = {
+    openai: {
+      apiKey: normalized,
+      updatedAt: new Date().toISOString(),
+    },
+  };
+  writeJsonFile(API_KEYS_FILE, nextStore);
+  return nextStore;
+}
+
+function clearOpenAIApiKey() {
+  const nextStore = {
+    openai: {
+      apiKey: '',
+      updatedAt: new Date().toISOString(),
+    },
+  };
+  writeJsonFile(API_KEYS_FILE, nextStore);
+  return nextStore;
+}
+
+function getOpenAISettingsSummary() {
+  const store = readOpenAIKeyStore();
+  return {
+    configured: Boolean(store.openai.apiKey),
+    maskedKey: store.openai.apiKey ? maskApiKey(store.openai.apiKey) : '',
+    updatedAt: store.openai.updatedAt || null,
+  };
+}
+
+function getRequiredOpenAIApiKey() {
+  const store = readOpenAIKeyStore();
+  if (!store.openai.apiKey) {
+    throw new Error('尚未設定 OpenAI API key；請先到 /settings 儲存。');
+  }
+
+  return store.openai.apiKey;
+}
+
+function normalizeConversationId(value) {
+  const normalized = String(value || '').trim();
+  if (!/^[A-Za-z0-9_-]{6,}$/.test(normalized)) {
+    throw new Error('conversationId 格式不合法');
+  }
+
+  return normalized;
+}
+
+function readTrackedConversationIndex() {
+  const parsed = readJsonFile(OPENAI_CONVERSATION_INDEX_FILE, { sessions: [] });
+  const sessions = Array.isArray(parsed && parsed.sessions) ? parsed.sessions : [];
+
+  return {
+    sessions: sessions
+      .filter((session) => session && typeof session === 'object')
+      .map((session) => ({
+        conversationId: String(session.conversationId || '').trim(),
+        projectId: String(session.projectId || '').trim(),
+        title: String(session.title || '').trim(),
+        preview: String(session.preview || '').trim(),
+        updatedAt: normalizeIsoTimestamp(session.updatedAt),
+        createdAt: normalizeIsoTimestamp(session.createdAt),
+        trackedAt: normalizeIsoTimestamp(session.trackedAt),
+        lastSyncedAt: normalizeIsoTimestamp(session.lastSyncedAt),
+        lastLoadedAt: normalizeIsoTimestamp(session.lastLoadedAt),
+        messageCount: Number.isFinite(Number(session.messageCount)) ? Number(session.messageCount) : 0,
+        source: String(session.source || 'chatgpt-api').trim() || 'chatgpt-api',
+      }))
+      .filter((session) => session.conversationId && session.projectId),
+  };
+}
+
+function writeTrackedConversationIndex(index) {
+  writeJsonFile(OPENAI_CONVERSATION_INDEX_FILE, {
+    sessions: Array.isArray(index && index.sessions) ? index.sessions : [],
+  });
+}
+
+function sortTrackedSessions(sessions) {
+  return sessions.slice().sort((left, right) => {
+    const leftTime = new Date(left.lastLoadedAt || left.lastSyncedAt || left.trackedAt || left.updatedAt || 0).getTime();
+    const rightTime = new Date(right.lastLoadedAt || right.lastSyncedAt || right.trackedAt || right.updatedAt || 0).getTime();
+    return rightTime - leftTime;
+  });
+}
+
+function upsertTrackedConversation(record) {
+  const nextRecord = {
+    conversationId: normalizeConversationId(record.conversationId),
+    projectId: String(record.projectId || '').trim(),
+    title: String(record.title || '').trim(),
+    preview: String(record.preview || '').trim(),
+    updatedAt: normalizeIsoTimestamp(record.updatedAt),
+    createdAt: normalizeIsoTimestamp(record.createdAt),
+    trackedAt: normalizeIsoTimestamp(record.trackedAt) || new Date().toISOString(),
+    lastSyncedAt: normalizeIsoTimestamp(record.lastSyncedAt),
+    lastLoadedAt: normalizeIsoTimestamp(record.lastLoadedAt),
+    messageCount: Number.isFinite(Number(record.messageCount)) ? Number(record.messageCount) : 0,
+    source: String(record.source || 'chatgpt-api').trim() || 'chatgpt-api',
+  };
+
+  if (!nextRecord.projectId) {
+    throw new Error('tracked conversation 缺少 projectId');
+  }
+
+  const index = readTrackedConversationIndex();
+  const filtered = index.sessions.filter((session) => !(
+    session.projectId === nextRecord.projectId && session.conversationId === nextRecord.conversationId
+  ));
+  filtered.push(nextRecord);
+  const sessions = sortTrackedSessions(filtered);
+  writeTrackedConversationIndex({ sessions });
+  return nextRecord;
+}
+
+function listTrackedConversationsForProject(projectId, limit = OPENAI_TRACKED_SESSION_LIMIT) {
+  return sortTrackedSessions(
+    readTrackedConversationIndex().sessions.filter((session) => session.projectId === projectId)
+  ).slice(0, limit);
+}
+
+function getTrackedConversationForProject(projectId, conversationId) {
+  const normalizedConversationId = normalizeConversationId(conversationId);
+  return readTrackedConversationIndex().sessions.find((session) => (
+    session.projectId === projectId && session.conversationId === normalizedConversationId
+  )) || null;
+}
+
+async function readJsonRequestBody(req) {
+  const body = await new Promise((resolve, reject) => {
+    let payload = '';
+    req.on('data', (chunk) => {
+      payload += chunk;
+    });
+    req.on('end', () => resolve(payload));
+    req.on('error', reject);
+  });
+
+  if (!body.trim()) {
+    return {};
+  }
+
+  return JSON.parse(body);
+}
+
+async function openAIJsonRequest(endpointPath, options, apiKey) {
+  if (typeof fetch !== 'function') {
+    throw new Error('目前 Node.js runtime 不支援 fetch');
+  }
+
+  const requestOptions = {
+    method: options && options.method ? options.method : 'GET',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      ...(options && options.headers ? options.headers : {}),
+    },
+  };
+
+  if (options && Object.prototype.hasOwnProperty.call(options, 'body')) {
+    requestOptions.body = JSON.stringify(options.body);
+  }
+
+  const response = await fetch(`${OPENAI_API_BASE_URL}${endpointPath}`, requestOptions);
+  const responseText = await response.text();
+  let responseBody = null;
+  if (responseText) {
+    try {
+      responseBody = JSON.parse(responseText);
+    } catch (error) {
+      responseBody = null;
+    }
+  }
+
+  if (!response.ok) {
+    const errorMessage =
+      responseBody && responseBody.error && responseBody.error.message
+        ? responseBody.error.message
+        : `${response.status} ${response.statusText}`;
+    throw new Error(`OpenAI API 錯誤：${errorMessage}`);
+  }
+
+  return responseBody;
+}
+
+async function retrieveOpenAIConversation(conversationId, apiKey) {
+  return openAIJsonRequest(`/conversations/${encodeURIComponent(conversationId)}`, null, apiKey);
+}
+
+async function listAllOpenAIConversationItems(conversationId, apiKey) {
+  let after = '';
+  let pageCount = 0;
+  const items = [];
+
+  while (pageCount < 10) {
+    const suffix = after ? `?after=${encodeURIComponent(after)}` : '';
+    const payload = await openAIJsonRequest(
+      `/conversations/${encodeURIComponent(conversationId)}/items${suffix}`,
+      null,
+      apiKey
+    );
+    const pageItems = Array.isArray(payload)
+      ? payload
+      : Array.isArray(payload && payload.data)
+        ? payload.data
+        : Array.isArray(payload && payload.items)
+          ? payload.items
+          : [];
+
+    items.push(...pageItems);
+    pageCount += 1;
+
+    if (!payload || !payload.has_more || !payload.last_id || pageItems.length === 0) {
+      break;
+    }
+
+    after = payload.last_id;
+  }
+
+  return items;
+}
+
+function summarizeTrackedConversation(projectId, conversationId, conversationDoc, conversation, previousRecord, options) {
+  const firstUserMessage = conversationDoc.messages.find((message) => message.role === 'user');
+  const firstVisibleMessage = conversationDoc.messages.find((message) => message.content);
+  const previewBase = (firstUserMessage || firstVisibleMessage || { content: '' }).content.trim();
+  const title =
+    String((conversation && conversation.title) || previousRecord && previousRecord.title || '').trim() ||
+    previewBase.slice(0, 80) ||
+    conversationId;
+  const nowIso = new Date().toISOString();
+
+  return {
+    conversationId,
+    projectId,
+    title,
+    preview: previewBase.slice(0, 160),
+    updatedAt: normalizeIsoTimestamp(
+      conversation && (conversation.updated_at || conversation.updatedAt || conversation.last_activity_at || conversation.created_at)
+    ) || previousRecord && previousRecord.updatedAt || nowIso,
+    createdAt: normalizeIsoTimestamp(
+      conversation && (conversation.created_at || conversation.createdAt)
+    ) || previousRecord && previousRecord.createdAt || null,
+    trackedAt: previousRecord && previousRecord.trackedAt || nowIso,
+    lastSyncedAt: nowIso,
+    lastLoadedAt: options && options.markLoaded ? nowIso : previousRecord && previousRecord.lastLoadedAt || null,
+    messageCount: conversationDoc.messages.length,
+    source: 'chatgpt-api',
+  };
+}
+
+async function syncTrackedConversation(projectId, conversationId, apiKey, options) {
+  const normalizedConversationId = normalizeConversationId(conversationId);
+  const previousRecord = listTrackedConversationsForProject(projectId, Number.MAX_SAFE_INTEGER)
+    .find((session) => session.conversationId === normalizedConversationId) || null;
+  const conversation = await retrieveOpenAIConversation(normalizedConversationId, apiKey);
+  const items = await listAllOpenAIConversationItems(normalizedConversationId, apiKey);
+  const conversationDoc = adaptOpenAIConversationItems(items, {
+    source: 'chatgpt-api',
+    conversationId: normalizedConversationId,
+    sessionId: normalizedConversationId,
+    title: String(conversation && conversation.title || previousRecord && previousRecord.title || '').trim() || undefined,
+    projectId,
+  });
+  const summary = summarizeTrackedConversation(
+    projectId,
+    normalizedConversationId,
+    conversationDoc,
+    conversation,
+    previousRecord,
+    options
+  );
+
+  upsertTrackedConversation(summary);
+  return {
+    summary,
+    conversation,
+    conversationDoc,
+  };
 }
 
 function serveStaticFile(res, filePath) {
@@ -382,7 +740,7 @@ function getGovernanceSnapshotForProject(projectContext) {
   return buildGovernanceSnapshotForProject(projectContext.currentProject, listGovernanceProjects(), governanceSnapshotState.config, governanceSnapshotState.checkedAt || new Date());
 }
 
-function handleAPI(req, res) {
+async function handleAPI(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const projectId = url.searchParams.get('projectId');
   const projectContext = resolveProjectContext(projectId);
@@ -421,6 +779,29 @@ function handleAPI(req, res) {
     return true;
   }
 
+  if (url.pathname === '/api/settings/openai') {
+    if (req.method === 'GET') {
+      sendJSON(res, 200, getOpenAISettingsSummary());
+      return true;
+    }
+
+    if (req.method === 'POST') {
+      try {
+        const payload = await readJsonRequestBody(req);
+        if (payload && payload.clear) {
+          clearOpenAIApiKey();
+        } else {
+          saveOpenAIApiKey(payload && payload.apiKey);
+        }
+
+        sendJSON(res, 200, getOpenAISettingsSummary());
+      } catch (error) {
+        sendJSON(res, 400, { error: error.message || 'Invalid JSON body' });
+      }
+      return true;
+    }
+  }
+
   // Handoff templates listing
   if (url.pathname === '/api/handoff-templates') {
     const templateFiles = [
@@ -449,57 +830,49 @@ function handleAPI(req, res) {
 
   // Memory writeback endpoint (POST)
   if (url.pathname === '/api/memory/write' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      try {
-        const { filename, content } = JSON.parse(body);
-        const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
-        writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, content, (writeErr, backedUp) => {
-          if (writeErr) {
-            sendJSON(res, 500, { error: writeErr.message });
-            return;
-          }
-          sendJSON(res, 200, { success: true, filename, backedUp });
-        });
-      } catch (e) {
-        const message = e && e.message ? e.message : 'Invalid JSON body';
-        const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
-        sendJSON(res, statusCode, { error: message });
-      }
-    });
+    try {
+      const { filename, content } = await readJsonRequestBody(req);
+      const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+      writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, content, (writeErr, backedUp) => {
+        if (writeErr) {
+          sendJSON(res, 500, { error: writeErr.message });
+          return;
+        }
+        sendJSON(res, 200, { success: true, filename, backedUp });
+      });
+    } catch (e) {
+      const message = e && e.message ? e.message : 'Invalid JSON body';
+      const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
+      sendJSON(res, statusCode, { error: message });
+    }
     return true;
   }
 
   if (url.pathname === '/api/memory/dedup' && req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      try {
-        const payload = JSON.parse(body);
-        const filename = (payload.filename || '').trim();
-        const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
-        const currentContent = fs.readFileSync(resolved, 'utf8');
-        const updatedContent = memoryDedupUtils.applyMemoryDedupAction(currentContent, filename, payload);
+    try {
+      const payload = await readJsonRequestBody(req);
+      const filename = (payload.filename || '').trim();
+      const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+      const currentContent = fs.readFileSync(resolved, 'utf8');
+      const updatedContent = memoryDedupUtils.applyMemoryDedupAction(currentContent, filename, payload);
 
-        writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, updatedContent, (writeErr, backedUp) => {
-          if (writeErr) {
-            sendJSON(res, 500, { error: writeErr.message });
-            return;
-          }
-          sendJSON(res, 200, {
-            success: true,
-            filename,
-            action: payload.action,
-            backedUp,
-          });
+      writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, updatedContent, (writeErr, backedUp) => {
+        if (writeErr) {
+          sendJSON(res, 500, { error: writeErr.message });
+          return;
+        }
+        sendJSON(res, 200, {
+          success: true,
+          filename,
+          action: payload.action,
+          backedUp,
         });
-      } catch (error) {
-        const message = error && error.message ? error.message : 'Invalid JSON body';
-        const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
-        sendJSON(res, statusCode, { error: message });
-      }
-    });
+      });
+    } catch (error) {
+      const message = error && error.message ? error.message : 'Invalid JSON body';
+      const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
+      sendJSON(res, statusCode, { error: message });
+    }
     return true;
   }
 
@@ -597,6 +970,95 @@ function handleAPI(req, res) {
     return true;
   }
 
+  if (url.pathname === '/api/chatgpt/sessions') {
+    try {
+      const apiKey = getRequiredOpenAIApiKey();
+      const trackedSessions = listTrackedConversationsForProject(projectContext.currentProject.id, OPENAI_TRACKED_SESSION_LIMIT);
+      const sessions = [];
+
+      for (const tracked of trackedSessions) {
+        try {
+          const synced = await syncTrackedConversation(
+            projectContext.currentProject.id,
+            tracked.conversationId,
+            apiKey,
+            { markLoaded: false }
+          );
+          sessions.push(synced.summary);
+        } catch (error) {
+          sessions.push({
+            ...tracked,
+            error: error.message,
+          });
+        }
+      }
+
+      sendJSON(res, 200, {
+        settings: getOpenAISettingsSummary(),
+        sessions: sortTrackedSessions(sessions).slice(0, OPENAI_TRACKED_SESSION_LIMIT),
+      });
+    } catch (error) {
+      sendJSON(res, 400, { error: error.message });
+    }
+    return true;
+  }
+
+  if (url.pathname === '/api/chatgpt/sessions/track' && req.method === 'POST') {
+    try {
+      const apiKey = getRequiredOpenAIApiKey();
+      const payload = await readJsonRequestBody(req);
+      const conversationId = normalizeConversationId(payload && payload.conversationId);
+      const synced = await syncTrackedConversation(
+        projectContext.currentProject.id,
+        conversationId,
+        apiKey,
+        { markLoaded: false }
+      );
+
+      sendJSON(res, 200, {
+        tracked: true,
+        summary: synced.summary,
+        sessions: listTrackedConversationsForProject(projectContext.currentProject.id, OPENAI_TRACKED_SESSION_LIMIT),
+      });
+    } catch (error) {
+      sendJSON(res, 400, { error: error.message });
+    }
+    return true;
+  }
+
+  if (url.pathname === '/api/chatgpt/session') {
+    try {
+      const apiKey = getRequiredOpenAIApiKey();
+      const conversationId = normalizeConversationId(url.searchParams.get('conversationId'));
+      const trackedConversation = getTrackedConversationForProject(
+        projectContext.currentProject.id,
+        conversationId
+      );
+      if (!trackedConversation) {
+        sendJSON(res, 400, {
+          error: '尚未追蹤此 conversationId；請先在 ChatGPT API 載入區塊追蹤 Conversation。',
+        });
+        return true;
+      }
+
+      const synced = await syncTrackedConversation(
+        projectContext.currentProject.id,
+        conversationId,
+        apiKey,
+        { markLoaded: true }
+      );
+      sendJSON(res, 200, {
+        conversationId,
+        summary: synced.summary,
+        conversationDoc: synced.conversationDoc,
+        previewText: conversationDocToText(synced.conversationDoc),
+      });
+    } catch (error) {
+      sendJSON(res, 400, { error: error.message });
+    }
+    return true;
+  }
+
   return false;
 }
 
@@ -605,8 +1067,17 @@ const server = http.createServer((req, res) => {
 
   // API routes
   if (url.pathname.startsWith('/api/')) {
-    if (handleAPI(req, res)) return;
-    sendJSON(res, 404, { error: 'Unknown API endpoint' });
+    Promise.resolve(handleAPI(req, res))
+      .then((handled) => {
+        if (!handled && !res.writableEnded) {
+          sendJSON(res, 404, { error: 'Unknown API endpoint' });
+        }
+      })
+      .catch((error) => {
+        if (!res.writableEnded) {
+          sendJSON(res, 500, { error: error.message || 'Internal Server Error' });
+        }
+      });
     return;
   }
 
@@ -683,6 +1154,9 @@ if (require.main === module) {
 }
 
 module.exports = {
+  API_KEYS_FILE,
+  OPENAI_CONVERSATION_INDEX_FILE,
+  OPENAI_API_BASE_URL,
   PORT,
   getGovernanceSnapshotForProject,
   refreshGovernanceSnapshots,

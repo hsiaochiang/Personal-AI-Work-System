@@ -4,6 +4,8 @@
 
 | Date | Decision | Why | Impact | Evidence |
 |---|---|---|---|---|
+| 2026-04-04 | V5 `chatgpt-api-auto-import` executor 採 local tracked conversation index + manual `conversationId` bootstrap，並以 `chatgpt-api` 作為 API 匯入來源標記 | 官方 OpenAI 文件可確認 retrieve conversation / conversation items 與 conversation state，但未提供可直接列出使用者全部 ChatGPT/Conversations 歷史的穩定能力；若仍要提供「最近 sessions」，必須由工作台維護 local tracked index | 使用者現在可在 `/settings` 儲存 API key、在 `/extract` 的 ChatGPT panel 追蹤 `conversationId` 並載入 tracked sessions；同時可在候選審核與 memory writeback 分辨 `chatgpt` 與 `chatgpt-api` 來源 | `openspec/changes/chatgpt-api-auto-import/design.md` |
+| 2026-04-04 | V5 `chatgpt-api-auto-import` scope 改為 OpenAI platform conversations，不再宣稱可直接讀取 ChatGPT 產品聊天歷史 | 官方 OpenAI 文件可確認 Responses API 的 conversation state、`conversation` / `previous_response_id` 與 retrieve conversation，但未找到可用 API key 直接列出 ChatGPT 產品聊天歷史的官方依據；為避免 Executor 在外部能力不存在的前提下實作錯誤目標，需先收斂到官方支援範圍 | `chatgpt-api-auto-import` 可直接交給 Executor 進入 settings / server proxy / `/extract` API picker / local conversation index 的最小安全實作；後續若要做 account-level import，需開新 scope 或等官方能力明確 | `docs/planning/v5-brief.md` |
 | 2026-03-26 | S7 正式關閉：Cycle-06 為最終 cycle，不再新增 | 原始目標（治理自動化 MVP）於 Cycle-02 Review Gate GO 後已達成；Cycle-03-06 為增量優化，但沒有定義終止條件，形成開放性債務 | 後續治理腳本改善若有需要，開新 S8 change 追蹤，不在 S7 內無限 cycle | `docs/roadmap.md` |
 | 2026-03-26 | S7 Cycle-06 新增 roadmap 單一真源防回退檢核（腳本化） | roadmap 已完成單檔合併，需避免後續續作把雙檔分工誤帶回來 | 一鍵檢核可在每輪續作自動驗證「merge redirect + 唯一路線圖宣告」，降低命名/來源漂移風險 | `scripts/s7-cycle06-governance-check.ps1` |
 | 2026-03-26 | 合併 roadmap 為單一檔案 + S-stage 命名正規化 | 兩份 roadmap 命名不一致（S5=V2✅ vs Phase 3 全未勾選），三層架構增加認知負擔而非降低 | `docs/roadmap.md` 為唯一路線圖（產品路線＋執行狀態＋OpenSpec 記錄）；`project-roadmap.md` 改為 redirect；S5/S6 明確標註「規格草案，非產品交付」 | `docs/roadmap.md` |

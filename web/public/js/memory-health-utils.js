@@ -112,6 +112,10 @@
       return 0.96;
     }
 
+    if (normalizedSource === 'chatgpt-api') {
+      return 0.98;
+    }
+
     if (normalizedSource === 'plain') {
       return 0.88;
     }

@@ -11,7 +11,7 @@
 `V5` 是 **外部 API 整合與多工具擴充層**。
 
 它不是繼續打磨 V4 的治理機制，也不是跳到雲端多人協作。
-它的任務是讓這個工作台**突破本機邊界**：透過外部 API 自動抓取 ChatGPT / Gemini 等工具的對話記錄，並補齊 V3 遺留的 Gemini、Claude 半自動 adapter，讓多工具知識匯入的覆蓋面更完整。
+它的任務是讓這個工作台**突破本機邊界**：透過外部 API 載入工作台建立或追蹤的 OpenAI platform conversations，並補齊 V3 遺留的 Gemini、Claude 半自動 adapter，讓多工具知識匯入的覆蓋面更完整。
 
 ---
 
@@ -28,7 +28,7 @@ V4 完成後，工作台已具備完整的治理自動化能力：
 
 1. **工具覆蓋有缺口**：Gemini 和 Claude 的對話必須手動複製貼上（純文字），沒有對應的 adapter，使用者無法以半自動方式匯入這些工具的結構化對話。
 
-2. **所有匯入仍是手動觸發**：即使是 ChatGPT，使用者也必須手動匯出 JSON 或複製分享頁面。若能透過官方 API（需使用者提供 API key）自動抓取最近對話，可大幅降低知識輸入摩擦。
+2. **所有匯入仍是手動觸發**：即使是 ChatGPT 模式，使用者也必須手動匯出 JSON 或複製分享頁面。若能透過官方 API（需使用者提供 API key）直接載入本工作台建立或追蹤的 OpenAI platform conversations，可降低知識輸入摩擦，並為後續更完整的 account-level integration 做前置驗證。
 
 V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少摩擦流進工作台——包含補齊現有工具的 adapter，以及引入 API 金鑰機制支援真正的自動抓取？**
 
@@ -38,9 +38,9 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 
 - 複製 Gemini 對話文字貼上，系統自動識別 Gemini 格式並解析，不需要手動清理
 - 複製 Claude 對話文字貼上，系統自動識別 Claude 格式並解析
-- 在設定頁輸入 ChatGPT API key，之後可直接從「選擇來源」點選 API 抓取最近對話，不需操作官方網站匯出
+- 在設定頁輸入 OpenAI API key，之後可直接從 ChatGPT 匯入模式點選 API 載入工作台追蹤的最近對話，不需每次重新匯出
 - 每個 adapter 都有明確的「支援格式說明」，使用者知道哪些格式可用
-- 看到每條記憶的來源標記（出自 Gemini / Claude / ChatGPT API）
+- 看到每條記憶的來源標記（出自 Gemini / Claude / ChatGPT API import）
 
 ---
 
@@ -64,14 +64,15 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 - 格式偵測邏輯納入現有 adapter 自動辨識流程
 - `/extract` 工具來源下拉新增「Claude」選項
 
-### C. ChatGPT API 自動抓取（真正 auto-import）
+### C. ChatGPT 模式的 OpenAI API 自動載入（真正 auto-import）
 
-透過使用者提供的 ChatGPT API key，從 OpenAI API 自動抓取最近 N 筆對話，讓使用者點選後直接進入提取流程。
+透過使用者提供的 OpenAI API key，載入本工作台建立或追蹤的 OpenAI platform conversations，讓使用者在 ChatGPT 匯入模式中點選後直接進入提取流程。
 
 - settings 頁新增「API Keys」設定區塊（local-only，儲存於 `web/api-keys.json`，不 commit）
-- server 端新增 `/api/chatgpt/sessions` endpoint（需 API key，抓取最近 N 筆 Thread 摘要）
+- server 端新增 `/api/chatgpt/sessions` endpoint（需 API key，列出本工作台追蹤的最近 N 筆 OpenAI conversations 摘要）
 - `/extract` 的 ChatGPT 來源選項新增「API 載入」按鈕（需已設定 API key）
-- 抓取結果以 `ConversationDoc` 格式進入既有提取流程
+- 載入結果以 `ConversationDoc` 格式進入既有提取流程
+- 第一版允許 server 維護 local-only conversation index，以支援「最近 sessions」選單
 - API key 不落入任何 git 追蹤檔案（`.gitignore` 強制排除 `web/api-keys.json`）
 
 ### D. 多工具 Adapter 文件補齊
@@ -104,7 +105,7 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 |:-:|---------|---------|
 | 1 | 貼上 Gemini 對話，系統自動識別並提取候選 | 複製真實 Gemini 對話 → extraction → 有候選輸出，且 source 標記為 `gemini` |
 | 2 | 貼上 Claude 對話，系統自動識別並提取候選 | 複製真實 Claude 對話 → extraction → 有候選輸出，且 source 標記為 `claude` |
-| 3 | 設定 ChatGPT API key 後，可從 API 載入最近對話 sessions | settings 頁輸入 key → `/extract` 選 ChatGPT → 點「API 載入」→ 顯示可選 sessions |
+| 3 | 設定 OpenAI API key 後，可從 ChatGPT 模式載入工作台追蹤的最近對話 sessions | settings 頁輸入 key → `/extract` 選 ChatGPT → 點「API 載入」→ 顯示可選 sessions |
 | 4 | API key 不被 git 追蹤 | `git status` 確認 `web/api-keys.json` 出現在 `.gitignore` 排除清單 |
 | 5 | adapter 文件更新完整 | `docs/workflows/conversation-schema.md` 包含 Gemini / Claude / ChatGPT API 三條 adapter 說明 |
 | 6 | `/extract` 工具來源下拉包含 Gemini 和 Claude 選項 | UI 可操作 |
@@ -118,7 +119,7 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 |---|---|---|---|---|
 | `gemini-adapter` | 身為使用 Google Gemini 的使用者，我想要把 Gemini 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Gemini 的思考結果存進記憶 | ✅ 已 archive | 實作 `GeminiAdapter`：解析 Gemini 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `gemini`）；main spec sync 與 archive 已完成 | `/extract` → 選工具來源「Gemini」→ 貼上 → 提取候選 |
 | `claude-adapter` | 身為使用 Claude 的使用者，我想要把 Claude 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Claude 的分析結果存進記憶 | ✅ 已 archive | `ClaudeAdapter`、`/extract` Claude source option、Claude source badge、main spec sync、archive 與收尾驗證已完成；active change 已封存後，下一步可切到 `chatgpt-api-auto-import` | `/extract` → 選工具來源「Claude」→ 貼上 → 提取候選 |
-| `chatgpt-api-auto-import` | 身為重度使用 ChatGPT 的使用者，我想要直接透過 API key 從 ChatGPT 帳號自動載入最近的對話，以便不需要在官方網站手動操作匯出就能把對話知識帶進工作台 | 未開始 | settings 頁 API key 設定；server `/api/chatgpt/sessions`；`/extract` ChatGPT 選項新增 API 載入按鈕；`web/api-keys.json` 不 commit（.gitignore 追加） | settings → 填入 API key → `/extract` → 選 ChatGPT → 點「API 載入」→ 選 session → 提取候選 |
+| `chatgpt-api-auto-import` | 身為重度使用 ChatGPT 的使用者，我想要在 ChatGPT 匯入模式中直接透過 API key 載入工作台建立或追蹤的 OpenAI 對話，以便不需要每次都手動匯出同一批對話內容 | ✅ Review Gate PASS | 已完成 `/settings` OpenAI API key 設定、server `/api/settings/openai` + `/api/chatgpt/sessions*`、local conversation index、`/extract` ChatGPT API import UI 與 `chatgpt-api` source attribution；Review Gate 已補齊 tracked-only guard 與 direct-load rejection verify，現在可進入 commit / main spec sync / archive 決策 | settings → 填入 API key → `/extract` → 選 ChatGPT → 點「API 載入」→ 追蹤 / 選 session → 提取候選 |
 | `adapter-docs-update` | 身為需要了解工具支援狀況的使用者，我想要在 import 頁面看到每個工具的支援格式說明，以便知道應該複製哪段文字、可以上傳哪種格式，不需要試錯 | 未開始 | 更新 `docs/workflows/conversation-schema.md` 補齊 V5 adapter 說明；`/extract` 各工具選項下方顯示格式提示文字 | `/extract` → 選工具 → 看到「支援格式：...」提示 |
 
 ---
@@ -141,9 +142,9 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | 04 | `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` | Planner | claude-adapter | ✅ 完成 |
 | 05 | `docs/agents/codex-prompts/v5/05-claude-adapter-execute.md` | Executor | claude-adapter | ✅ 完成 |
 | 06 | `docs/agents/codex-prompts/v5/06-claude-adapter-review.md` | Review Gate | claude-adapter | ✅ PASS |
-| 07 | `docs/agents/codex-prompts/v5/07-chatgpt-api-auto-import-plan.md` | Planner | chatgpt-api-auto-import | — |
-| 08 | `docs/agents/codex-prompts/v5/08-chatgpt-api-auto-import-execute.md` | Executor | chatgpt-api-auto-import | — |
-| 09 | `docs/agents/codex-prompts/v5/09-chatgpt-api-auto-import-review.md` | Review Gate | chatgpt-api-auto-import | — |
+| 07 | `docs/agents/codex-prompts/v5/07-chatgpt-api-auto-import-plan.md` | Planner | chatgpt-api-auto-import | ✅ 完成 |
+| 08 | `docs/agents/codex-prompts/v5/08-chatgpt-api-auto-import-execute.md` | Executor | chatgpt-api-auto-import | ✅ 完成 |
+| 09 | `docs/agents/codex-prompts/v5/09-chatgpt-api-auto-import-review.md` | Review Gate | chatgpt-api-auto-import | ✅ PASS |
 | 10 | `docs/agents/codex-prompts/v5/10-adapter-docs-update-plan.md` | Planner | adapter-docs-update | — |
 | 11 | `docs/agents/codex-prompts/v5/11-adapter-docs-update-execute.md` | Executor | adapter-docs-update | — |
 | 12 | `docs/agents/codex-prompts/v5/12-adapter-docs-update-review.md` | Review Gate | adapter-docs-update | — |
@@ -157,14 +158,14 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | **依賴 V3** | `ConversationDoc` schema（V3 Change 1）— 所有新 adapter 輸出格式標準 |
 | **依賴 V3** | import UI 多來源框架（V3 Change 6）— 新 adapter 直接插入現有下拉選單 |
 | **依賴 V4** | source attribution（V3 / V4）— 新 adapter 的 source 標記需與健康度 / 共用知識掃描相容 |
-| **影響後續版本** | ChatGPT API key 機制是未來 OAuth flow 的先行驗證 |
+| **影響後續版本** | OpenAI API key + local conversation index 機制是未來 OAuth / account-level import 的先行驗證 |
 
 ---
 
 ## 使用者影響與 Manual Sync
 
 - **使用者可見影響**：有
-- **影響摘要**：`/extract` 新增 Gemini 和 Claude 來源選項；ChatGPT 選項新增 API 載入按鈕；settings 頁新增 API Keys 區塊
+- **影響摘要**：`/extract` 新增 Gemini 和 Claude 來源選項；ChatGPT 選項新增 API 載入按鈕；settings 頁新增 API Keys 區塊；ChatGPT API import 範圍以工作台追蹤的 OpenAI platform conversations 為準
 - **需同步更新的 `docs/system-manual.md` 區段**：
   - 「知識提取與寫回（/extract）」— 說明 Gemini / Claude 半自動貼上與 ChatGPT API 自動載入
   - 「設定（/settings）」— 說明 API Keys 設定區塊

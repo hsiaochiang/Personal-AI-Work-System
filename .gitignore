@@ -41,3 +41,7 @@ design/stitch/snapshots/
 
 # Roo / local MCP overrides (may contain secrets)
 .roo/
+
+# Local-only API credentials / tracked OpenAI conversations
+web/api-keys.json
+web/openai-conversation-index.json

@@ -1,0 +1,62 @@
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "item_001",
+      "type": "message",
+      "role": "user",
+      "created_at": "2026-04-04T08:00:10Z",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "請把這一輪 scope 收斂到官方 API 支援能力。"
+        }
+      ]
+    },
+    {
+      "id": "item_002",
+      "type": "message",
+      "role": "assistant",
+      "created_at": "2026-04-04T08:00:24Z",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "第一版只做 server-side API key、tracked conversations 與 /extract API 匯入。"
+        }
+      ]
+    },
+    {
+      "id": "item_003",
+      "type": "message",
+      "role": "user",
+      "created_at": "2026-04-04T08:01:02Z",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "最近 sessions 需要 local index 才能成立。"
+        }
+      ]
+    },
+    {
+      "id": "item_004",
+      "type": "message",
+      "role": "assistant",
+      "created_at": "2026-04-04T08:01:25Z",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "可以在 ChatGPT panel 內追蹤 conversationId，再從 tracked sessions 載入。"
+        }
+      ]
+    },
+    {
+      "id": "item_005",
+      "type": "reasoning",
+      "role": "assistant",
+      "created_at": "2026-04-04T08:01:40Z",
+      "summary": "internal reasoning"
+    }
+  ],
+  "has_more": false,
+  "last_id": "item_004"
+}

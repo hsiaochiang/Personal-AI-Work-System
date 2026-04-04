@@ -8,7 +8,7 @@
   root.ConversationAdapters = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const CONVERSATION_SCHEMA_VERSION = 'v1';
-  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'gemini', 'claude', 'copilot']);
+  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'chatgpt-api', 'gemini', 'claude', 'copilot']);
   const ALLOWED_ROLES = new Set(['user', 'assistant', 'system', 'tool']);
   const ISO_8601_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/;
   const COPILOT_EXCLUDED_RESPONSE_KINDS = new Set([
@@ -358,6 +358,137 @@
         };
       })
       .filter(Boolean);
+  }
+
+  function normalizeOpenAIConversationItemsPayload(input) {
+    if (Array.isArray(input)) {
+      return input;
+    }
+
+    if (input && typeof input === 'object') {
+      if (Array.isArray(input.data)) {
+        return input.data;
+      }
+
+      if (Array.isArray(input.items)) {
+        return input.items;
+      }
+    }
+
+    throw new Error('OpenAI conversation items 格式不支援');
+  }
+
+  function extractOpenAIContentPart(part) {
+    if (typeof part === 'string') {
+      return part.trim();
+    }
+
+    if (!part || typeof part !== 'object') {
+      return '';
+    }
+
+    if (typeof part.text === 'string') {
+      return part.text.trim();
+    }
+
+    if (part.text && typeof part.text === 'object') {
+      return extractTextParts(part.text);
+    }
+
+    if (typeof part.output_text === 'string') {
+      return part.output_text.trim();
+    }
+
+    if (part.output_text && typeof part.output_text === 'object') {
+      return extractTextParts(part.output_text);
+    }
+
+    if (typeof part.input_text === 'string') {
+      return part.input_text.trim();
+    }
+
+    if (part.input_text && typeof part.input_text === 'object') {
+      return extractTextParts(part.input_text);
+    }
+
+    if (typeof part.refusal === 'string') {
+      return part.refusal.trim();
+    }
+
+    return extractTextParts(part.content || part.value || part);
+  }
+
+  function extractOpenAIItemText(item) {
+    if (!item || typeof item !== 'object') {
+      return '';
+    }
+
+    if (Array.isArray(item.content)) {
+      return item.content
+        .map((part) => extractOpenAIContentPart(part))
+        .filter(Boolean)
+        .join('\n\n')
+        .trim();
+    }
+
+    if (Array.isArray(item.output)) {
+      return item.output
+        .map((part) => extractOpenAIContentPart(part))
+        .filter(Boolean)
+        .join('\n\n')
+        .trim();
+    }
+
+    return extractOpenAIContentPart(item.content || item.output_text || item.input_text || item.text || item);
+  }
+
+  function normalizeOpenAIItemRole(item) {
+    const normalized = normalizeRole(item && item.role);
+    if (normalized) {
+      return normalized === 'tool' ? 'tool' : normalized;
+    }
+
+    const type = String(item && item.type || '').trim().toLowerCase();
+    if (type === 'developer') {
+      return 'system';
+    }
+
+    return null;
+  }
+
+  function extractOpenAIConversationMessages(input, options) {
+    const items = normalizeOpenAIConversationItemsPayload(input);
+    const source = options && options.source ? options.source : 'chatgpt-api';
+
+    return items
+      .filter((item) => item && typeof item === 'object')
+      .filter((item) => {
+        const type = String(item.type || '').trim().toLowerCase();
+        return !type || type === 'message' || type === 'developer';
+      })
+      .map((item, index) => ({
+        index,
+        item,
+        role: normalizeOpenAIItemRole(item),
+        content: extractOpenAIItemText(item),
+        timestamp: normalizeTimestamp(item.created_at || item.timestamp || item.completed_at || item.updated_at),
+      }))
+      .filter((entry) => entry.role && entry.content)
+      .sort((left, right) => {
+        const leftTime = left.timestamp ? new Date(left.timestamp).getTime() : 0;
+        const rightTime = right.timestamp ? new Date(right.timestamp).getTime() : 0;
+        if (leftTime !== rightTime) {
+          return leftTime - rightTime;
+        }
+
+        return left.index - right.index;
+      })
+      .map((entry) => ({
+        role: entry.role === 'developer' ? 'system' : entry.role,
+        content: entry.content,
+        source,
+        timestamp: entry.timestamp,
+      }));
   }
 
   function parseJsonLines(input) {
@@ -782,6 +913,22 @@
     return adaptChatGPTSharedConversation(input, metadata);
   }
 
+  function adaptOpenAIConversationItems(input, metadata) {
+    const normalizedMetadata = stripControlMetadata(metadata);
+    const messages = extractOpenAIConversationMessages(input, {
+      source: normalizedMetadata.source || 'chatgpt-api',
+    });
+
+    if (messages.length === 0) {
+      throw new Error('OpenAI conversation items 未找到可匯入的文字訊息');
+    }
+
+    return createConversationDoc(messages, {
+      ...normalizedMetadata,
+      sessionId: normalizedMetadata.sessionId || normalizedMetadata.conversationId || undefined,
+    });
+  }
+
   function adaptConversationInput(input, metadata) {
     if (typeof input !== 'string' || input.trim().length === 0) {
       throw new Error('請提供非空對話內容');
@@ -846,6 +993,7 @@
     CONVERSATION_SCHEMA_VERSION,
     adaptChatGPTConversation,
     adaptChatGPTJsonConversation,
+    adaptOpenAIConversationItems,
     adaptClaudeConversation,
     adaptGeminiConversation,
     adaptConversationInput,

@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>專案總覽 — 個人 AI 工作系統</title>
+  <title>設定 — 個人 AI 工作系統</title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app-layout">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand">
         <div class="logo">AI</div>
@@ -63,51 +62,48 @@
       </a>
     </aside>
 
-    <!-- Main -->
     <main class="main-content">
       <div class="page-header">
-        <h2>專案總覽</h2>
-        <p class="description">從 roadmap.md 讀取的即時進度</p>
+        <h2>設定</h2>
+        <p class="description">管理 local-only 的 API keys。這一輪只支援 OpenAI API key，且 key 只會存於 server-side storage。</p>
       </div>
 
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">總 Phase 數</div>
-          <div class="kpi-value" id="kpi-total">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">已完成</div>
-          <div class="kpi-value" id="kpi-done">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">下一步</div>
-          <div class="kpi-value" id="kpi-next" style="font-size:1.25rem">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">整體進度</div>
-          <div class="kpi-value" id="kpi-progress">—</div>
-        </div>
-      </div>
-
-      <div class="card governance-overview-card">
+      <div class="card settings-card">
         <div class="card-header">
-          <span class="card-title">治理待辦</span>
+          <span class="card-title">
+            <span class="step-badge">1</span>
+            API Keys
+          </span>
         </div>
-        <div id="governance-content"></div>
-      </div>
-
-      <!-- Phase Table -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Phase 進度表</span>
+        <div class="settings-grid">
+          <div class="settings-copy">
+            <h3>OpenAI API key</h3>
+            <p>用於在 ChatGPT 匯入模式中載入本工作台追蹤的 OpenAI platform conversations。原始 key 不會回傳到瀏覽器，也不應進入 git 追蹤。</p>
+          </div>
+          <div class="settings-form">
+            <label class="settings-label" for="openai-api-key">API key</label>
+            <input class="settings-input" id="openai-api-key" type="password" placeholder="貼上 OpenAI API key" autocomplete="off" spellcheck="false">
+            <div class="extract-status settings-status" id="openai-settings-status">
+              <span class="material-symbols-outlined">vpn_key</span>
+              <span>讀取設定狀態中…</span>
+            </div>
+            <div class="settings-actions">
+              <button class="btn btn-primary" id="btn-save-openai-key" type="button">
+                <span class="material-symbols-outlined">save</span>
+                儲存 API key
+              </button>
+              <button class="btn btn-secondary" id="btn-clear-openai-key" type="button">
+                <span class="material-symbols-outlined">delete</span>
+                清除已儲存 key
+              </button>
+            </div>
+          </div>
         </div>
-        <div id="phase-content"></div>
       </div>
     </main>
   </div>
 
   <script src="/js/app.js"></script>
-  <script src="/js/overview.js"></script>
+  <script src="/js/settings.js"></script>
 </body>
 </html>

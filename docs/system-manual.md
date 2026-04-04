@@ -10,6 +10,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
 - **V3** — 跨工具整合層 ✅ 已完成
 - **V4** — 治理、自動化、個人 AI 作業系統 ✅ 已完成
+- **V5** — 外部 API 整合與多工具擴充層 🔄 進行中
 
 ## 功能總覽
 
@@ -40,6 +41,12 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V3 Change 6）：`/extract` 新增工具來源 selector 與 per-source import controls；候選審核卡片與 summary 會顯示來源 badge / source summary
 - 改善（V5 Change 1）：新增 `GeminiAdapter` 與 `/extract` 的 Gemini 來源選項；可直接貼上 Gemini transcript，並在候選審核與 writeback 保留 `gemini` 來源標記
 - 改善（V5 Change 2）：新增 `ClaudeAdapter` 與 `/extract` 的 Claude 來源選項；可直接貼上 Claude transcript，並在候選審核與 writeback 保留 `claude` 來源標記
+- 改善（V5 Change 3）：ChatGPT 來源新增 API import flow；使用者可先到 `/settings` 儲存 OpenAI API key，再於 ChatGPT panel 追蹤 `conversationId`、載入 tracked OpenAI platform conversations，並在候選審核與 writeback 保留 `chatgpt-api` 來源標記
+
+### 設定（/settings）
+- 能力描述：管理 local-only API Keys；第一版提供 OpenAI API key 的儲存 / 清除入口，供 `/extract` 的 ChatGPT API import flow 使用
+- 操作方式：開啟 http://localhost:3000/settings → 輸入 OpenAI API key → 點「儲存 API key」；若要移除則點「清除已儲存 key」
+- 限制：原始 key 只存於 server-side `web/api-keys.json`；client 只會看到已設定狀態與遮罩摘要
 
 ### 專案記憶（/memory）
 - 能力描述：讀取 `docs/memory/*.md`，以分類卡片呈現專案記憶，並顯示 health summary 與每條記憶的健康狀態
@@ -88,8 +95,10 @@ npm start        # 或 node server.js
 - ChatGPT JSON 若包含多筆 conversation，現階段僅 deterministic 選擇最近更新的一筆；尚無 picker UI
 - Copilot local import 目前以單一路徑掃描 + 單筆載入為主；尚無搜尋、rich preview 或多 session merge
 - `/extract` 的工具來源 selector 目前涵蓋 `plain` / `chatgpt` / `gemini` / `claude` / `copilot`；尚未支援 Antigravity
+- ChatGPT API import 目前只支援「本工作台追蹤的 OpenAI platform conversations」；尚未支援直接列出 ChatGPT 產品聊天歷史，也沒有 account-wide auto discovery
 - Gemini 匯入目前只支援貼上 transcript；尚未支援 API 載入、檔案上傳或多 conversation picker
 - Claude 匯入目前只支援貼上 transcript；尚未支援 API 載入、檔案上傳或多 conversation picker
+- ChatGPT API import 的 tracked session list 目前需手動輸入 `conversationId` 先建立 local index；沒有 background refresh、cloud sync 或跨裝置共享
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
 - memory dedup suggestion 第一版只處理同一 memory 檔案內的重複 / 高度相似條目，不做跨檔案或跨專案合併
@@ -100,6 +109,7 @@ npm start        # 或 node server.js
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V5 Change 3 | 2026-04-04 | `/settings` OpenAI API key storage、local tracked conversation index、`/api/chatgpt/sessions*`、`/extract` ChatGPT API import flow 與 `chatgpt-api` source attribution |
 | V5 Change 2 | 2026-04-04 | `ClaudeAdapter`、`/extract` Claude 來源選項、Claude source badge 與 targeted verify evidence |
 | V5 Change 1 | 2026-04-04 | `GeminiAdapter`、`/extract` Gemini 來源選項、Gemini source badge 與 main spec sync / archive |
 | V4 Change 5 | 2026-04-04 | `web/governance.json`、server startup due-check、`/api/governance` 與 Overview 治理待辦摘要 |
@@ -122,6 +132,11 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V5 Change 3 review gate pass | 已修補 `chatgpt-api-auto-import` 的 tracked-only server-side guard：`/api/chatgpt/session` 現在會拒絕未先追蹤的 `conversationId` direct load，並更新 targeted verify 覆蓋此邊界；同步 brief / roadmap / handoff / blockers / runlog 為 PASS-ready 狀態 | 無（No user-facing change；本次僅修補收尾品質與治理狀態，既有 `/settings` / `/extract` 可見能力不變） |
+| 2026-04-04 | V5 Change 3 review gate fail | Review Gate 重查 `chatgpt-api-auto-import` 後，確認 `/api/chatgpt/session` 尚未驗證 `conversationId` 是否已存在於目前 project 的 tracked index，導致 direct load 可繞過「先追蹤、再載入」的 server-side 邊界；已同步 brief / roadmap / handoff / blockers / runlog，待修補 guard 與 targeted verify 後再重跑 Review Gate | 無（No user-facing change；本次僅更新閘門判定與治理文件，尚未新增或移除任何可見功能） |
+| 2026-04-04 | V5 Change 3 executor verify | 完成 `chatgpt-api-auto-import` 的 apply / verify：新增 `/settings` OpenAI API key 設定頁、server-side `web/api-keys.json` / `web/openai-conversation-index.json`、`/api/settings/openai`、`/api/chatgpt/sessions*` 與 `/extract` ChatGPT API import flow；同時新增 `chatgpt-api` source attribution 與 targeted verify，既有 `plain` / `chatgpt` / `gemini` / `claude` / `copilot` regression 全數 PASS | 有（使用者現在可先到 `/settings` 儲存 API key，再於 `/extract` 的 ChatGPT 模式追蹤 `conversationId`、載入 tracked OpenAI platform conversations；本輪仍不支援直接列出 ChatGPT 產品聊天歷史或 background sync） |
+| 2026-04-04 | V5 Change 3 scope adjust | 依官方 OpenAI 文件，將 `chatgpt-api-auto-import` 從「直接讀取 ChatGPT 產品聊天歷史」收斂為「在 ChatGPT 匯入模式中載入本工作台建立或追蹤的 OpenAI platform conversations」；同步更新 brief / roadmap / handoff / blockers / decision-log，解除規格 blocker，下一步可進 Executor | 無（No user-facing change；本次仍屬規劃與治理同步，尚未新增 `/settings` 或 `/extract` API import UI） |
+| 2026-04-04 | V5 Change 3 planner | 已完成 `chatgpt-api-auto-import` 的 Planner scope gate：確認 V5 brief 已有人類確認、change 屬於 In Scope、repo 無 active duplicate，並盤點目前尚無 `/settings`、`web/api-keys.json` ignore 與 `/api/chatgpt/sessions`。另查官方 OpenAI 文件後，尚未找到可用 API key 直接列出使用者 ChatGPT 產品聊天歷史的明確依據，因此先把此需求記為 blocker，待人確認是否調整 scope 後再交給 Executor | 無（No user-facing change；本次僅完成規劃、handoff / roadmap / brief 同步與 blocker 留痕，產品功能尚未變更） |
 | 2026-04-04 | V5 Change 2 archive | `claude-adapter` 已完成 implementation commit、`openspec/specs/claude-adapter/spec.md` sync 與 archive；active change 已封存至 `openspec/changes/archive/2026-04-04-claude-adapter/`，下一步可切到 `chatgpt-api-auto-import` | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/extract` 的 Claude 匯入能力維持不變） |
 | 2026-04-04 | V5 Change 2 review gate pass | `claude-adapter` Review Gate 已通過；已重查 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、Claude targeted verify 與既有來源 regression；目前可進入 commit / sync / archive 決策，但本輪未執行不可逆操作 | 無（No user-facing change；本次僅更新治理狀態與收尾判定，`/extract` 已上線的 Claude 匯入能力不變） |
 | 2026-04-04 | V5 Change 2 executor verify | 完成 `claude-adapter` 的 apply / verify：`/extract` 現在新增 `Claude` 來源選項、`ClaudeAdapter` transcript 解析與 `Claude` source badge；已重跑 strict validate、Claude targeted verify 與既有來源 regression，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 `/extract` 直接選 `Claude` 並貼上 transcript，後續候選審核與 writeback 會保留 `claude` 來源標記；本輪仍不支援 Claude API 或檔案匯入） |
