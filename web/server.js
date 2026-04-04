@@ -8,6 +8,7 @@ const {
   summarizeVSCodeCopilotSession,
 } = require('./public/js/conversation-adapters.js');
 const memoryHealthUtils = require('./public/js/memory-health-utils.js');
+const memoryDedupUtils = require('./public/js/memory-dedup-utils.js');
 
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -76,6 +77,55 @@ function getProjectRoot(projectId) {
   }
 }
 
+function getWritableMemoryFilePath(memoryDir, filename) {
+  if (!WRITABLE_MEMORY_FILES.includes(filename)) {
+    throw new Error('File not in writable whitelist: ' + filename);
+  }
+
+  const filePath = path.join(memoryDir, filename);
+  const resolved = path.resolve(filePath);
+  if (!resolved.startsWith(path.resolve(memoryDir))) {
+    throw new Error('Path traversal denied');
+  }
+
+  return resolved;
+}
+
+function writeMemoryFileWithBackup(memoryDir, backupDir, resolvedFilePath, content, callback) {
+  fs.mkdir(backupDir, { recursive: true }, (mkdirErr) => {
+    if (mkdirErr) {
+      callback(mkdirErr);
+      return;
+    }
+
+    const doWrite = (backedUp) => {
+      fs.writeFile(resolvedFilePath, content, 'utf-8', (writeErr) => {
+        if (writeErr) {
+          callback(writeErr);
+          return;
+        }
+        callback(null, backedUp);
+      });
+    };
+
+    fs.readFile(resolvedFilePath, 'utf-8', (readErr, existing) => {
+      if (readErr) {
+        doWrite(false);
+        return;
+      }
+
+      const backupPath = path.join(backupDir, path.basename(resolvedFilePath));
+      fs.writeFile(backupPath, existing, 'utf-8', (backupErr) => {
+        if (backupErr) {
+          callback(backupErr);
+          return;
+        }
+        doWrite(true);
+      });
+    });
+  });
+}
+
 function handleAPI(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const projectId = url.searchParams.get('projectId');
@@ -103,14 +153,18 @@ function handleAPI(req, res) {
   if (url.pathname === '/api/memory') {
     fs.readdir(MEMORY_DIR, (err, files) => {
       if (err) {
-        sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload([])); // Directory might not exist yet
+        sendJSON(res, 200, memoryDedupUtils.attachDedupToMemoryPayload(
+          memoryHealthUtils.buildMemoryApiPayload([])
+        )); // Directory might not exist yet
         return;
       }
       const mdFiles = files.filter(f => f.endsWith('.md'));
       const results = [];
       let pending = mdFiles.length;
       if (pending === 0) {
-        sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload([]));
+        sendJSON(res, 200, memoryDedupUtils.attachDedupToMemoryPayload(
+          memoryHealthUtils.buildMemoryApiPayload([])
+        ));
         return;
       }
       mdFiles.forEach(file => {
@@ -122,7 +176,13 @@ function handleAPI(req, res) {
           pending--;
           if (pending === 0) {
             results.sort((a, b) => a.filename.localeCompare(b.filename));
-            sendJSON(res, 200, memoryHealthUtils.buildMemoryApiPayload(results));
+            sendJSON(
+              res,
+              200,
+              memoryDedupUtils.attachDedupToMemoryPayload(
+                memoryHealthUtils.buildMemoryApiPayload(results)
+              )
+            );
           }
         });
       });
@@ -163,57 +223,50 @@ function handleAPI(req, res) {
     req.on('end', () => {
       try {
         const { filename, content } = JSON.parse(body);
-
-        // Validate filename is in whitelist
-        if (!WRITABLE_MEMORY_FILES.includes(filename)) {
-          sendJSON(res, 403, { error: 'File not in writable whitelist: ' + filename });
-          return;
-        }
-
-        const filePath = path.join(MEMORY_DIR, filename);
-        const resolved = path.resolve(filePath);
-
-        // Double-check path is within MEMORY_DIR
-        if (!resolved.startsWith(path.resolve(MEMORY_DIR))) {
-          sendJSON(res, 403, { error: 'Path traversal denied' });
-          return;
-        }
-
-        // Backup existing file before overwriting
-        const doWrite = (backedUp) => {
-          fs.writeFile(resolved, content, 'utf-8', (err) => {
-            if (err) {
-              sendJSON(res, 500, { error: 'Write failed: ' + err.message });
-              return;
-            }
-            sendJSON(res, 200, { success: true, filename, backedUp });
-          });
-        };
-
-        fs.mkdir(BACKUP_DIR, { recursive: true }, (mkdirErr) => {
-          if (mkdirErr) {
-            sendJSON(res, 500, { error: 'Cannot create backup directory: ' + mkdirErr.message });
+        const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+        writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, content, (writeErr, backedUp) => {
+          if (writeErr) {
+            sendJSON(res, 500, { error: writeErr.message });
             return;
           }
-          // Read existing file for backup (skip if not found)
-          fs.readFile(resolved, 'utf-8', (readErr, existing) => {
-            if (readErr) {
-              // File doesn't exist yet — first write, no backup needed
-              doWrite(false);
-              return;
-            }
-            const backupPath = path.join(BACKUP_DIR, filename);
-            fs.writeFile(backupPath, existing, 'utf-8', (backupErr) => {
-              if (backupErr) {
-                sendJSON(res, 500, { error: 'Backup failed: ' + backupErr.message });
-                return;
-              }
-              doWrite(true);
-            });
-          });
+          sendJSON(res, 200, { success: true, filename, backedUp });
         });
       } catch (e) {
-        sendJSON(res, 400, { error: 'Invalid JSON body' });
+        const message = e && e.message ? e.message : 'Invalid JSON body';
+        const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
+        sendJSON(res, statusCode, { error: message });
+      }
+    });
+    return true;
+  }
+
+  if (url.pathname === '/api/memory/dedup' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const filename = (payload.filename || '').trim();
+        const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+        const currentContent = fs.readFileSync(resolved, 'utf8');
+        const updatedContent = memoryDedupUtils.applyMemoryDedupAction(currentContent, filename, payload);
+
+        writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, updatedContent, (writeErr, backedUp) => {
+          if (writeErr) {
+            sendJSON(res, 500, { error: writeErr.message });
+            return;
+          }
+          sendJSON(res, 200, {
+            success: true,
+            filename,
+            action: payload.action,
+            backedUp,
+          });
+        });
+      } catch (error) {
+        const message = error && error.message ? error.message : 'Invalid JSON body';
+        const statusCode = /whitelist|Path traversal/i.test(message) ? 403 : 400;
+        sendJSON(res, statusCode, { error: message });
       }
     });
     return true;

@@ -19,6 +19,10 @@ const CATEGORY_ICONS = {
   'task-patterns.md': 'pattern',
 };
 
+let memoryPageRefs = null;
+let dedupActionPending = false;
+let dedupStatusMessage = null;
+
 function getMemorySourceUtilsAPI() {
   if (!window.MemorySourceUtils) {
     throw new Error('MemorySourceUtils 未載入');
@@ -31,6 +35,13 @@ function getMemoryHealthUtilsAPI() {
     throw new Error('MemoryHealthUtils 未載入');
   }
   return window.MemoryHealthUtils;
+}
+
+function getMemoryDedupUtilsAPI() {
+  if (!window.MemoryDedupUtils) {
+    throw new Error('MemoryDedupUtils 未載入');
+  }
+  return window.MemoryDedupUtils;
 }
 
 function formatPercent(value) {
@@ -79,28 +90,257 @@ function updateHealthOverview(summary) {
   overview.appendChild(legend);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('memory-content');
-  const kpiTotal = document.getElementById('kpi-total');
-  const kpiFiles = document.getElementById('kpi-files');
-  const kpiStaleRatio = document.getElementById('kpi-stale-ratio');
-  const kpiCleanup = document.getElementById('kpi-cleanup');
+function renderDedupStatus(overview) {
+  if (!dedupStatusMessage) {
+    return;
+  }
 
-  showLoading(container);
+  const banner = document.createElement('div');
+  banner.className = `memory-dedup-status ${dedupStatusMessage.kind || 'info'}`;
+  banner.textContent = dedupStatusMessage.message;
+  overview.appendChild(banner);
+}
+
+function createBadge(text, className) {
+  const badge = document.createElement('span');
+  badge.className = className;
+  badge.textContent = text;
+  return badge;
+}
+
+function setDedupButtonsDisabled(disabled) {
+  dedupActionPending = disabled;
+  document.querySelectorAll('[data-dedup-action]').forEach(button => {
+    button.disabled = disabled;
+  });
+}
+
+function updateDedupOverview(dedup) {
+  const overview = document.getElementById('memory-dedup-overview');
+  if (!overview) {
+    return;
+  }
+
+  getMemoryDedupUtilsAPI();
+  overview.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'memory-dedup-overview-title';
+  title.textContent = '疑似重複建議';
+  overview.appendChild(title);
+
+  const summary = dedup && dedup.summary ? dedup.summary : {
+    groupCount: 0,
+    duplicateItemCount: 0,
+    exactGroupCount: 0,
+    nearGroupCount: 0,
+  };
+  const groups = dedup && Array.isArray(dedup.groups) ? dedup.groups : [];
+
+  const copy = document.createElement('div');
+  copy.className = 'memory-dedup-overview-copy';
+  copy.textContent = summary.groupCount
+    ? `目前找到 ${summary.groupCount} 組疑似重複，共涉及 ${summary.duplicateItemCount} 條記憶。所有整理操作都需要你手動確認，且會先建立 backup。`
+    : '目前沒有找到足夠接近的重複條目。之後若同一類記憶被反覆寫回，這裡會顯示可整理的建議群組。';
+  overview.appendChild(copy);
+
+  renderDedupStatus(overview);
+
+  if (!summary.groupCount) {
+    return;
+  }
+
+  const stats = document.createElement('div');
+  stats.className = 'memory-dedup-stats';
+  stats.appendChild(createBadge(`${summary.exactGroupCount} 組完全重複`, 'memory-dedup-stat'));
+  stats.appendChild(createBadge(`${summary.nearGroupCount} 組高度相似`, 'memory-dedup-stat'));
+  overview.appendChild(stats);
+
+  groups.forEach(group => {
+    const groupCard = document.createElement('div');
+    groupCard.className = 'memory-dedup-group';
+
+    const header = document.createElement('div');
+    header.className = 'memory-dedup-group-header';
+
+    const meta = document.createElement('div');
+    meta.className = 'memory-dedup-group-meta';
+
+    const metaTitle = document.createElement('div');
+    metaTitle.className = 'memory-dedup-group-title';
+    metaTitle.textContent = CATEGORY_LABELS[group.filename] || group.filename;
+    meta.appendChild(metaTitle);
+
+    const metaSub = document.createElement('div');
+    metaSub.className = 'memory-dedup-group-sub';
+    metaSub.textContent = `${group.itemCount} 條候選 · ${group.similarityLabel} · 相似度 ${formatPercent(group.similarity * 100)}`;
+    meta.appendChild(metaSub);
+
+    header.appendChild(meta);
+
+    const mergeButton = document.createElement('button');
+    mergeButton.className = 'btn btn-secondary';
+    mergeButton.type = 'button';
+    mergeButton.dataset.dedupAction = 'merge';
+    mergeButton.innerHTML = '<span class="material-symbols-outlined">merge</span>合併為一條';
+    mergeButton.addEventListener('click', () => handleDedupMerge(group));
+    header.appendChild(mergeButton);
+
+    groupCard.appendChild(header);
+
+    const recommendation = document.createElement('div');
+    recommendation.className = 'memory-dedup-group-recommendation';
+    const primary = group.items.find(item => item.itemId === group.primaryItemId);
+    recommendation.textContent = primary
+      ? `建議保留：${primary.content}。${group.primaryReason || ''}`
+      : '建議保留目前較健康、較完整的一條。';
+    groupCard.appendChild(recommendation);
+
+    group.items.forEach(item => {
+      const itemCard = document.createElement('div');
+      itemCard.className = 'memory-dedup-item';
+
+      const badges = document.createElement('div');
+      badges.className = 'memory-dedup-item-badges';
+
+      if (item.itemId === group.primaryItemId) {
+        badges.appendChild(createBadge('建議保留', 'memory-dedup-primary-badge'));
+      }
+
+      if (item.health && item.health.status) {
+        const healthPresentation = getMemoryHealthUtilsAPI().getMemoryHealthPresentation(item.health.status);
+        if (healthPresentation) {
+          badges.appendChild(createBadge(healthPresentation.label, `health-badge ${healthPresentation.className}`));
+        }
+      }
+
+      const sourcePresentation = getMemorySourceUtilsAPI().getMemorySourcePresentation(item.source);
+      if (sourcePresentation) {
+        badges.appendChild(createBadge(sourcePresentation.label, `source-badge ${sourcePresentation.className}`));
+      }
+
+      itemCard.appendChild(badges);
+
+      const content = document.createElement('div');
+      content.className = 'memory-dedup-item-content';
+      content.textContent = item.content;
+      itemCard.appendChild(content);
+
+      const sub = document.createElement('div');
+      sub.className = 'memory-dedup-item-sub';
+      sub.textContent = item.groupTitle;
+      itemCard.appendChild(sub);
+
+      if (item.itemId !== group.primaryItemId) {
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn-text';
+        deleteButton.type = 'button';
+        deleteButton.dataset.dedupAction = 'delete';
+        deleteButton.innerHTML = '<span class="material-symbols-outlined">delete</span>刪除這條';
+        deleteButton.addEventListener('click', () => handleDedupDelete(group, item));
+        itemCard.appendChild(deleteButton);
+      }
+
+      groupCard.appendChild(itemCard);
+    });
+
+    overview.appendChild(groupCard);
+  });
+
+  setDedupButtonsDisabled(dedupActionPending);
+}
+
+async function handleDedupMerge(group) {
+  if (dedupActionPending) {
+    return;
+  }
+
+  const confirmed = window.confirm('將這組疑似重複條目合併為一條？系統會先備份原始 memory 檔案。');
+  if (!confirmed) {
+    return;
+  }
+
+  await runDedupAction({
+    filename: group.filename,
+    action: 'merge',
+    itemIds: group.items.map(item => item.itemId),
+    primaryItemId: group.primaryItemId,
+    mergedContent: group.mergeCandidate && group.mergeCandidate.content,
+    mergedSource: group.mergeCandidate && group.mergeCandidate.source,
+  }, '已完成合併，並重新整理 dedup 建議。');
+}
+
+async function handleDedupDelete(group, item) {
+  if (dedupActionPending) {
+    return;
+  }
+
+  const confirmed = window.confirm(`刪除這條疑似重複記憶？\n\n${item.content}`);
+  if (!confirmed) {
+    return;
+  }
+
+  await runDedupAction({
+    filename: group.filename,
+    action: 'delete',
+    targetItemId: item.itemId,
+  }, '已刪除指定條目，並重新整理 dedup 建議。');
+}
+
+async function runDedupAction(body, successMessage) {
+  try {
+    setDedupButtonsDisabled(true);
+    await apiPost('/api/memory/dedup', body);
+    dedupStatusMessage = {
+      kind: 'success',
+      message: successMessage,
+    };
+    await loadMemoryData();
+  } catch (error) {
+    dedupStatusMessage = {
+      kind: 'error',
+      message: `整理失敗：${error.message}`,
+    };
+    updateDedupOverview({ summary: { groupCount: 0, duplicateItemCount: 0, exactGroupCount: 0, nearGroupCount: 0 }, groups: [] });
+  } finally {
+    setDedupButtonsDisabled(false);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  memoryPageRefs = {
+    container: document.getElementById('memory-content'),
+    kpiTotal: document.getElementById('kpi-total'),
+    kpiFiles: document.getElementById('kpi-files'),
+    kpiStaleRatio: document.getElementById('kpi-stale-ratio'),
+    kpiCleanup: document.getElementById('kpi-cleanup'),
+  };
+
+  showLoading(memoryPageRefs.container);
+  await loadMemoryData();
+});
+
+async function loadMemoryData() {
+  const { container, kpiTotal, kpiFiles, kpiStaleRatio, kpiCleanup } = memoryPageRefs;
 
   try {
     const data = await apiFetch('/api/memory');
 
     if (!data.files || data.files.length === 0) {
       showEmpty(container, 'folder_open', '尚無記憶檔案');
+      updateDedupOverview(null);
+      updateHealthOverview({
+        totalItems: 0,
+        needsAttentionCount: 0,
+        staleCount: 0,
+      });
       return;
     }
 
-    // KPIs
-    const parsed = data.files.map(f => {
-      const groups = Array.isArray(f.groups) ? f.groups : parseMemoryFile(f.content);
-      return { filename: f.filename, groups };
-    });
+    const parsed = data.files.map(file => ({
+      filename: file.filename,
+      groups: Array.isArray(file.groups) ? file.groups : parseMemoryFile(file.content),
+    }));
     const summary = data.summary || getMemoryHealthUtilsAPI().buildMemoryApiPayload(data.files).summary;
 
     if (kpiFiles) kpiFiles.textContent = data.files.length;
@@ -108,13 +348,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (kpiStaleRatio) kpiStaleRatio.textContent = formatPercent(summary.staleRatio);
     if (kpiCleanup) kpiCleanup.textContent = summary.needsAttentionCount;
 
+    updateDedupOverview(data.dedup);
     updateHealthOverview(summary);
-
     renderMemory(container, parsed);
-  } catch (err) {
-    showError(container, '無法載入記憶資料: ' + err.message);
+  } catch (error) {
+    showError(container, '無法載入記憶資料: ' + error.message);
   }
-});
+}
 
 /**
  * Parse a memory markdown file into groups of items.
@@ -131,7 +371,6 @@ function renderMemory(container, files) {
     const category = document.createElement('div');
     category.className = 'memory-category';
 
-    // Category header
     const header = document.createElement('div');
     header.className = 'memory-category-header';
 
@@ -141,33 +380,28 @@ function renderMemory(container, files) {
     icon.style.color = 'var(--primary)';
     header.appendChild(icon);
 
-    const h3 = document.createElement('h3');
-    h3.textContent = CATEGORY_LABELS[file.filename] || file.filename.replace('.md', '');
-    header.appendChild(h3);
+    const heading = document.createElement('h3');
+    heading.textContent = CATEGORY_LABELS[file.filename] || file.filename.replace('.md', '');
+    header.appendChild(heading);
 
-    const totalItems = file.groups.reduce((sum, g) => sum + g.items.length, 0);
+    const totalItems = file.groups.reduce((sum, group) => sum + group.items.length, 0);
     const count = document.createElement('span');
     count.className = 'memory-count';
-    count.textContent = totalItems + ' 條';
+    count.textContent = `${totalItems} 條`;
     header.appendChild(count);
 
     category.appendChild(header);
 
-    // Groups and items
     file.groups.forEach(group => {
-      if (group.items.length === 0) return;
+      if (group.items.length === 0) {
+        return;
+      }
 
-      // Group sub-header
       const subHeader = document.createElement('div');
-      subHeader.style.fontSize = '0.8125rem';
-      subHeader.style.fontWeight = '600';
-      subHeader.style.color = 'var(--on-surface-variant)';
-      subHeader.style.marginTop = '0.75rem';
-      subHeader.style.marginBottom = '0.375rem';
+      subHeader.className = 'memory-group-header';
       subHeader.textContent = group.title;
       category.appendChild(subHeader);
 
-      // Items
       group.items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'memory-item';
@@ -188,21 +422,14 @@ function renderMemory(container, files) {
           badges.className = 'memory-item-badges';
 
           if (healthPresentation) {
-            const healthBadge = document.createElement('span');
-            healthBadge.className = `health-badge ${healthPresentation.className}`;
-            healthBadge.textContent = healthPresentation.label;
-            badges.appendChild(healthBadge);
+            badges.appendChild(createBadge(healthPresentation.label, `health-badge ${healthPresentation.className}`));
           }
 
           if (sourcePresentation) {
-            const badge = document.createElement('span');
-            badge.className = `source-badge ${sourcePresentation.className}`;
-            badge.textContent = sourcePresentation.label;
-            badges.appendChild(badge);
+            badges.appendChild(createBadge(sourcePresentation.label, `source-badge ${sourcePresentation.className}`));
           }
 
           headerRow.appendChild(badges);
-
           card.appendChild(headerRow);
         }
 
@@ -213,7 +440,6 @@ function renderMemory(container, files) {
           card.appendChild(reason);
         }
 
-        // Check for key: value pattern
         const kvMatch = item.content.match(/^(.+?)[:：]\s*(.+)$/);
         if (kvMatch) {
           const title = document.createElement('div');

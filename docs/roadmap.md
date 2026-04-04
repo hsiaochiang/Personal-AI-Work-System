@@ -73,10 +73,10 @@
 
 ---
 
-## 3. 當前版本：V4 啟動 — Change 1 已 archive
+## 3. 當前版本：V4 啟動 — Change 2 已 archive
 
 > **Current release：V3**
-> **Release status：V4 Change 1 `memory-health-scoring` 已完成 sync / archive（2026-04-04）**
+> **Release status：V4 Change 2 `memory-dedup-suggestions` 已完成 sync / archive（2026-04-04）**
 > **可用程度：** `node web/server.js` → http://localhost:3000
 
 ### V1 Phase 進度
@@ -92,7 +92,7 @@
 
 ### 下一步
 
-V1–V3 全數完成；V4 已啟動，第一個治理 change 已完成 sync / archive，下一步可切到 Change 2 或先處理 template blocker。
+V1–V3 全數完成；V4 已啟動，第二個治理 change 已完成 sync / archive；下一步可切到 `rule-conflict-detection-v2`，或先處理 template blocker。
 
 - V2 Change 1（writeback safety hardening）✅ 已完成（`5658def`）
 - V2 Change 2（multi-project true switching）✅ 已完成（`b5eea82`）
@@ -104,14 +104,14 @@ V1–V3 全數完成；V4 已啟動，第一個治理 change 已完成 sync / ar
 - V3 Change 4（`local-import-vscode-copilot`）✅ 已完成並 archive（2026-04-03）；`/extract` 可從本機 Copilot session JSONL 載入單一對話。
 - V3 Change 5（`source-attribution-in-memory`）✅ 已完成並 archive（2026-04-03）；新寫回的 memory 條目可保留來源 metadata，`/memory` 會顯示來源 badge。
 - V3 Change 6（`import-ui-multi-source`）✅ 已完成並 archive（2026-04-04）；`/extract` 的多來源匯入入口、來源 badge 與 main spec sync 全數收尾完成。
-- **下一步：決定先啟動 `memory-dedup-suggestions`，或先處理 template verify blocker**
+- **下一步：啟動 `rule-conflict-detection-v2`，或先處理 template verify blocker**
 
 ### V4 Change 進度
 
 | # | Change | 狀態 | 備註 |
 |:-:|--------|:----:|------|
 | 1 | memory-health-scoring | ✅ 已 archive | `/api/memory` health summary、`/memory` 健康度概覽與 per-item badge 已上線，main spec sync 與 archive 已完成 |
-| 2 | memory-dedup-suggestions | ⏳ 未開始 | — |
+| 2 | memory-dedup-suggestions | ✅ 已 archive | `/api/memory` dedup summary、`/memory` 疑似重複建議與 merge/delete action 已完成 verify；server-side duplicate group validation、main spec sync 與 archive 全數完成 |
 | 3 | rule-conflict-detection-v2 | ⏳ 未開始 | — |
 | 4 | cross-project-shared-knowledge | ⏳ 未開始 | — |
 | 5 | governance-scheduler | ⏳ 未開始 | — |
@@ -307,6 +307,10 @@ V1–V3 全數完成；V4 已啟動，第一個治理 change 已完成 sync / ar
 - 2026-04-04：**V4 Change 1 executor verify 完成** — `memory-health-scoring` 已完成 strict validate、health scoring 實作與 `/memory` UI 驗證，待 Review Gate
 - 2026-04-04：**V4 Change 1 Review Gate PASS** — 已修補 missing source / missing date guard，重跑 strict validate、targeted verify、source attribution regression 與 local API smoke 後，可進入 commit / sync；archive 仍需人工確認
 - 2026-04-04：**V4 Change 1 archive complete** — `memory-health-scoring` 已完成 main spec sync 與 archive，下一步可切到 `memory-dedup-suggestions` 或先處理 template blocker
+- 2026-04-04：**V4 Change 2 executor verify 完成** — `memory-dedup-suggestions` 已完成 strict validate、dedup heuristic / action API、`/memory` 疑似重複 UI 與 local API smoke 驗證；下一步待 Review Gate
+- 2026-04-04：**V4 Change 2 Review Gate FAIL** — `memory-dedup-suggestions` 的 merge action 曾未驗證 `primaryItemId` 屬於本次 duplicate group，錯誤 payload 可能誤改其他 memory item；已先凍結 sync / archive
+- 2026-04-04：**V4 Change 2 Review Gate PASS** — 已補 server-side duplicate group validation，並重跑 targeted verify、health/source regression 與 local API smoke；目前可進入 commit / sync，archive 仍待人工確認
+- 2026-04-04：**V4 Change 2 archive complete** — `memory-dedup-suggestions` 已完成 main spec sync 與 archive，下一步可切到 `rule-conflict-detection-v2` 或先處理 template blocker
 - 2026-04-04：修正 roadmap.md：版本表 V2 狀態、Section 3 標題與 Current release、補 V3 Change 進度表
 - 2026-03-27：Phase 5 (V3) 全部完成並 archive（`phase11-v3-multi-tool-integration-mvp`）
 - 2026-03-27：Phase 4 (V2.5) 全部完成並 archive（`phase10-v2.5-multi-project-shared-capability-mvp`）

@@ -9,7 +9,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - **V1** — 單專案知識閉環工作台 ✅ 已完成
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
 - **V3** — 跨工具整合層 ✅ 已完成
-- **V4** — 治理、自動化、個人 AI 作業系統 ⏳ 規劃中
+- **V4** — 治理、自動化、個人 AI 作業系統 🔄 進行中
 
 ## 功能總覽
 
@@ -38,6 +38,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 操作方式：瀏覽器開啟 http://localhost:3000/memory
 - 改善（V3 Change 5）：若記憶條目含 `<!-- source: ... -->` metadata，頁面會顯示對應來源 badge；舊條目沒有 metadata 仍可正常顯示
 - 改善（V4 Change 1）：`/api/memory` 會先計算記憶健康度摘要，`/memory` 頁面新增過期比例、建議清理數量與每條記憶的健康 badge / reason；第一版採新鮮度 × 來源權重
+- 改善（V4 Change 2）：`/api/memory` 會額外提供 dedup summary 與 suggestion groups；`/memory` 頁面新增「疑似重複建議」區塊，可在人工確認後執行 merge 或 delete，且改寫前會先 backup
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
@@ -74,11 +75,13 @@ npm start        # 或 node server.js
 - `/extract` 的工具來源 selector 目前只涵蓋 `plain` / `chatgpt` / `copilot`；尚未支援 Gemini / Claude / Antigravity
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
+- memory dedup suggestion 第一版只處理同一 memory 檔案內的重複 / 高度相似條目，不做跨檔案或跨專案合併
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V4 Change 2 | 2026-04-04 | `/memory` 疑似重複建議、dedup summary 與 merge/delete action（archive complete） |
 | V4 Change 1 | 2026-04-04 | `/memory` 健康度概覽、過期比例 / 建議清理 KPI 與 per-item health badge |
 | V3 Change 6 | 2026-04-04 | `/extract` 工具來源 selector、per-source import controls 與 candidate source badge |
 | V3 Change 5 | 2026-04-03 | memory source metadata 寫回與 `/memory` 來源 badge |
@@ -95,6 +98,10 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 Change 2 executor verify | 完成 `memory-dedup-suggestions` 的 apply / verify：`/api/memory` 現在會回傳 dedup summary 與 suggestion groups，`/memory` 已顯示疑似重複建議並提供 merge / delete action；下一步待 Review Gate 判定是否進入 sync / archive | 有（使用者現在可在 `/memory` 直接看到疑似重複條目群組，並在人工確認後執行 merge 或刪除；所有操作都會先 backup） |
+| 2026-04-04 | V4 Change 2 review gate fail | Review Gate 發現 `memory-dedup-suggestions` 的 blocking mismatch：`/api/memory/dedup` merge action 尚未驗證 `primaryItemId` 屬於本次 duplicate group，錯誤 payload 可能誤改其他 memory item；下一步需修補 server-side guard 與 targeted verify，完成後才能進入 commit / sync / archive | 無（No user-facing change；已上線的 dedup UI 仍可操作，但本 change 尚未通過收尾閘門） |
+| 2026-04-04 | V4 Change 2 review gate pass | 已修補 `memory-dedup-suggestions` 的 merge action 邊界：server 現在會驗證 `primaryItemId` 與 `itemIds` 屬於同一 duplicate group，並拒絕 non-duplicate delete；重跑 targeted verify、health/source regression 與 local API smoke 後，Review Gate 重新判定 PASS | 無（No user-facing change；本次為收尾品質修補與治理狀態更新，`/memory` 的可見功能不變） |
+| 2026-04-04 | V4 Change 2 archive | `memory-dedup-suggestions` 已完成 main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-memory-dedup-suggestions/`；下一步可切到 `rule-conflict-detection-v2` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，使用者可見能力已在 apply / verify 階段上線） |
 | 2026-04-04 | V4 Change 1 archive | `memory-health-scoring` 已完成 main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-memory-health-scoring/`；下一步可切到 `memory-dedup-suggestions` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，使用者可見能力已在 apply / verify 階段上線） |
 | 2026-04-04 | V4 Change 1 review gate pass | `memory-health-scoring` 已修補 missing source / missing date guard，Review Gate 重新判定 PASS；下一步可進入 commit / sync，archive 仍待人工確認 | 無（No user-facing change；本次為收尾品質修補與治理狀態更新，`/memory` 的可見功能不變） |
 | 2026-04-04 | V4 Change 1 review gate fail | Review Gate 發現 `memory-health-scoring` 的 blocking mismatch：近期但無 source metadata 的條目仍可能被標成 `healthy`；下一步需修補 scoring 規則與 targeted verify，完成後才能進入 commit / sync / archive | 無（No user-facing change；已實作的 `/memory` 健康度 UI 仍可操作，但本 change 尚未通過收尾閘門） |

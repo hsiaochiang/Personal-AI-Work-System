@@ -120,7 +120,7 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
 |---|---|---|---|---|
 | `memory-health-scoring` | 身為長期使用工作台的使用者，我想要看到每條記憶的「健康度」標記，以便知道哪些記憶可能已經過期或不再適用，不需要自己一條一條翻 | ✅ 已 archive | 定義健康度評分模型（新鮮度 × 來源權重）；`/memory` 頁面顯示 🟢/🟡/🔴 標記與健康度概覽卡片；評分邏輯在 server 端計算，不需前端 LLM | `/memory` → 頁面頂部顯示健康度摘要，每條記憶旁顯示標記 |
-| `memory-dedup-suggestions` | 身為記憶庫越來越大的使用者，我想要系統主動告訴我哪些記憶內容重複或相似，以便我可以一次整理，而不是等到記憶庫混亂到難以使用 | 未開始 | 輕量啟發式關鍵詞重疊比對（無需 LLM）；`/memory` 頁面顯示「疑似重複」群組；支援「合併」與「刪除」，操作前自動 backup；不自動執行，使用者確認才寫入 | `/memory` → 「疑似重複」區塊 → 選擇合併或忽略 |
+| `memory-dedup-suggestions` | 身為記憶庫越來越大的使用者，我想要系統主動告訴我哪些記憶內容重複或相似，以便我可以一次整理，而不是等到記憶庫混亂到難以使用 | ✅ 已 archive | 輕量啟發式關鍵詞重疊比對（無需 LLM）；`/memory` 頁面顯示「疑似重複」群組；支援「合併」與「刪除」，操作前自動 backup；merge action 已補上 server-side group membership 驗證，main spec sync 與 archive 已完成 | `/memory` → 「疑似重複」區塊 → 選擇合併或忽略 |
 | `rule-conflict-detection-v2` | 身為有很多偏好規則的使用者，我想要系統自動偵測規則間的矛盾並解釋為什麼衝突，以便我不需要自己記住所有規則的邏輯關係 | 未開始 | 超越 V1 否定詞前綴比對；偵測同類別互斥規則（如「偏好極簡」vs「需要詳細說明」）；`/decisions` 顯示衝突列表與原因說明；標記「可能衝突」不強制修改 | `/decisions` → 「規則衝突」tab → 查看衝突說明 → 編輯規則 |
 | `cross-project-shared-knowledge` | 身為管理多個專案的使用者，我想要系統識別我在不同專案中重複記錄的相同偏好和模式，以便整合成一份共用的個人知識庫，不需要在每個專案重複維護 | 未開始 | 跨專案掃描 `docs/memory/` 找重複主題；建立 `docs/shared/` 存放共用知識；各專案記憶頁顯示「來自共用庫」標記；不自動搬移，使用者確認後整合 | `/memory` → 「共用知識」區塊 → 或 `/shared`（新頁面）|
 | `governance-scheduler` | 身為不想手動定期維護知識庫的使用者，我想要設定工作台每隔一段時間自動掃描一次，然後在我開啟工作台時告訴我有哪些需要處理的治理待辦，以便在我不主動想到的時候也能維持知識庫的品質 | 未開始 | `web/governance.json` 定義掃描頻率；server 啟動時檢查是否到期；掃描結果以「治理待辦」清單形式在 Overview 頁顯示；不主動寫檔，使用者確認才執行 | `web/governance.json` 設定頻率 → 重啟 server → Overview 頁顯示待辦清單 |
@@ -143,8 +143,8 @@ V4 要回答的問題是：**能不能讓這個系統在你不注意的時候，
 | 02 | `docs/agents/codex-prompts/v4/02-memory-health-scoring-execute.md` | Executor | memory-health-scoring | ✅ 完成 |
 | 03 | `docs/agents/codex-prompts/v4/03-memory-health-scoring-review.md` | Review Gate | memory-health-scoring | ✅ PASS |
 | 04 | `docs/agents/codex-prompts/v4/04-memory-dedup-suggestions-plan.md` | Planner | memory-dedup-suggestions | — |
-| 05 | `docs/agents/codex-prompts/v4/05-memory-dedup-suggestions-execute.md` | Executor | memory-dedup-suggestions | — |
-| 06 | `docs/agents/codex-prompts/v4/06-memory-dedup-suggestions-review.md` | Review Gate | memory-dedup-suggestions | — |
+| 05 | `docs/agents/codex-prompts/v4/05-memory-dedup-suggestions-execute.md` | Executor | memory-dedup-suggestions | ✅ 完成 |
+| 06 | `docs/agents/codex-prompts/v4/06-memory-dedup-suggestions-review.md` | Review Gate | memory-dedup-suggestions | ✅ PASS |
 | 07 | `docs/agents/codex-prompts/v4/07-rule-conflict-detection-v2-plan.md` | Planner | rule-conflict-detection-v2 | — |
 | 08 | `docs/agents/codex-prompts/v4/08-rule-conflict-detection-v2-execute.md` | Executor | rule-conflict-detection-v2 | — |
 | 09 | `docs/agents/codex-prompts/v4/09-rule-conflict-detection-v2-review.md` | Review Gate | rule-conflict-detection-v2 | — |
