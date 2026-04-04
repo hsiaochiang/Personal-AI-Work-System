@@ -9,6 +9,7 @@ const {
 } = require('./public/js/conversation-adapters.js');
 const memoryHealthUtils = require('./public/js/memory-health-utils.js');
 const memoryDedupUtils = require('./public/js/memory-dedup-utils.js');
+const sharedKnowledgeUtils = require('./public/js/shared-knowledge-utils.js');
 
 const PORT = 3000;
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -60,21 +61,54 @@ function serveStaticFile(res, filePath) {
   });
 }
 
+function readProjectsConfig() {
+  try {
+    const projectsFile = path.join(__dirname, 'projects.json');
+    const data = JSON.parse(fs.readFileSync(projectsFile, 'utf-8'));
+    return Array.isArray(data.projects) ? data.projects : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getDefaultProjectConfig(projects) {
+  return projects.find(project => path.resolve(project.path) === DEFAULT_PROJECT_ROOT) || null;
+}
+
+function resolveProjectContext(projectId) {
+  const projects = readProjectsConfig();
+  const selectedProject = projectId
+    ? projects.find(project => project.id === projectId)
+    : getDefaultProjectConfig(projects);
+
+  if (selectedProject) {
+    return {
+      projects,
+      currentProject: {
+        id: selectedProject.id,
+        name: selectedProject.name,
+        path: path.resolve(selectedProject.path),
+      },
+    };
+  }
+
+  return {
+    projects,
+    currentProject: {
+      id: projectId || 'personal-ai',
+      name: '個人 AI 工作系統',
+      path: DEFAULT_PROJECT_ROOT,
+    },
+  };
+}
+
 /**
  * Get the project root directory based on projectId.
  * @param {string} projectId 
  * @returns {string}
  */
 function getProjectRoot(projectId) {
-  if (!projectId) return DEFAULT_PROJECT_ROOT;
-  try {
-    const projectsFile = path.join(__dirname, 'projects.json');
-    const data = JSON.parse(fs.readFileSync(projectsFile, 'utf-8'));
-    const project = data.projects.find(p => p.id === projectId);
-    return project ? project.path : DEFAULT_PROJECT_ROOT;
-  } catch (e) {
-    return DEFAULT_PROJECT_ROOT;
-  }
+  return resolveProjectContext(projectId).currentProject.path;
 }
 
 function getWritableMemoryFilePath(memoryDir, filename) {
@@ -126,10 +160,52 @@ function writeMemoryFileWithBackup(memoryDir, backupDir, resolvedFilePath, conte
   });
 }
 
+function readMemoryEntries(projectRoot) {
+  const memoryDir = path.join(projectRoot, 'docs', 'memory');
+  try {
+    return fs.readdirSync(memoryDir)
+      .filter(file => file.endsWith('.md'))
+      .sort((left, right) => left.localeCompare(right))
+      .map(file => ({
+        filename: file,
+        content: fs.readFileSync(path.join(memoryDir, file), 'utf8'),
+      }));
+  } catch (error) {
+    return [];
+  }
+}
+
+function buildMemoryPayloadForProjectRoot(projectRoot) {
+  return memoryDedupUtils.attachDedupToMemoryPayload(
+    memoryHealthUtils.buildMemoryApiPayload(readMemoryEntries(projectRoot))
+  );
+}
+
+function buildSharedKnowledgeForProject(projectContext) {
+  const projectCatalog = projectContext.projects.map(project => ({
+    projectId: project.id,
+    projectName: project.name,
+    files: buildMemoryPayloadForProjectRoot(path.resolve(project.path)).files,
+  }));
+
+  if (!projectCatalog.some(project => project.projectId === projectContext.currentProject.id)) {
+    projectCatalog.push({
+      projectId: projectContext.currentProject.id,
+      projectName: projectContext.currentProject.name,
+      files: buildMemoryPayloadForProjectRoot(projectContext.currentProject.path).files,
+    });
+  }
+
+  return sharedKnowledgeUtils.buildSharedKnowledgePayload(projectCatalog, {
+    currentProjectId: projectContext.currentProject.id,
+  });
+}
+
 function handleAPI(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const projectId = url.searchParams.get('projectId');
-  const projectRoot = getProjectRoot(projectId);
+  const projectContext = resolveProjectContext(projectId);
+  const projectRoot = projectContext.currentProject.path;
 
   // Derived directories
   const MEMORY_DIR = path.join(projectRoot, 'docs', 'memory');
@@ -151,41 +227,10 @@ function handleAPI(req, res) {
 
   // Memory listing endpoint
   if (url.pathname === '/api/memory') {
-    fs.readdir(MEMORY_DIR, (err, files) => {
-      if (err) {
-        sendJSON(res, 200, memoryDedupUtils.attachDedupToMemoryPayload(
-          memoryHealthUtils.buildMemoryApiPayload([])
-        )); // Directory might not exist yet
-        return;
-      }
-      const mdFiles = files.filter(f => f.endsWith('.md'));
-      const results = [];
-      let pending = mdFiles.length;
-      if (pending === 0) {
-        sendJSON(res, 200, memoryDedupUtils.attachDedupToMemoryPayload(
-          memoryHealthUtils.buildMemoryApiPayload([])
-        ));
-        return;
-      }
-      mdFiles.forEach(file => {
-        fs.readFile(path.join(MEMORY_DIR, file), 'utf-8', (err2, content) => {
-          results.push({
-            filename: file,
-            content: err2 ? '' : content,
-          });
-          pending--;
-          if (pending === 0) {
-            results.sort((a, b) => a.filename.localeCompare(b.filename));
-            sendJSON(
-              res,
-              200,
-              memoryDedupUtils.attachDedupToMemoryPayload(
-                memoryHealthUtils.buildMemoryApiPayload(results)
-              )
-            );
-          }
-        });
-      });
+    const payload = buildMemoryPayloadForProjectRoot(projectRoot);
+    sendJSON(res, 200, {
+      ...payload,
+      sharedKnowledge: buildSharedKnowledgeForProject(projectContext),
     });
     return true;
   }
@@ -316,19 +361,7 @@ function handleAPI(req, res) {
 
   // Projects endpoint
   if (url.pathname === '/api/projects') {
-    const projectsFile = path.join(__dirname, 'projects.json');
-    fs.readFile(projectsFile, 'utf-8', (err, content) => {
-      if (err) {
-        sendJSON(res, 500, { error: 'Cannot read projects.json' });
-        return;
-      }
-      try {
-        const data = JSON.parse(content);
-        sendJSON(res, 200, data);
-      } catch (e) {
-        sendJSON(res, 500, { error: 'Invalid JSON in projects.json' });
-      }
-    });
+    sendJSON(res, 200, { projects: readProjectsConfig() });
     return true;
   }
 

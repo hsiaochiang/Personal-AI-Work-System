@@ -73,10 +73,10 @@
 
 ---
 
-## 3. 當前版本：V4 啟動 — Change 3 已 archive
+## 3. 當前版本：V4 啟動 — Change 4 verify 完成
 
 > **Current release：V3**
-> **Release status：V4 Change 3 `rule-conflict-detection-v2` 已完成 main spec sync / archive（2026-04-04）**
+> **Release status：V4 Change 4 `cross-project-shared-knowledge` 已通過 Review Gate（2026-04-04），待人工決定 commit / sync / archive**
 > **可用程度：** `node web/server.js` → http://localhost:3000
 
 ### V1 Phase 進度
@@ -92,7 +92,7 @@
 
 ### 下一步
 
-V1–V3 全數完成；V4 已啟動，第三個治理 change 已完成 main spec sync / archive；下一步可推進 `cross-project-shared-knowledge`，或先處理 template blocker。
+V1–V3 全數完成；V4 已啟動，第四個治理 change 已通過 Review Gate；下一步可由人決定是否進入 `cross-project-shared-knowledge` 的 commit / sync / archive，或先處理 template blocker。
 
 - V2 Change 1（writeback safety hardening）✅ 已完成（`5658def`）
 - V2 Change 2（multi-project true switching）✅ 已完成（`b5eea82`）
@@ -104,7 +104,7 @@ V1–V3 全數完成；V4 已啟動，第三個治理 change 已完成 main spec
 - V3 Change 4（`local-import-vscode-copilot`）✅ 已完成並 archive（2026-04-03）；`/extract` 可從本機 Copilot session JSONL 載入單一對話。
 - V3 Change 5（`source-attribution-in-memory`）✅ 已完成並 archive（2026-04-03）；新寫回的 memory 條目可保留來源 metadata，`/memory` 會顯示來源 badge。
 - V3 Change 6（`import-ui-multi-source`）✅ 已完成並 archive（2026-04-04）；`/extract` 的多來源匯入入口、來源 badge 與 main spec sync 全數收尾完成。
-- **下一步：啟動 `cross-project-shared-knowledge` Executor，或先處理 template verify blocker**
+- **下一步：由人決定是否進入 `cross-project-shared-knowledge` 的 commit / sync / archive，或先處理 template verify blocker**
 
 ### V4 Change 進度
 
@@ -113,7 +113,7 @@ V1–V3 全數完成；V4 已啟動，第三個治理 change 已完成 main spec
 | 1 | memory-health-scoring | ✅ 已 archive | `/api/memory` health summary、`/memory` 健康度概覽與 per-item badge 已上線，main spec sync 與 archive 已完成 |
 | 2 | memory-dedup-suggestions | ✅ 已 archive | `/api/memory` dedup summary、`/memory` 疑似重複建議與 merge/delete action 已完成 verify；server-side duplicate group validation、main spec sync 與 archive 全數完成 |
 | 3 | rule-conflict-detection-v2 | ✅ 已 archive | `/decisions` conflict overview、signal-based detection、main spec sync 與 archive 已完成 |
-| 4 | cross-project-shared-knowledge | ⏳ 未開始 | — |
+| 4 | cross-project-shared-knowledge | ✅ Review Gate PASS | `/api/memory` sharedKnowledge payload、`/memory` 共用知識候選與 `docs/shared/` snapshot generator 已完成 verify；待人工決定 sync / archive |
 | 5 | governance-scheduler | ⏳ 未開始 | — |
 
 ### 已知缺口（V2 → V3 之間）
@@ -313,6 +313,8 @@ V1–V3 全數完成；V4 已啟動，第三個治理 change 已完成 main spec
 - 2026-04-04：**V4 Change 2 archive complete** — `memory-dedup-suggestions` 已完成 main spec sync 與 archive，下一步可切到 `rule-conflict-detection-v2` 或先處理 template blocker
 - 2026-04-04：**V4 Change 3 Review Gate PASS** — `rule-conflict-detection-v2` 已完成 strict validate、targeted verify、local smoke、UI/UX review 與 Review Gate；目前可進入 main spec sync / archive
 - 2026-04-04：**V4 Change 3 archive complete** — `rule-conflict-detection-v2` 已完成 main spec sync 與 archive，下一步可切到 `cross-project-shared-knowledge` 或先處理 template blocker
+- 2026-04-04：**V4 Change 4 executor verify 完成** — `cross-project-shared-knowledge` 已完成 strict validate、shared utility / snapshot generator、`/api/memory` sharedKnowledge payload、`/memory` 共用知識候選與 local API smoke；下一步待 Review Gate
+- 2026-04-04：**V4 Change 4 Review Gate PASS** — `cross-project-shared-knowledge` 已確認 shared candidate 品質、same-filename guard、snapshot / `/memory` 契約與 human-confirm 邊界均符合本輪 scope；目前可進入 commit / main spec sync / archive，是否執行仍待人工確認
 - 2026-04-04：修正 roadmap.md：版本表 V2 狀態、Section 3 標題與 Current release、補 V3 Change 進度表
 - 2026-03-27：Phase 5 (V3) 全部完成並 archive（`phase11-v3-multi-tool-integration-mvp`）
 - 2026-03-27：Phase 4 (V2.5) 全部完成並 archive（`phase10-v2.5-multi-project-shared-capability-mvp`）

@@ -63,7 +63,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>專案記憶</h2>
-        <p class="description">從 docs/memory/ 讀取的所有記憶分類</p>
+        <p class="description">從 docs/memory/ 讀取目前專案記憶，並顯示跨專案共用知識候選</p>
       </div>
 
       <!-- KPI -->
@@ -86,6 +86,7 @@
         </div>
       </div>
 
+      <div class="card memory-shared-overview" id="memory-shared-overview"></div>
       <div class="card memory-dedup-overview" id="memory-dedup-overview"></div>
       <div class="card memory-health-overview" id="memory-health-overview"></div>
       <div id="memory-content"></div>
@@ -96,6 +97,7 @@
   <script src="/js/memory-source-utils.js"></script>
   <script src="/js/memory-health-utils.js"></script>
   <script src="/js/memory-dedup-utils.js"></script>
+  <script src="/js/shared-knowledge-utils.js"></script>
   <script src="/js/memory.js"></script>
 </body>
 </html>

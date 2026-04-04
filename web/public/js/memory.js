@@ -44,6 +44,13 @@ function getMemoryDedupUtilsAPI() {
   return window.MemoryDedupUtils;
 }
 
+function getSharedKnowledgeUtilsAPI() {
+  if (!window.SharedKnowledgeUtils) {
+    throw new Error('SharedKnowledgeUtils 未載入');
+  }
+  return window.SharedKnowledgeUtils;
+}
+
 function formatPercent(value) {
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return '—';
@@ -88,6 +95,130 @@ function updateHealthOverview(summary) {
   });
 
   overview.appendChild(legend);
+}
+
+function updateSharedKnowledgeOverview(sharedKnowledge) {
+  const overview = document.getElementById('memory-shared-overview');
+  if (!overview) {
+    return;
+  }
+
+  getSharedKnowledgeUtilsAPI();
+  overview.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'memory-shared-overview-title';
+  title.textContent = '共用知識候選';
+  overview.appendChild(title);
+
+  const summary = sharedKnowledge && sharedKnowledge.summary ? sharedKnowledge.summary : {
+    groupCount: 0,
+    candidateItemCount: 0,
+    projectCount: 0,
+    categoryCount: 0,
+  };
+  const groups = sharedKnowledge && Array.isArray(sharedKnowledge.groups) ? sharedKnowledge.groups : [];
+  const snapshotPath = sharedKnowledge && sharedKnowledge.snapshotPath
+    ? sharedKnowledge.snapshotPath
+    : 'docs/shared/shared-knowledge-candidates.md';
+
+  const copy = document.createElement('div');
+  copy.className = 'memory-shared-overview-copy';
+  copy.textContent = summary.groupCount
+    ? `目前找到 ${summary.groupCount} 組跨專案候選，共涉及 ${summary.projectCount} 個專案與 ${summary.categoryCount} 類記憶。這些內容仍屬 suggestion-only，需人工確認後再決定是否整理成正式 shared layer。`
+    : '目前沒有偵測到足夠穩定的跨專案共用知識候選。若不同專案開始重複記錄相同偏好或模式，這裡會先以 suggestion-only 方式提醒。';
+  overview.appendChild(copy);
+
+  const note = document.createElement('div');
+  note.className = 'memory-shared-overview-note';
+  note.textContent = `Snapshot：${snapshotPath}`;
+  overview.appendChild(note);
+
+  if (!summary.groupCount) {
+    return;
+  }
+
+  const stats = document.createElement('div');
+  stats.className = 'memory-shared-stats';
+  stats.appendChild(createBadge(`${summary.candidateItemCount} 條候選`, 'memory-shared-stat'));
+  stats.appendChild(createBadge(`${summary.projectCount} 個專案`, 'memory-shared-stat'));
+  overview.appendChild(stats);
+
+  groups.forEach(group => {
+    const card = document.createElement('div');
+    card.className = 'memory-shared-group';
+
+    const header = document.createElement('div');
+    header.className = 'memory-shared-group-header';
+
+    const meta = document.createElement('div');
+    meta.className = 'memory-shared-group-meta';
+
+    const metaTitle = document.createElement('div');
+    metaTitle.className = 'memory-shared-group-title';
+    metaTitle.textContent = CATEGORY_LABELS[group.filename] || group.filename;
+    meta.appendChild(metaTitle);
+
+    const metaSub = document.createElement('div');
+    metaSub.className = 'memory-shared-group-sub';
+    metaSub.textContent = `${group.projectCount} 個專案 · ${group.similarityLabel} · 相似度 ${formatPercent(group.similarity * 100)}`;
+    meta.appendChild(metaSub);
+
+    header.appendChild(meta);
+    card.appendChild(header);
+
+    const summaryCopy = document.createElement('div');
+    summaryCopy.className = 'memory-shared-group-summary';
+    summaryCopy.textContent = group.sharedSummary
+      ? `建議 shared 摘要：${group.sharedSummary}。${group.primaryReason || ''}`
+      : '建議先人工整理成一條可跨專案重用的 shared 摘要。';
+    card.appendChild(summaryCopy);
+
+    const projectList = document.createElement('div');
+    projectList.className = 'memory-shared-projects';
+    const projectNames = Array.from(new Set((group.items || []).map(item => item.projectName)));
+    projectNames.forEach(projectName => {
+      projectList.appendChild(createBadge(projectName, 'memory-shared-project-badge'));
+    });
+    card.appendChild(projectList);
+
+    (group.items || []).forEach(item => {
+      const itemCard = document.createElement('div');
+      itemCard.className = 'memory-shared-item';
+
+      const badges = document.createElement('div');
+      badges.className = 'memory-shared-item-badges';
+      badges.appendChild(createBadge(item.projectName, 'memory-shared-project-badge'));
+
+      if (item.health && item.health.status) {
+        const healthPresentation = getMemoryHealthUtilsAPI().getMemoryHealthPresentation(item.health.status);
+        if (healthPresentation) {
+          badges.appendChild(createBadge(healthPresentation.label, `health-badge ${healthPresentation.className}`));
+        }
+      }
+
+      const sourcePresentation = getMemorySourceUtilsAPI().getMemorySourcePresentation(item.source);
+      if (sourcePresentation) {
+        badges.appendChild(createBadge(sourcePresentation.label, `source-badge ${sourcePresentation.className}`));
+      }
+
+      itemCard.appendChild(badges);
+
+      const content = document.createElement('div');
+      content.className = 'memory-shared-item-content';
+      content.textContent = item.content;
+      itemCard.appendChild(content);
+
+      const sub = document.createElement('div');
+      sub.className = 'memory-shared-item-sub';
+      sub.textContent = item.groupTitle || '未標示群組';
+      itemCard.appendChild(sub);
+
+      card.appendChild(itemCard);
+    });
+
+    overview.appendChild(card);
+  });
 }
 
 function renderDedupStatus(overview) {
@@ -328,6 +459,7 @@ async function loadMemoryData() {
 
     if (!data.files || data.files.length === 0) {
       showEmpty(container, 'folder_open', '尚無記憶檔案');
+      updateSharedKnowledgeOverview(null);
       updateDedupOverview(null);
       updateHealthOverview({
         totalItems: 0,
@@ -348,6 +480,7 @@ async function loadMemoryData() {
     if (kpiStaleRatio) kpiStaleRatio.textContent = formatPercent(summary.staleRatio);
     if (kpiCleanup) kpiCleanup.textContent = summary.needsAttentionCount;
 
+    updateSharedKnowledgeOverview(data.sharedKnowledge);
     updateDedupOverview(data.dedup);
     updateHealthOverview(summary);
     renderMemory(container, parsed);

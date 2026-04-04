@@ -39,6 +39,12 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V3 Change 5）：若記憶條目含 `<!-- source: ... -->` metadata，頁面會顯示對應來源 badge；舊條目沒有 metadata 仍可正常顯示
 - 改善（V4 Change 1）：`/api/memory` 會先計算記憶健康度摘要，`/memory` 頁面新增過期比例、建議清理數量與每條記憶的健康 badge / reason；第一版採新鮮度 × 來源權重
 - 改善（V4 Change 2）：`/api/memory` 會額外提供 dedup summary 與 suggestion groups；`/memory` 頁面新增「疑似重複建議」區塊，可在人工確認後執行 merge 或 delete，且改寫前會先 backup
+- 改善（V4 Change 4）：`/api/memory` 會額外提供與目前 project 相關的 `sharedKnowledge` payload；`/memory` 頁面新增「共用知識候選」區塊，顯示跨專案重複主題、參與專案與建議 shared 摘要；本輪維持 suggestion-only，不做 shared writeback
+
+### Shared Knowledge Snapshot（`docs/shared/`）
+- 能力描述：把跨專案 shared knowledge 候選輸出成 read-only markdown snapshot，作為人工整理 shared layer 的起點
+- 操作方式：在 repo 根目錄執行 `node tools/generate_shared_knowledge_report.js`，再查看 `docs/shared/shared-knowledge-candidates.md`
+- 限制：第一版只掃描相同 memory filename 的跨專案條目，並排除低訊號 metadata；snapshot 只寫入 `docs/shared/`，不會改動任何 `docs/memory/*.md`
 
 ### 決策與規則檢視（/decisions）
 - 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則與可解釋的衝突提示
@@ -77,11 +83,13 @@ npm start        # 或 node server.js
 - 舊有 memory 條目大多尚未回填來源 metadata，因此 `/memory` 只會對新寫回或手動補 metadata 的條目顯示來源 badge
 - memory health scoring 第一版尚未納入真正的 usage frequency telemetry；沒有日期的 legacy 條目會先列為 `待確認`
 - memory dedup suggestion 第一版只處理同一 memory 檔案內的重複 / 高度相似條目，不做跨檔案或跨專案合併
+- cross-project shared knowledge 第一版只處理不同 projectId、相同 memory filename 的重複主題；目前沒有 `/shared` 獨立頁面，也沒有 accept / writeback action
 - 無自動化治理（V4 改善目標）
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V4 Change 4 | 2026-04-04 | `/memory` 共用知識候選、`/api/memory` sharedKnowledge payload 與 `docs/shared/` snapshot generator |
 | V4 Change 3 | 2026-04-04 | `/decisions` conflict overview、signal-based rule conflict detection 與 per-rule explanation（archive complete） |
 | V4 Change 2 | 2026-04-04 | `/memory` 疑似重複建議、dedup summary 與 merge/delete action（archive complete） |
 | V4 Change 1 | 2026-04-04 | `/memory` 健康度概覽、過期比例 / 建議清理 KPI 與 per-item health badge |
@@ -100,6 +108,8 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 Change 4 review gate pass | Review Gate 判定 `cross-project-shared-knowledge` PASS；已重查 strict validate、targeted verify、ephemeral local API smoke 與 shared candidate / contract 邊界，確認本輪可進入 commit / main spec sync / archive；本 session 仍未執行不可逆操作 | 無（No user-facing change；本次為收尾閘門判定與治理狀態更新，`/memory` 與 `docs/shared/` 的可見功能不變） |
+| 2026-04-04 | V4 Change 4 executor verify | 完成 `cross-project-shared-knowledge` 的 apply / verify：`/api/memory` 現在會回傳目前 project 相關的 `sharedKnowledge` summary / groups，`/memory` 已顯示 read-only 的共用知識候選，並可透過 `node tools/generate_shared_knowledge_report.js` 生成 `docs/shared/shared-knowledge-candidates.md`；下一步待 Review Gate 判定是否可進入 sync / archive | 有（使用者現在可在 `/memory` 直接看到跨專案重複的偏好 / 模式候選，並到 `docs/shared/` 查看 snapshot；本輪仍無 shared writeback action） |
 | 2026-04-04 | V4 Change 3 archive | `rule-conflict-detection-v2` 已完成 Review Gate、main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-rule-conflict-detection-v2/`；下一步可切到 `cross-project-shared-knowledge` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，使用者可見能力已在 apply / verify 階段上線） |
 | 2026-04-04 | V4 Change 3 review gate pass | Review Gate 判定 `rule-conflict-detection-v2` PASS；已確認 strict validate、targeted verify、local smoke 與 UI/UX evidence 全數到位，接下來可進入 main spec sync / archive | 無（No user-facing change；本次為收尾閘門判定與治理狀態更新，`/decisions` 的可見功能不變） |
 | 2026-04-04 | V4 Change 4 planner | 完成 `cross-project-shared-knowledge` 的 Planner scope gate：確認 V4 brief 已有人類確認、change 已在 Changes 表內，並盤點現況只有 per-project memory API、尚無 `docs/shared/` 與 `/shared`；下一步可開新 session 進入 Executor | 無（No user-facing change；本次僅完成規劃、handoff 切換與 shared knowledge 基線盤點，尚未新增跨專案掃描、shared docs 或新頁面） |
