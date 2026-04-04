@@ -49,14 +49,14 @@
 - 已執行 `openspec archive gemini-adapter -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-gemini-adapter/` ✅
 
 ## In Progress
-- 無；`gemini-adapter` 已完成 sync / archive，待提交本輪相關檔案
+- 無；`gemini-adapter` 已完成 commit / sync / archive
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 提交本輪 `gemini-adapter` implementation + main spec sync + archive 相關檔案 |
-| 🟡 2 | 提交完成後，下一個 V5 change 依 brief 順序接 `claude-adapter`，先跑 `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` |
+| 🔴 1 | 下一個 V5 change 依 brief 順序接 `claude-adapter`，先跑 `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` |
+| 🟡 2 | 若暫不進下一個 change，維持目前 archive 後狀態作為交接基線 |
 
 ## Files Touched（本 session）
 - docs/handoff/current-task.md
@@ -97,4 +97,5 @@
 - Manual sync fix：✅ `docs/system-manual.md` 已改為「selector 涵蓋 plain / chatgpt / gemini / copilot；Claude / Antigravity 尚未支援」
 - Main spec sync：✅ `openspec/specs/gemini-adapter/spec.md` + `openspec validate gemini-adapter --type spec --strict`
 - Archive：✅ `openspec archive gemini-adapter -y --skip-specs`
+- Commit：✅ `132e5ab` `feat: add gemini adapter import flow`
 - Review Gate：✅ PASS
