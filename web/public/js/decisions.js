@@ -8,9 +8,18 @@ const RULE_FILE_LABELS = {
 
 let allDecisions = [];   // parsed decision items
 let allRules = [];       // parsed rule items
+let allRuleConflicts = [];
+let ruleConflictSummary = { pairCount: 0, conflictRuleCount: 0, byCategory: [] };
 let currentTab = 'decisions';
 let currentRuleCat = null;
 let searchQuery = '';
+
+function getRuleConflictUtilsAPI() {
+  if (typeof RuleConflictUtils === 'undefined') {
+    throw new Error('RuleConflictUtils 尚未載入');
+  }
+  return RuleConflictUtils;
+}
 
 /* ─── Init ─── */
 document.addEventListener('DOMContentLoaded', async () => {
@@ -51,11 +60,16 @@ async function loadData() {
   }
 
   if (rulesData && rulesData.files) {
+    const parsedRules = [];
     rulesData.files.forEach(file => {
       const parsed = parseRuleFile(file.filename, file.content);
-      allRules.push(...parsed);
+      parsedRules.push(...parsed);
     });
-    detectConflicts(allRules);
+    const conflictApi = getRuleConflictUtilsAPI();
+    const enriched = conflictApi.enrichRulesWithConflicts(parsedRules);
+    allRules = enriched.rules;
+    allRuleConflicts = enriched.conflicts;
+    ruleConflictSummary = enriched.summary;
   }
 }
 
@@ -183,43 +197,6 @@ function parseRuleFile(filename, content) {
   return results;
 }
 
-/* ─── Conflict Detection ─── */
-function detectConflicts(rules) {
-  // Extract "normalized" statements: strip negations and compare nouns
-  // Look for pairs where one affirms X and another negates X (same stem word)
-  const negPrefixes = ['不要', '不得', '避免', '禁止', '不應', '不用', '不先', '不能'];
-
-  for (let i = 0; i < rules.length; i++) {
-    const textI = (rules[i].title + ' ' + rules[i].body).toLowerCase();
-
-    for (let j = i + 1; j < rules.length; j++) {
-      const textJ = (rules[j].title + ' ' + rules[j].body).toLowerCase();
-
-      // Find negated phrases in i, check if j affirms them
-      for (const neg of negPrefixes) {
-        const negIdx = textI.indexOf(neg);
-        if (negIdx === -1) continue;
-        // Extract word after negation (up to 8 chars)
-        const stem = textI.substring(negIdx + neg.length, negIdx + neg.length + 8).replace(/[^\u4e00-\u9fff\w]/g, '').substring(0, 5);
-        if (stem.length < 2) continue;
-        // Check if j positively contains the stem WITHOUT a negation in front
-        const jIdx = textJ.indexOf(stem);
-        if (jIdx > 0) {
-          // Make sure j doesn't also negate it
-          const before = textJ.substring(Math.max(0, jIdx - 4), jIdx);
-          const jAlsoNegates = negPrefixes.some(n => before.includes(n));
-          if (!jAlsoNegates) {
-            rules[i].conflict = true;
-            rules[j].conflict = true;
-            rules[i].conflictWith.push(rules[j].id);
-            rules[j].conflictWith.push(rules[i].id);
-          }
-        }
-      }
-    }
-  }
-}
-
 /* ─── Render All ─── */
 function renderAll() {
   updateCounts();
@@ -234,14 +211,13 @@ function updateCounts() {
   document.getElementById('tab-count-decisions').textContent = filteredDec.length;
   document.getElementById('tab-count-rules').textContent = filteredRules.length;
 
-  const conflicts = allRules.filter(r => r.conflict).length;
   const statsEl = document.getElementById('decisions-stats');
   statsEl.innerHTML =
     `<span>${allDecisions.length} 決策</span>` +
     `<span class="stat-sep">·</span>` +
     `<span>${allRules.length} 規則</span>` +
-    (conflicts > 0
-      ? `<span class="stat-sep">·</span><span class="stat-conflict"><span class="material-symbols-outlined">warning</span>${conflicts} 待確認衝突</span>`
+    (ruleConflictSummary.pairCount > 0
+      ? `<span class="stat-sep">·</span><span class="stat-conflict"><span class="material-symbols-outlined">warning</span>${ruleConflictSummary.pairCount} 組待確認衝突</span>`
       : '');
 }
 
@@ -320,13 +296,80 @@ function filterRules() {
   const q = searchQuery.toLowerCase();
   return rules.filter(r =>
     r.title.toLowerCase().includes(q) ||
-    r.body.toLowerCase().includes(q)
+    r.body.toLowerCase().includes(q) ||
+    (r.conflictReasons || []).some(item =>
+      item.reason.toLowerCase().includes(q) ||
+      item.signalLabel.toLowerCase().includes(q) ||
+      item.otherRuleTitle.toLowerCase().includes(q)
+    )
   );
+}
+
+function getVisibleRuleConflicts(visibleRules) {
+  const visibleIds = new Set((visibleRules || []).map(rule => rule.id));
+  return allRuleConflicts.filter(conflict => {
+    if (currentRuleCat && conflict.category !== currentRuleCat) {
+      return false;
+    }
+
+    if (!searchQuery) {
+      return true;
+    }
+
+    return conflict.ruleIds.some(ruleId => visibleIds.has(ruleId));
+  });
+}
+
+function renderRuleConflictOverview(visibleRules) {
+  const container = document.getElementById('rule-conflict-overview');
+  const conflicts = getVisibleRuleConflicts(visibleRules);
+  if (!container) {
+    return;
+  }
+
+  if (!currentRuleCat || conflicts.length === 0) {
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    return;
+  }
+
+  const affectedRuleCount = new Set(conflicts.flatMap(conflict => conflict.ruleIds)).size;
+  const pairHtml = conflicts.map(conflict => `
+    <div class="rule-conflict-pair">
+      <div class="rule-conflict-pair-top">
+        <span class="rule-conflict-pair-signal">${escapeHTML(conflict.signalLabel)}</span>
+        <span class="rule-conflict-pair-title">${escapeHTML(conflict.ruleTitles.join('  vs  '))}</span>
+      </div>
+      <div class="rule-conflict-pair-copy">${escapeHTML(conflict.reason)}</div>
+    </div>
+  `).join('');
+
+  container.classList.remove('hidden');
+  container.innerHTML = `
+    <div class="rule-conflict-overview-header">
+      <div>
+        <div class="rule-conflict-overview-title">規則衝突摘要</div>
+        <div class="rule-conflict-overview-copy">目前分類中有 ${conflicts.length} 組可能衝突，涉及 ${affectedRuleCount} 條規則。系統只提供提示，不會自動改寫。</div>
+      </div>
+      <div class="rule-conflict-overview-kpis">
+        <div class="rule-conflict-kpi">
+          <span class="rule-conflict-kpi-value">${conflicts.length}</span>
+          <span class="rule-conflict-kpi-label">衝突組數</span>
+        </div>
+        <div class="rule-conflict-kpi">
+          <span class="rule-conflict-kpi-value">${affectedRuleCount}</span>
+          <span class="rule-conflict-kpi-label">涉及規則</span>
+        </div>
+      </div>
+    </div>
+    <div class="rule-conflict-pairs">${pairHtml}</div>
+  `;
 }
 
 function renderRules() {
   const container = document.getElementById('rules-list');
   const items = filterRules();
+  renderRuleConflictOverview(items);
 
   if (items.length === 0) {
     showEmpty(container, 'search_off', searchQuery ? `找不到包含「${searchQuery}」的規則` : '此分類無規則');
@@ -334,14 +377,6 @@ function renderRules() {
   }
 
   container.innerHTML = '';
-  const conflictCount = items.filter(r => r.conflict).length;
-
-  if (conflictCount > 0) {
-    const banner = document.createElement('div');
-    banner.className = 'conflict-banner';
-    banner.innerHTML = `<span class="material-symbols-outlined">warning</span>此分類有 ${conflictCount} 條規則可能存在邏輯矛盾，請人工確認`;
-    container.appendChild(banner);
-  }
 
   items.forEach(rule => {
     const card = document.createElement('div');
@@ -365,6 +400,22 @@ function renderRules() {
       return `<div class="rule-bullet">${escapeHTML(line.trim())}</div>`;
     }).join('');
 
+    const conflictDetails = rule.conflict
+      ? `
+        <div class="rule-conflict-details">
+          ${(rule.conflictReasons || []).map(item => `
+            <div class="rule-conflict-detail">
+              <div class="rule-conflict-detail-head">
+                <span class="rule-conflict-detail-signal">${escapeHTML(item.signalLabel)}</span>
+                <span class="rule-conflict-detail-target">對象：${escapeHTML(item.otherRuleTitle)}</span>
+              </div>
+              <div class="rule-conflict-detail-copy">${escapeHTML(item.reason)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `
+      : '';
+
     card.innerHTML = `
       <div class="rule-card-header">
         <div class="rule-title">
@@ -374,6 +425,7 @@ function renderRules() {
         ${conflictBadge}
       </div>
       <div class="rule-body">${bodyHtml}</div>
+      ${conflictDetails}
     `;
     container.appendChild(card);
   });

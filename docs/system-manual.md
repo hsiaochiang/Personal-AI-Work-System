@@ -41,9 +41,10 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V4 Change 2）：`/api/memory` 會額外提供 dedup summary 與 suggestion groups；`/memory` 頁面新增「疑似重複建議」區塊，可在人工確認後執行 merge 或 delete，且改寫前會先 backup
 
 ### 決策與規則檢視（/decisions）
-- 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則、基本衝突偵測
+- 能力描述：瀏覽決策記錄、搜尋篩選、檢視偏好規則與可解釋的衝突提示
 - 操作方式：輸入關鍵字搜尋，切換 tab 查看不同分類
-- 限制：衝突偵測僅基於否定詞前綴比對
+- 改善（V4 Change 3）：rules tab 會顯示 conflict overview、衝突規則組數與 per-rule explanation；第一版只做 same-category、signal-based suggestion，不自動修改規則
+- 限制：衝突偵測仍屬 deterministic heuristic；目前只覆蓋高可信 signal（如精簡 vs 詳細、先規劃 vs 直接實作、白話 vs 術語抽象），不做跨分類或跨專案推論
 
 ### 多專案管理（/projects）
 - 能力描述：多專案卡片、選中狀態、sidebar 顯示目前專案
@@ -81,6 +82,7 @@ npm start        # 或 node server.js
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
 |------|------|---------||
+| V4 Change 3 | 2026-04-04 | `/decisions` conflict overview、signal-based rule conflict detection 與 per-rule explanation（archive complete） |
 | V4 Change 2 | 2026-04-04 | `/memory` 疑似重複建議、dedup summary 與 merge/delete action（archive complete） |
 | V4 Change 1 | 2026-04-04 | `/memory` 健康度概覽、過期比例 / 建議清理 KPI 與 per-item health badge |
 | V3 Change 6 | 2026-04-04 | `/extract` 工具來源 selector、per-source import controls 與 candidate source badge |
@@ -98,6 +100,12 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-04 | V4 Change 3 archive | `rule-conflict-detection-v2` 已完成 Review Gate、main spec sync 與 archive，active change 已封存至 `openspec/changes/archive/2026-04-04-rule-conflict-detection-v2/`；下一步可切到 `cross-project-shared-knowledge` 或 template blocker | 無（No user-facing change；本次為治理收尾與封存狀態更新，使用者可見能力已在 apply / verify 階段上線） |
+| 2026-04-04 | V4 Change 3 review gate pass | Review Gate 判定 `rule-conflict-detection-v2` PASS；已確認 strict validate、targeted verify、local smoke 與 UI/UX evidence 全數到位，接下來可進入 main spec sync / archive | 無（No user-facing change；本次為收尾閘門判定與治理狀態更新，`/decisions` 的可見功能不變） |
+| 2026-04-04 | V4 Change 4 planner | 完成 `cross-project-shared-knowledge` 的 Planner scope gate：確認 V4 brief 已有人類確認、change 已在 Changes 表內，並盤點現況只有 per-project memory API、尚無 `docs/shared/` 與 `/shared`；下一步可開新 session 進入 Executor | 無（No user-facing change；本次僅完成規劃、handoff 切換與 shared knowledge 基線盤點，尚未新增跨專案掃描、shared docs 或新頁面） |
+| 2026-04-04 | V4 Change 3 executor verify | 完成 `rule-conflict-detection-v2` 的 apply / verify：`/decisions` 現在會用 shared utility 偵測 same-category rule conflicts，rules tab 顯示 conflict overview、衝突原因與對象；下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 `/decisions` 的 rules tab 直接看到規則衝突摘要與 explanation，不再只是一個否定詞前綴警告 badge） |
+| 2026-04-04 | V4 Change 3 executor start | 啟動 `rule-conflict-detection-v2` executor，已建立 `openspec/changes/rule-conflict-detection-v2/` 並切換 brief / handoff 到 active 狀態；本輪 scope 鎖定 `/decisions` conflict detection + explanation + targeted verify，不做 auto-fix / writeback | 無（No user-facing change；本次先建立 active change artifacts 與治理同步，尚未改動 `/decisions` UI 或 rules API 行為） |
+| 2026-04-04 | V4 Change 3 planner | 啟動 `rule-conflict-detection-v2` 的 Planner scope gate，確認 V4 brief 已有人類確認、目前無 active duplicate change，並盤點 `/decisions` 現況僅支援否定詞前綴衝突偵測；下一步待 Executor session 決定是否進入 `#opsx-new` | 無（No user-facing change；本次僅完成 change 規劃與 handoff 切換，尚未改動 `/decisions` UI、API 或規則資料） |
 | 2026-04-04 | V4 Change 2 executor verify | 完成 `memory-dedup-suggestions` 的 apply / verify：`/api/memory` 現在會回傳 dedup summary 與 suggestion groups，`/memory` 已顯示疑似重複建議並提供 merge / delete action；下一步待 Review Gate 判定是否進入 sync / archive | 有（使用者現在可在 `/memory` 直接看到疑似重複條目群組，並在人工確認後執行 merge 或刪除；所有操作都會先 backup） |
 | 2026-04-04 | V4 Change 2 review gate fail | Review Gate 發現 `memory-dedup-suggestions` 的 blocking mismatch：`/api/memory/dedup` merge action 尚未驗證 `primaryItemId` 屬於本次 duplicate group，錯誤 payload 可能誤改其他 memory item；下一步需修補 server-side guard 與 targeted verify，完成後才能進入 commit / sync / archive | 無（No user-facing change；已上線的 dedup UI 仍可操作，但本 change 尚未通過收尾閘門） |
 | 2026-04-04 | V4 Change 2 review gate pass | 已修補 `memory-dedup-suggestions` 的 merge action 邊界：server 現在會驗證 `primaryItemId` 與 `itemIds` 屬於同一 duplicate group，並拒絕 non-duplicate delete；重跑 targeted verify、health/source regression 與 local API smoke 後，Review Gate 重新判定 PASS | 無（No user-facing change；本次為收尾品質修補與治理狀態更新，`/memory` 的可見功能不變） |
