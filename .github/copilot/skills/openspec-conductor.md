@@ -36,6 +36,7 @@
 | `tasks/*.md` | docs/runlog/（每日進度） |
 | 規格變更 | docs/decisions/（決策留痕） |
 | 實作完成 | docs/qa/（smoke test） |
+| `changes/<name>/gate.md` | `openspec/changes/<name>/gate.md`（由 `#opsx-verify` 寫入；`#opsx-archive` 讀取作為硬閘依據；隨 change 一起歸檔） |
 
 ## Change 類型分類與 Gate Matrix
 
