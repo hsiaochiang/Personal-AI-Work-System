@@ -37,6 +37,37 @@
 | 規格變更 | docs/decisions/（決策留痕） |
 | 實作完成 | docs/qa/（smoke test） |
 
+## Change 類型分類與 Gate Matrix
+
+在 verify / archive 階段，依 change 內容判斷類型，決定必填的證據欄位。
+
+### 分類規則
+
+讀取 `openspec/changes/<name>/design.md` 或 `tasks.md`：
+
+| 條件 | Change 類型 |
+|------|------------|
+| 含 `UI`/`前端`/`畫面`/`介面`/`component`/`頁面`/`style`/`layout` | **ui** |
+| 只修改 `docs/` 目錄，無程式碼變更 | **doc-only** |
+| 其他 | **logic** |
+
+### Gate Matrix
+
+| change type | ui-review | ux-review | smoke |
+|------------|-----------|-----------|-------|
+| ui | 必需 ✅ | 必需 ✅ | 必需 ✅ |
+| logic | — 不適用 | — 不適用 | 必需 ✅ |
+| doc-only | — 不適用 | — 不適用 | — 不適用 |
+
+### 掃描方式（file presence）
+
+- ui-review：`docs/uiux/` 下有含 `<change-name>` 且 `ui-review` 的 .md → ✅
+- ux-review：`docs/uiux/` 下有含 `<change-name>` 且 `ux-review` 的 .md → ✅
+- smoke：`docs/qa/` 下有含 `<change-name>` 或 `smoke` 的 .md → ✅
+
+> verify（`#opsx-verify`）= **軟閘**：展示結果，不阻擋  
+> archive（`#opsx-archive`）= **硬閘**：缺 ❌ 則停止，需補齊或明確 Override
+
 ## 禁止事項
 - brief 使用者確認為空就開新 change（必須先確認再開始）
 - 跳過 validate 階段直接進入 apply（各階段順序不得跟級）
