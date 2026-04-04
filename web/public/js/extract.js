@@ -106,6 +106,12 @@ const IMPORT_SOURCE_CONFIG = {
     statusMessage: 'Gemini 模式已就緒，可直接貼上 Gemini transcript。',
     statusIcon: 'star',
   },
+  claude: {
+    hint: '貼上 Claude 對話 transcript，系統會明確走 Claude adapter，保留來源標記。',
+    placeholder: '將 Claude transcript 貼在這裡…\n\n支援輸入：\n• Claude.ai 網頁複製的對話全文\n• 具有 Human / Assistant / Claude 標頭的 transcript\n\n提取引擎會使用 ClaudeAdapter，而不是 plain text fallback。',
+    statusMessage: 'Claude 模式已就緒，可直接貼上 Claude transcript。',
+    statusIcon: 'psychology',
+  },
   copilot: {
     hint: '先從本機 session 清單載入一筆 Copilot 對話，再進入既有 extraction 流程。',
     placeholder: '先從上方載入一筆 VS Code Copilot session…\n\n載入後這裡會顯示對話預覽；若你手動編輯內容，系統會退出 Copilot 匯入模式。',
@@ -236,11 +242,15 @@ function getManualEditResetMessage() {
     return '已切回手動編輯的 Gemini 內容；系統會依 Gemini 模式重新解析 textarea。';
   }
 
+  if (selectedImportSource === 'claude') {
+    return '已切回手動編輯的 Claude 內容；系統會依 Claude 模式重新解析 textarea。';
+  }
+
   return '純文字模式會直接使用你目前貼上的內容。';
 }
 
 function renderSourcePanels() {
-  ['plain', 'chatgpt', 'gemini', 'copilot'].forEach((source) => {
+  ['plain', 'chatgpt', 'gemini', 'claude', 'copilot'].forEach((source) => {
     const panel = document.getElementById(`source-panel-${source}`);
     if (!panel) {
       return;
@@ -440,6 +450,14 @@ async function runExtraction() {
       }
       conversationDoc = adapterApi.adaptGeminiConversation(text, {
         inputFormatHint: 'gemini-text',
+      });
+    } else if (selectedImportSource === 'claude') {
+      if (!text) {
+        alert('請先貼上 Claude transcript。');
+        return;
+      }
+      conversationDoc = adapterApi.adaptClaudeConversation(text, {
+        inputFormatHint: 'claude-text',
       });
     } else {
       if (!text) {

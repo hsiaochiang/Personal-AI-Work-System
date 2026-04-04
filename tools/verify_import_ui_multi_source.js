@@ -35,6 +35,7 @@ function runStaticChecks() {
   assert.match(extractScript, /selectedImportSource = 'plain'/);
   assert.match(extractScript, /import-source-select/);
   assert.match(extractScript, /adaptChatGPTConversation/);
+  assert.match(extractScript, /adaptClaudeConversation/);
   assert.match(extractScript, /adaptGeminiConversation/);
   assert.match(extractScript, /adaptPlainTextConversation/);
   assert.match(extractScript, /candidate-source-badge/);
@@ -42,6 +43,7 @@ function runStaticChecks() {
 
   assert.match(extractStyles, /\.extract-source-selector/);
   assert.match(extractStyles, /\.chatgpt-import-panel/);
+  assert.match(extractStyles, /\.claude-import-panel/);
   assert.match(extractStyles, /\.candidate-source-badge/);
 
   console.log('PASS static source-aware UI contract');
@@ -60,10 +62,12 @@ async function runServerSmoke() {
     assert.match(extractPage.body, /value="plain"/);
     assert.match(extractPage.body, /value="chatgpt"/);
     assert.match(extractPage.body, /value="gemini"/);
+    assert.match(extractPage.body, /value="claude"/);
     assert.match(extractPage.body, /value="copilot"/);
     assert.match(extractPage.body, /source-panel-copilot/);
     assert.match(extractPage.body, /source-panel-chatgpt/);
     assert.match(extractPage.body, /source-panel-gemini/);
+    assert.match(extractPage.body, /source-panel-claude/);
     assert.match(extractPage.body, /source-panel-plain/);
 
     const extractScript = await fetchText('/js/extract.js');

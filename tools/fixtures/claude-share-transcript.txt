@@ -1,0 +1,11 @@
+Human
+請幫我整理 Claude adapter 這一輪的最小 scope。
+
+Assistant
+先在共享 adapter 模組加入 Claude transcript parser，並讓 `/extract` 的來源 selector 多一個 Claude 選項。
+
+Human
+還有哪些事情這一輪不要做？
+
+Claude 3.7 Sonnet
+不要在這一輪加入 Claude API、自動抓取歷史、ChatGPT API 匯入，或新的 runtime dependency。

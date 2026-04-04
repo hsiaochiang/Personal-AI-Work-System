@@ -117,7 +117,7 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
 |---|---|---|---|---|
 | `gemini-adapter` | 身為使用 Google Gemini 的使用者，我想要把 Gemini 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Gemini 的思考結果存進記憶 | ✅ 已 archive | 實作 `GeminiAdapter`：解析 Gemini 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `gemini`）；main spec sync 與 archive 已完成 | `/extract` → 選工具來源「Gemini」→ 貼上 → 提取候選 |
-| `claude-adapter` | 身為使用 Claude 的使用者，我想要把 Claude 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Claude 的分析結果存進記憶 | 未開始 | 實作 `ClaudeAdapter`：解析 Claude Human/Assistant 對話格式；自動偵測或手動選擇；輸出 `ConversationDoc`（source: `claude`） | `/extract` → 選工具來源「Claude」→ 貼上 → 提取候選 |
+| `claude-adapter` | 身為使用 Claude 的使用者，我想要把 Claude 對話直接複製貼上，讓系統自動識別並提取知識，以便不用手動清理格式就能把 Claude 的分析結果存進記憶 | ✅ 已 archive | `ClaudeAdapter`、`/extract` Claude source option、Claude source badge、main spec sync、archive 與收尾驗證已完成；active change 已封存後，下一步可切到 `chatgpt-api-auto-import` | `/extract` → 選工具來源「Claude」→ 貼上 → 提取候選 |
 | `chatgpt-api-auto-import` | 身為重度使用 ChatGPT 的使用者，我想要直接透過 API key 從 ChatGPT 帳號自動載入最近的對話，以便不需要在官方網站手動操作匯出就能把對話知識帶進工作台 | 未開始 | settings 頁 API key 設定；server `/api/chatgpt/sessions`；`/extract` ChatGPT 選項新增 API 載入按鈕；`web/api-keys.json` 不 commit（.gitignore 追加） | settings → 填入 API key → `/extract` → 選 ChatGPT → 點「API 載入」→ 選 session → 提取候選 |
 | `adapter-docs-update` | 身為需要了解工具支援狀況的使用者，我想要在 import 頁面看到每個工具的支援格式說明，以便知道應該複製哪段文字、可以上傳哪種格式，不需要試錯 | 未開始 | 更新 `docs/workflows/conversation-schema.md` 補齊 V5 adapter 說明；`/extract` 各工具選項下方顯示格式提示文字 | `/extract` → 選工具 → 看到「支援格式：...」提示 |
 
@@ -138,9 +138,9 @@ V5 要回答的問題是：**能不能讓更多工具的對話知識，用更少
 | 01 | `docs/agents/codex-prompts/v5/01-gemini-adapter-plan.md` | Planner | gemini-adapter | ✅ 完成 |
 | 02 | `docs/agents/codex-prompts/v5/02-gemini-adapter-execute.md` | Executor | gemini-adapter | ✅ 完成 |
 | 03 | `docs/agents/codex-prompts/v5/03-gemini-adapter-review.md` | Review Gate | gemini-adapter | ✅ PASS |
-| 04 | `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` | Planner | claude-adapter | — |
-| 05 | `docs/agents/codex-prompts/v5/05-claude-adapter-execute.md` | Executor | claude-adapter | — |
-| 06 | `docs/agents/codex-prompts/v5/06-claude-adapter-review.md` | Review Gate | claude-adapter | — |
+| 04 | `docs/agents/codex-prompts/v5/04-claude-adapter-plan.md` | Planner | claude-adapter | ✅ 完成 |
+| 05 | `docs/agents/codex-prompts/v5/05-claude-adapter-execute.md` | Executor | claude-adapter | ✅ 完成 |
+| 06 | `docs/agents/codex-prompts/v5/06-claude-adapter-review.md` | Review Gate | claude-adapter | ✅ PASS |
 | 07 | `docs/agents/codex-prompts/v5/07-chatgpt-api-auto-import-plan.md` | Planner | chatgpt-api-auto-import | — |
 | 08 | `docs/agents/codex-prompts/v5/08-chatgpt-api-auto-import-execute.md` | Executor | chatgpt-api-auto-import | — |
 | 09 | `docs/agents/codex-prompts/v5/09-chatgpt-api-auto-import-review.md` | Review Gate | chatgpt-api-auto-import | — |

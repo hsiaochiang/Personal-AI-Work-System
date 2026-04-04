@@ -8,7 +8,7 @@
   root.ConversationAdapters = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const CONVERSATION_SCHEMA_VERSION = 'v1';
-  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'gemini', 'copilot']);
+  const BUILTIN_SOURCES = new Set(['plain', 'chatgpt', 'gemini', 'claude', 'copilot']);
   const ALLOWED_ROLES = new Set(['user', 'assistant', 'system', 'tool']);
   const ISO_8601_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z|[+-]\d{2}:\d{2})$/;
   const COPILOT_EXCLUDED_RESPONSE_KINDS = new Set([
@@ -32,6 +32,13 @@
     assistant: {
       exact: new Set(['gemini', 'google gemini']),
       prefixes: ['gemini', 'google gemini'],
+    },
+  };
+  const CLAUDE_TRANSCRIPT_ROLE_ALIASES = {
+    user: SHARED_USER_TRANSCRIPT_ALIASES,
+    assistant: {
+      exact: new Set(['claude', 'assistant']),
+      prefixes: ['claude'],
     },
   };
   const NODE_FS = safeNodeRequire('fs');
@@ -136,6 +143,17 @@
     }
 
     return false;
+  }
+
+  function transcriptHasRoleHeading(input, roleAliases) {
+    if (typeof input !== 'string' || input.trim().length === 0) {
+      return false;
+    }
+
+    return input
+      .replace(/\r\n?/g, '\n')
+      .split('\n')
+      .some((line) => Boolean(detectTranscriptRole(line, roleAliases)));
   }
 
   function detectTranscriptRole(line, roleAliases) {
@@ -717,6 +735,24 @@
     return adaptGeminiTranscriptConversation(input, metadata);
   }
 
+  function adaptClaudeTranscriptConversation(input, metadata) {
+    return adaptRoleHeadingTranscript(input, {
+      adapterName: 'ClaudeAdapter',
+      invalidMessage: '無法辨識為 Claude transcript',
+      metadata,
+      roleAliases: CLAUDE_TRANSCRIPT_ROLE_ALIASES,
+      source: 'claude',
+    });
+  }
+
+  function adaptClaudeConversation(input, metadata) {
+    if (typeof input !== 'string' || input.trim().length === 0) {
+      throw new Error('ClaudeAdapter 需要非空文字輸入');
+    }
+
+    return adaptClaudeTranscriptConversation(input, metadata);
+  }
+
   function adaptChatGPTJsonConversation(input, metadata) {
     const payload = typeof input === 'string' ? JSON.parse(input) : input;
     const conversation = selectChatGPTConversation(payload);
@@ -765,6 +801,10 @@
       return adaptGeminiTranscriptConversation(input, metadata);
     }
 
+    if (hint === 'claude-text') {
+      return adaptClaudeTranscriptConversation(input, metadata);
+    }
+
     if (isLikelyJsonString(input)) {
       try {
         return adaptChatGPTJsonConversation(input, metadata);
@@ -772,6 +812,14 @@
         if (hint === 'json') {
           throw error;
         }
+      }
+    }
+
+    if (transcriptHasRoleHeading(input, CLAUDE_TRANSCRIPT_ROLE_ALIASES)) {
+      try {
+        return adaptClaudeTranscriptConversation(input, metadata);
+      } catch (claudeError) {
+        // Fall through to other adapters when Claude parsing fails.
       }
     }
 
@@ -798,6 +846,7 @@
     CONVERSATION_SCHEMA_VERSION,
     adaptChatGPTConversation,
     adaptChatGPTJsonConversation,
+    adaptClaudeConversation,
     adaptGeminiConversation,
     adaptConversationInput,
     adaptVSCodeCopilotConversation,

@@ -108,6 +108,10 @@
       return { label: 'Gemini', className: 'source-gemini' };
     }
 
+    if (normalizedSource === 'claude') {
+      return { label: 'Claude', className: 'source-claude' };
+    }
+
     if (normalizedSource === 'copilot') {
       return { label: 'Copilot', className: 'source-copilot' };
     }
