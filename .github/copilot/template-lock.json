@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "template_version": "1.9.3",
+  "template_version": "1.9.5",
   "template_tag": null,
-  "template_commit": "7f69952",
+  "template_commit": "337556e",
   "project_name": "Personal-AI-Work-System",
-  "last_applied_at": "2026-04-04T17:48:34",
+  "last_applied_at": "2026-04-04T21:11:37",
   "bootstrap_mode": "upgrade",
   "managed_files": [
     ".claude/skills/openspec-apply-change/SKILL.md",

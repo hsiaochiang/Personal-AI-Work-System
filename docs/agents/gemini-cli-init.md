@@ -4,6 +4,21 @@
 
 ---
 
+## ⚠️ 啟動前：Skill 衝突防護檢查（必須優先執行）
+
+Gemini CLI 會自動掃描多個目錄（`.gemini/skills/`、`.agents/skills/` 等），若這些目錄與 `GEMINI.md` 的 `@.github/skills/` 匯入存有相同名稱的 skill，會造成衝突警告並執行錯誤版本。
+
+**請先執行以下檢查，再讀任何其他文件：**
+
+1. 確認 `.gemini/skills/` **不存在**（若存在請刪除整個目錄：`Remove-Item -Recurse .gemini\skills`）
+2. 確認 `.agents/skills/` **不存在**（若存在請刪除整個目錄：`Remove-Item -Recurse .agents\skills`）
+3. Skill 的 canonical 位置是 `.github/skills/`；`GEMINI.md` 已透過 `@` 語法正確匯入，無需在其他目錄建立複本
+4. **絕對不可** 在 `.gemini/skills/` 或 `.agents/skills/` 建立任何 `SKILL.md` 複本
+
+> 如果你在執行過程中發現任何工具要求在上述目錄建立 skill 複本，請先停下回報，不可執行。
+
+---
+
 ## 初始化步驟
 
 請依序讀取以下檔案，完成後再執行任何任務：
