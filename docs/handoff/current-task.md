@@ -4,8 +4,8 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V3 archived — ready for V4 planning
-- Owner agent: Codex
+- Name: V4 planning — 待使用者確認 V4 brief 後開始第一個 Change
+- Owner agent: Copilot / Codex
 - Last updated on: 2026-04-04
 
 ## Goal
@@ -62,16 +62,15 @@
 - V3 brief 六個 planned changes 全部 archive 完成 ✅
 
 ## In Progress
-- template verify 目前被 `.github/prompts/openspec-execute.prompt.md` 缺檔阻塞；需先確認是否為模板漂移或指令文件過期
-- V4 brief / roadmap 下一步尚未開始，待使用者決定先處理治理 blocker 或直接進入 V4 規劃
+- V4 brief 已草擬，使用者確認欄位（確認日期）尚未填寫，待確認後可開始第一個 V4 Change
 
 ## Next Step
 
-| 優先 | Change | 說明 |
-|:----:|--------|------|
-| 🔴 1 | Template blocker | 補 `.github/prompts/openspec-execute.prompt.md` 或確認模板 prompt 已改名，解除 verify-only FAIL |
-| 🟡 2 | V4 規劃 | 視使用者優先序，啟動 V4 brief / change 規劃 |
-| 🟡 3 | GitHub / release 決策 | 如需 PR / release，另由人工明確指示 |
+| 優先 | 說明 |
+|:----:|------|
+| 🔴 1 | 確認 `docs/planning/v4-brief.md`（填入確認日期），解除開工前置條件 |
+| 🟡 2 | 執行 `#opsx-new memory-health-scoring`（V4 第一個 Change） |
+| 🟡 3 | 若有新 template 升級，執行 `#template-upgrade` |
 
 ## Files Touched（本 session）
 - openspec/changes/archive/2026-04-03-import-ui-multi-source/proposal.md
@@ -94,15 +93,8 @@
 - docs/runlog/2026-04-04_README.md
 
 ## Validation Status
-- V3 brief confirmation：✅ PASS（2026-04-02，Wilson）
-- Scope gate：✅ PASS（change 屬於 V3 brief In Scope D「Import UI」範圍）
-- Duplicate change gate：✅ PASS（建立前確認無同名 / 同目的 active change；`openspec list --json` 為空）
-- Executor preflight：✅ PASS（`main` branch、`openspec/config.yaml`、brief 使用者確認、`openspec new change import-ui-multi-source`）
-- Strict validate：✅ PASS（`openspec validate import-ui-multi-source --strict`）
-- Targeted verify：✅ PASS（`node tools/verify_import_ui_multi_source.js`）
-- Regression verify：✅ PASS（plain / chatgpt / local-import-vscode-copilot 全 PASS）
-- Review Gate：✅ PASS（可進入 sync；archive 僅差人工確認）
-- Main spec sync：✅ PASS（`openspec/specs/import-ui-multi-source/spec.md`）
-- Git publish：✅ PASS（`335d338` → `origin/main`）
-- Archive：✅ PASS（`openspec archive import-ui-multi-source -y --skip-specs`）
-- Template verify：⚠️ FAIL（`tools/bootstrap_copilot_workspace.py --verify-only` 回報缺少 `.github/prompts/openspec-execute.prompt.md`）
+- V3 全 6 個 Changes：✅ 全部 archive
+- Roadmap 更新：✅ V2/V3 狀態、Current release、V3 進度表（2026-04-04）
+- Template verify：⚠️ copilot-workspace-template 路徑不在此機器（非阻塞）
+- `.github/prompts/openspec-execute.prompt.md` 缺檔問題：✅ 已在 `070b90f` commit 補建
+- Git：⏳ 本次 roadmap + handoff 更新尚未 commit/push
