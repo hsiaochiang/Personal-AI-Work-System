@@ -23,6 +23,7 @@
 - `VERSION` 建立：1.1.0
 - `CHANGELOG.md` 建立：V1–V5 功能摘要
 - git tag v1.1.0 建立並推送（2026-04-05）
+- `docs/product/user-manual-v5.md` 撰寫完成（2026-04-05）
 
 ## In Progress
 - 無
@@ -33,9 +34,11 @@
 |:----:|------|
 | 🟢 1 | 系統進入穩定運行期；可依需要規劃 V6（Out-of-scope 項目如 OAuth / cloud sync / vector search） |
 | 🟢 2 | 日常使用：`node web/server.js` → http://localhost:3000 |
-| 🟢 3 | 若暫不做版本收尾，維持 `adapter-docs-update` archive complete 狀態作為下一個 session 起點 |
 
 ## Files Touched（本 session）
+- docs/product/user-manual-v5.md
+- docs/runlog/2026-04-05_README.md
+- docs/handoff/current-task.md
 - docs/workflows/conversation-schema.md
 - web/public/extract.html
 - web/public/js/extract.js
@@ -49,7 +52,6 @@
 - docs/uiux/2026-04-04_adapter-docs-update-ui-review.md
 - docs/uiux/2026-04-04_adapter-docs-update-ux-review.md
 - docs/planning/v5-brief.md
-- docs/handoff/current-task.md
 - docs/roadmap.md
 - docs/system-manual.md
 - docs/runlog/2026-04-04_README.md
