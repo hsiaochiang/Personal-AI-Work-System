@@ -4,50 +4,35 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V5 Change 4 — `adapter-docs-update` Archive Complete
-- Owner agent: Codex
-- Last updated on: 2026-04-04
+- Name: V5 版本收尾完成 — v1.1.0 發布
+- Owner agent: Copilot
+- Last updated on: 2026-04-05
 
 ## Goal
-- 完成 `adapter-docs-update` 的 main spec sync、commit 與 archive，讓 V5 四個 planned changes 全數完成
-- 收斂本輪只處理 adapter 文件補齊與 `/extract` 支援格式提示，不擴張到新 adapter / API 能力
-- 同步 handoff / roadmap / brief / system manual / runlog，讓下一步明確切到 V5 版本收尾判定
-
-## Scope
-- In scope:
-  - 更新 `docs/workflows/conversation-schema.md`，補齊 Gemini / Claude / ChatGPT API 匯入的支援格式、來源命名與限制說明
-  - 在 `/extract` 各工具來源面板補齊一致的「支援格式」提示文案
-  - 保持既有 `plain` / `chatgpt` / `gemini` / `claude` / `copilot` 匯入流程與 adapter 行為不變
-- Out of scope:
-  - 新增或修改 `GeminiAdapter` / `ClaudeAdapter` / ChatGPT API server flow
-  - 新增 API、檔案上傳能力、session picker 或新的 source type
-  - commit / sync / archive 等不可逆操作
-
-## Constraints
-- 純靜態 HTML + vanilla JS（無框架、無 build）
-- Node.js `http` server（無 Express）
-- 禁止新增 runtime dependency
-- `AGENTS.md` 規定：scope 變更需人確認；本輪僅做 brief 既有範圍內的 docs/UI copy 補齊
+- V1–V5 全數 planned changes 已 archive，v1.1.0 已發布（git tag + VERSION + CHANGELOG）
+- roadmap、system-manual、handoff 文件已同步更新
+- 無 active blockers；無 active openspec changes
 
 ## Done
-- 已建立 active change `openspec/changes/adapter-docs-update/`，完成 `proposal.md`、`design.md`、`specs/adapter-docs-update/spec.md`、`tasks.md`，並通過 `openspec validate --changes adapter-docs-update --strict` ✅
-- 已更新 `docs/workflows/conversation-schema.md`，補齊 `chatgpt-api` / `gemini` / `claude` / `copilot` 的 V5 支援來源矩陣、來源命名與限制說明 ✅
-- 已更新 `/extract` 的 selector hint 與各來源 panel 文案，加入一致格式的「支援格式：...」提示，不改變既有按鈕與匯入流程 ✅
-- 已新增 `tools/verify_adapter_docs_update.js`，並重跑 `verify_import_ui_multi_source`、plain / chatgpt / chatgpt-api / gemini / claude / copilot regression，全數 PASS ✅
-- 已補 `docs/qa/2026-04-04_adapter-docs-update-smoke.md`、`docs/uiux/2026-04-04_adapter-docs-update-ui-review.md`、`docs/uiux/2026-04-04_adapter-docs-update-ux-review.md` ✅
-- 已完成 Review Gate 重查：scope / spec / tasks / QA / UI / UX evidence 與 docs/UI copy 均對齊，`adapter-docs-update` 判定 PASS，可進入 commit / main spec sync / archive 決策 ✅
-- 已建立 `openspec/specs/adapter-docs-update/spec.md`，並通過 `openspec validate adapter-docs-update --type spec --strict`，完成 main spec sync ✅
-- 已完成 implementation commit 與 `openspec archive adapter-docs-update -y --skip-specs`，active change 已封存至 `openspec/changes/archive/2026-04-04-adapter-docs-update/` ✅
+- V1 (Phase Spec + 1–5) ✅ 全 archive
+- V2 (Changes 1–4) ✅ 全 archive
+- V3 (Changes 1–6) ✅ 全 archive
+- V4 (Changes 1–5) ✅ 全 archive
+- V5 (Changes 1–4) ✅ 全 archive（2026-04-04）
+- `docs/roadmap.md` V5 狀態更新為 ✅ 已完成（2026-04-05）
+- `VERSION` 建立：1.1.0
+- `CHANGELOG.md` 建立：V1–V5 功能摘要
+- git tag v1.1.0 建立並推送（2026-04-05）
 
 ## In Progress
-- 無；`adapter-docs-update` 已 archive，待下一步決定是否進入 V5 版本收尾
+- 無
 
 ## Next Step
 
 | 優先 | 說明 |
 |:----:|------|
-| 🔴 1 | 檢查 `docs/planning/v5-brief.md` 的 Changes 表已全數 archive，並決定是否執行 V5 版本收尾 |
-| 🟡 2 | 若要收尾 V5，補 version status / completed date 與 roadmap 對應狀態更新 |
+| 🟢 1 | 系統進入穩定運行期；可依需要規劃 V6（Out-of-scope 項目如 OAuth / cloud sync / vector search） |
+| 🟢 2 | 日常使用：`node web/server.js` → http://localhost:3000 |
 | 🟢 3 | 若暫不做版本收尾，維持 `adapter-docs-update` archive complete 狀態作為下一個 session 起點 |
 
 ## Files Touched（本 session）
