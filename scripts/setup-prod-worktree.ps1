@@ -40,7 +40,7 @@ if (-not $tagExists) {
 
 # 移除空目錄（worktree add 要求目標不存在或是全新目錄）
 if (Test-Path $PROD_ROOT) {
-    $items = Get-ChildItem $PROD_ROOT -Force
+    $items = @(Get-ChildItem $PROD_ROOT -Force)
     if ($items.Count -gt 0) {
         Write-Error "目標目錄非空，請手動確認後再執行：$PROD_ROOT"
         exit 1
@@ -56,7 +56,9 @@ Write-Host "  worktree 建立完成 ✓" -ForegroundColor Green
 
 # npm install
 Write-Host "  npm install --omit=dev..."
-npm install --omit=dev --prefix "$PROD_ROOT\web"
+Push-Location "$PROD_ROOT\web"
+npm install --omit=dev
+Pop-Location
 Write-Host "  npm install 完成 ✓" -ForegroundColor Green
 
 # 提示 api-keys.json

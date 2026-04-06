@@ -151,7 +151,9 @@ if ($currentProdTag) {
 if ($pkgChanged -or -not $currentProdTag) {
     Write-Host "  package.json 有變動，執行 npm install..." -ForegroundColor Gray
     if (-not $DryRun) {
-        $npmResult = npm install --omit=dev --prefix "$PROD_ROOT\web" 2>&1
+        Push-Location "$PROD_ROOT\web"
+        npm install --omit=dev
+        Pop-Location
         if ($LASTEXITCODE -ne 0) {
             Write-Warning "npm install 發生警告，請手動確認：$PROD_ROOT\web"
         }

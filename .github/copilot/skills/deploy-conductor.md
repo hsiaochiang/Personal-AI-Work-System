@@ -7,6 +7,31 @@
 
 ---
 
+## 環境配置（本機 Dev/Prod 分離）
+
+| 環境 | 路徑 | PORT | NODE_ENV | URL |
+|------|------|------|----------|-----|
+| 測試區 (Dev) | `d:\program\Personal-AI-Work-System` | 3000 | development | http://localhost:3000 |
+| 正式區 (Prod) | `D:\prod\Personal-AI-Work-System` | 3001 | production | http://localhost:3001 |
+
+**正式區機制**：git worktree（與 Dev 共用同一份 `.git`）。Deploy = checkout 到指定 tag。
+
+**首次設置**（已完成，僅供參考）：
+```powershell
+.\scripts\setup-prod-worktree.ps1
+```
+
+**啟動服務**：
+```powershell
+# 測試區
+node d:\program\Personal-AI-Work-System\web\server.js
+
+# 正式區
+$env:PORT="3001"; $env:NODE_ENV="production"; node D:\prod\Personal-AI-Work-System\web\server.js
+```
+
+---
+
 ## 必讀規則
 
 - `rules/75-deploy-governance.md` — 布版治理規範（Gate 條件）
@@ -96,11 +121,16 @@
    - Release Notes：貼入 CHANGELOG.md 對應版本段落
    - 附加說明：本版本有哪些目標專案需人工合併的 protected files
 
-3. **執行批次布版**（若 `targets.yaml` 存在）
+3. **【本機 prod 布版】執行 deploy-to-prod.ps1**
    ```powershell
-   python deploy/orchestrate.py --dry-run  # 先預覽
-   python deploy/orchestrate.py            # 確認後執行
+   # 預覽（不實際執行）
+   .\scripts\deploy-to-prod.ps1 -DryRun
+
+   # 確認後執行部署
+   .\scripts\deploy-to-prod.ps1
+   # 或指定版本：.\scripts\deploy-to-prod.ps1 -Version 1.2.0
    ```
+   > 腳本會自動：確認 tag 存在 → 顯示差異 → 人工確認 → checkout → npm install（如有變動）→ 記錄 runlog
 
 4. **記錄每個目標的結果**：
    | 目標 | 操作 | 結果 |
@@ -119,11 +149,16 @@
 
 **步驟**：
 
-1. **對每個目標執行驗證**
+1. **【本機 prod 驗證】**
    ```powershell
-   python deploy/bootstrap.py --verify-only --root {target_path}
-   python deploy/bootstrap.py --status --root {target_path}
+   # 確認正式區 git tag 正確
+   git -C "D:\prod\Personal-AI-Work-System" describe --tags
+
+   # 確認正式區服務正常（PORT 3001）
+   Invoke-WebRequest -Uri "http://localhost:3001" -UseBasicParsing | Select-Object StatusCode
    ```
+   > 啟動正式區服務：`$env:PORT="3001"; $env:NODE_ENV="production"; node D:\prod\Personal-AI-Work-System\web\server.js`
+   > 啟動測試區服務：`node d:\program\Personal-AI-Work-System\web\server.js`
 
 2. **執行 smoke**（若在模板專案自驗）
    ```powershell
