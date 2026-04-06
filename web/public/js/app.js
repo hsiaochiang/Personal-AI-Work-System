@@ -126,23 +126,49 @@ function showEmpty(el, icon, message) {
 
 /* ─── Navigation highlighting ─── */
 document.addEventListener('DOMContentLoaded', () => {
+  const meta = window.__APP_META__;
+
+  // 1. Update <title> to include project name and environment tag
+  if (meta) {
+    const envTag = meta.env === 'production' ? 'PROD' : 'DEV';
+    document.title = `${document.title} — ${meta.projectName} [${envTag}:${meta.port}]`;
+  }
+
+  // 2. Highlight active nav link (match on pathname only, ignore query string)
   const current = location.pathname.replace(/\/$/, '') || '/';
   document.querySelectorAll('.nav-link').forEach(link => {
-    const href = link.getAttribute('href').replace(/\/$/, '') || '/';
-    if (href === current) {
+    const href = link.getAttribute('href') || '';
+    const linkPath = href.split('?')[0].replace(/\/$/, '') || '/';
+    if (linkPath === current) {
       link.classList.add('active');
+    }
+
+    // 3. Append projectId to nav links so URL always carries project identity
+    if (meta && meta.projectId && href.startsWith('/')) {
+      try {
+        const u = new URL(href, location.origin);
+        if (!u.searchParams.has('projectId')) {
+          u.searchParams.set('projectId', meta.projectId);
+          link.setAttribute('href', u.pathname + '?' + u.searchParams.toString());
+        }
+      } catch { /* ignore malformed href */ }
     }
   });
 
-  // Sidebar project name
+  // 4. Sidebar project name — prefer __APP_META__ over localStorage
   const projectEl = document.getElementById('sidebar-project-name');
   if (projectEl) {
-    try {
-      const saved = localStorage.getItem('selectedProject');
-      if (saved) {
-        const p = JSON.parse(saved);
-        projectEl.textContent = p.name || '個人 AI 工作系統';
-      }
-    } catch { /* ignore */ }
+    if (meta) {
+      const envLabel = meta.env === 'production' ? ' [PROD]' : ' [DEV]';
+      projectEl.textContent = (meta.projectName || '個人 AI 工作系統') + envLabel;
+    } else {
+      try {
+        const saved = localStorage.getItem('selectedProject');
+        if (saved) {
+          const p = JSON.parse(saved);
+          projectEl.textContent = p.name || '個人 AI 工作系統';
+        }
+      } catch { /* ignore */ }
+    }
   }
 });

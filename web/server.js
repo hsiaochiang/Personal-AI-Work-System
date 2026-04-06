@@ -431,6 +431,26 @@ function serveStaticFile(res, filePath) {
       res.end('Not Found');
       return;
     }
+
+    // Inject app meta for HTML pages so browser tab and URL carry environment/project info
+    if (ext === '.html') {
+      const defaultProject = getDefaultProjectConfig(readProjectsConfig()) || { id: 'personal-ai', name: '個人 AI 工作系統' };
+      const meta = JSON.stringify({
+        projectId: defaultProject.id,
+        projectName: defaultProject.name,
+        env: NODE_ENV,
+        port: PORT,
+      });
+      const injection = `<script>window.__APP_META__=${meta};</script>`;
+      let html = data.toString('utf-8');
+      html = html.includes('</head>')
+        ? html.replace('</head>', `${injection}\n</head>`)
+        : injection + html;
+      res.writeHead(200, { 'Content-Type': mimeType });
+      res.end(html);
+      return;
+    }
+
     res.writeHead(200, { 'Content-Type': mimeType });
     res.end(data);
   });
@@ -1113,15 +1133,18 @@ const server = http.createServer((req, res) => {
 
 function logServerStartup(port) {
   const envTag = NODE_ENV === 'production' ? '[PROD]' : '[DEV]';
-  console.log(`\n  ${envTag} 個人 AI 工作系統儀表板`);
-  console.log(`  ──────────────────────`);
-  console.log(`  http://localhost:${port}\n`);
-  console.log(`  頁面：`);
-  console.log(`    總覽     http://localhost:${port}/`);
-  console.log(`    當前任務  http://localhost:${port}/task`);
-  console.log(`    專案記憶  http://localhost:${port}/memory\n`);
+  const defaultProject = getDefaultProjectConfig(readProjectsConfig()) || { id: 'personal-ai', name: '個人 AI 工作系統' };
+  const baseUrl = `http://localhost:${port}`;
+  const projectParam = `?projectId=${defaultProject.id}`;
 
-  const defaultProject = getDefaultProjectConfig(listGovernanceProjects()) || { id: 'personal-ai' };
+  console.log(`\n  ${envTag} 個人 AI 工作系統儀表板`);
+  console.log(`  ──────────────────────────────────`);
+  console.log(`  專案：${defaultProject.name}（${defaultProject.id}）`);
+  console.log(`  環境：${NODE_ENV}  PORT：${port}\n`);
+  console.log(`  頁面：`);
+  console.log(`    總覽     ${baseUrl}/${projectParam}`);
+  console.log(`    當前任務  ${baseUrl}/task${projectParam}`);
+  console.log(`    專案記憶  ${baseUrl}/memory${projectParam}\n`);
   const governanceSnapshot = governanceSnapshotState.projects[defaultProject.id];
   if (!governanceSnapshot) {
     return;
