@@ -4,6 +4,9 @@
   "private": true,
   "description": "個人 AI 工作系統儀表板",
   "scripts": {
-    "start": "node server.js"
-  }
+    "start": "node server.js",
+    "start:dev": "node server.js",
+    "start:prod": "node server.js"
+  },
+  "note": "正式區請以 deploy-to-prod.ps1 啟動，腳本會自動設定 PORT=3001 NODE_ENV=production"
 }

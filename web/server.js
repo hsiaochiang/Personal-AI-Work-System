@@ -15,7 +15,8 @@ const ruleConflictUtils = require('./public/js/rule-conflict-utils.js');
 const sharedKnowledgeUtils = require('./public/js/shared-knowledge-utils.js');
 const governanceSchedulerUtils = require('./public/js/governance-scheduler-utils.js');
 
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const DEFAULT_PROJECT_ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const API_KEYS_FILE = path.join(__dirname, 'api-keys.json');
@@ -1111,7 +1112,8 @@ const server = http.createServer((req, res) => {
 });
 
 function logServerStartup(port) {
-  console.log(`\n  個人 AI 工作系統儀表板`);
+  const envTag = NODE_ENV === 'production' ? '[PROD]' : '[DEV]';
+  console.log(`\n  ${envTag} 個人 AI 工作系統儀表板`);
   console.log(`  ──────────────────────`);
   console.log(`  http://localhost:${port}\n`);
   console.log(`  頁面：`);
