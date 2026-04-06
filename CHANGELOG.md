@@ -4,6 +4,15 @@
 
 ---
 
+## [1.1.1] — 2026-04-06
+
+### 基礎設施
+- `web/server.js`：PORT 改為 `process.env.PORT`（預設 3000）；NODE_ENV 控制 banner 標籤（[DEV]/[PROD]）
+- 新增 `scripts/deploy-to-prod.ps1`：一鍵布版到正式區（PORT 3001）
+- 新增 `scripts/setup-prod-worktree.ps1`：首次設置 git worktree 正式區
+
+---
+
 ## [1.1.0] — 2026-04-05
 
 ### V5：外部 API 整合與多工具擴充層
