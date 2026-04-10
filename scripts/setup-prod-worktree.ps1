@@ -58,6 +58,12 @@ if ($actual -ne $tag) {
 }
 Write-Host "  Checkout $tag 完成 ✓" -ForegroundColor Green
 
+# sparse-checkout：只保留 web/ 和 docs/，移除開發用目錄
+Write-Host "  設定 sparse-checkout（只保留 web/ docs/）..."
+git -C $PROD_ROOT sparse-checkout init --cone
+git -C $PROD_ROOT sparse-checkout set web docs
+Write-Host "  sparse-checkout 完成 ✓" -ForegroundColor Green
+
 # npm install
 Write-Host "  npm install --omit=dev..."
 Push-Location "$PROD_ROOT\web"
