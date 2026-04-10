@@ -39,6 +39,9 @@ D:\prod\Personal-AI-Work-System\
 
 > 正式區透過 `git sparse-checkout` 只保留服務運行必要的目錄。
 > `design/`, `openspec/`, `scripts/`, `tools/`, `.github/`, `docs/agents/`, `docs/planning/` 等開發檔案不會出現在正式區。
+>
+> **注意**：使用 `--no-cone` 模式（非 cone mode）。`--cone` 模式會強制包含根層所有 tracked 檔案，無法排除 `AGENTS.md` 等開發設定。
+> Include list 位於 `D:\prod\Personal-AI-Work-System\.git\info\sparse-checkout`。
 
 ---
 
