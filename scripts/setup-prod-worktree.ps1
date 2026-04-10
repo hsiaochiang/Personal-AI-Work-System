@@ -58,10 +58,11 @@ if ($actual -ne $tag) {
 }
 Write-Host "  Checkout $tag 完成 ✓" -ForegroundColor Green
 
-# sparse-checkout：只保留 web/ 和 docs/，移除開發用目錄
-Write-Host "  設定 sparse-checkout（只保留 web/ docs/）..."
+# sparse-checkout：只保留 server 需要的目錄
+# docs/ 根層檔案（roadmap.md 等）由 cone mode 自動帶入
+Write-Host "  設定 sparse-checkout..."
 git -C $PROD_ROOT sparse-checkout init --cone
-git -C $PROD_ROOT sparse-checkout set web docs
+git -C $PROD_ROOT sparse-checkout set web docs/memory docs/handoff docs/templates docs/shared
 Write-Host "  sparse-checkout 完成 ✓" -ForegroundColor Green
 
 # npm install

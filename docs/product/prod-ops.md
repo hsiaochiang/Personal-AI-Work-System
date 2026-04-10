@@ -27,17 +27,18 @@ D:\prod\Personal-AI-Work-System\
 │   ├── projects.json      # 專案清單設定
 │   ├── governance.json    # 治理排程設定
 │   └── node_modules\      # npm 依賴（不入 git）
-├── docs\                  # 服務讀取的資料目錄
+├── docs\
 │   ├── roadmap.md         # 專案進度（Overview 頁面讀取）
-│   ├── handoff\           # 任務交接文件
-│   ├── memory\            # 累積知識（Memory 頁面讀取）
-│   └── templates\         # Handoff 模板
+│   ├── handoff\           # 任務交接文件（Task 頁面讀取）
+│   ├── memory\            # 累積知識庫（Memory 頁面讀寫）
+│   ├── templates\         # Handoff 模板
+│   └── shared\            # 跨工具共用知識快照
 ├── VERSION                # 目前版本號
 └── CHANGELOG.md           # 版本歷史
 ```
 
-> 正式區不含：`design/`、`openspec/`、`scripts/`、`tools/`、`.github/`
-> 這些屬於開發工具，由測試區管理。
+> 正式區透過 `git sparse-checkout` 只保留服務運行必要的目錄。
+> `design/`, `openspec/`, `scripts/`, `tools/`, `.github/`, `docs/agents/`, `docs/planning/` 等開發檔案不會出現在正式區。
 
 ---
 

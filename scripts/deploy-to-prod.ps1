@@ -135,6 +135,8 @@ if (-not $DryRun) {
     # Prod 是獨立 clone，需先 fetch 才能取得最新 tags
     git -C $PROD_ROOT fetch origin --tags --quiet 2>&1 | Out-Null
     git -C $PROD_ROOT checkout "tags/$tag" --detach --force 2>&1 | Out-Null
+    # 重新套用 sparse-checkout（確保 checkout 後 prod-only 目錄設定不變）
+    git -C $PROD_ROOT sparse-checkout reapply 2>&1 | Out-Null
     $actual = git -C $PROD_ROOT describe --tags --exact-match HEAD 2>$null
     if ($actual -ne $tag) {
         Write-Error "Checkout 後版本不符：預期 $tag，實際 $actual"
