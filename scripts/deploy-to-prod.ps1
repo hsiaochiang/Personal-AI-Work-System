@@ -22,9 +22,11 @@
 
 .NOTES
     環境配置：
-      測試區 (Dev)   http://localhost:3000   d:\program\Personal-AI-Work-System
-      正式區 (Prod)  http://localhost:3001   D:\prod\Personal-AI-Work-System
+      測試區 (Dev)   http://localhost:3000   d:\program\Personal-AI-Work-System  [DEV]
+      正式區 (Prod)  http://localhost:3001   D:\prod\Personal-AI-Work-System     [PROD]
     
+    正式區為獨立 git clone（有自己的 .git），deploy 透過 git fetch + checkout tag 更新。
+    Data（api-keys.json 等 gitignored 檔案）不會被 checkout 覆蓋。
     首次設置請先執行 scripts\setup-prod-worktree.ps1
 #>
 
@@ -126,11 +128,13 @@ if (-not $DryRun) {
     }
 }
 
-# ── Step 5：Checkout ─────────────────────────────────────────
-Write-Host "  [3/5] Checkout $tag..." -ForegroundColor Gray
+# ── Step 5：從 remote fetch 最新 tags 後 Checkout ──────────────
+Write-Host "  [3/5] Fetch + Checkout $tag..." -ForegroundColor Gray
 
 if (-not $DryRun) {
-    git -C $PROD_ROOT checkout $tag --detach --force 2>&1 | Out-Null
+    # Prod 是獨立 clone，需先 fetch 才能取得最新 tags
+    git -C $PROD_ROOT fetch origin --tags --quiet 2>&1 | Out-Null
+    git -C $PROD_ROOT checkout "tags/$tag" --detach --force 2>&1 | Out-Null
     $actual = git -C $PROD_ROOT describe --tags --exact-match HEAD 2>$null
     if ($actual -ne $tag) {
         Write-Error "Checkout 後版本不符：預期 $tag，實際 $actual"
