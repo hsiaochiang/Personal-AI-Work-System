@@ -4,6 +4,15 @@
 
 ---
 
+## [1.1.2] — 2026-04-10
+
+### URL 識別與環境標籤
+- `web/server.js`：HTML response 自動注入 `window.__APP_META__`（projectId / projectName / env / port）
+- `web/public/js/app.js`：`<title>` 顯示 `頁面 — 專案名 [ENV:PORT]`；sidebar 顯示環境標籤；nav links 自動贋加 `?projectId`
+- startup log 顯示帶 projectId 的完整 URL
+
+---
+
 ## [1.1.1] — 2026-04-06
 
 ### 基礎設施
