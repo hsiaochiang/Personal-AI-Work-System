@@ -306,11 +306,20 @@ async function geminiGenerateContent(promptText, apiKey) {
   // 去除 markdown code block wrapper（若有）
   const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
 
+  // 先嘗試直接解析
   try {
     return JSON.parse(cleaned);
-  } catch (_) {
-    throw new Error(`AI 回傳格式錯誤，無法解析為 JSON。原始內容（前 300 字）：${cleaned.slice(0, 300)}`);
+  } catch (_) { /* 可能有前後雜訊，繼續往下嘗試 */ }
+
+  // fallback：從文字中擷取第一個完整 JSON 物件
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch (_2) { /* 擷取後仍失敗，往下拋錯 */ }
   }
+
+  throw new Error(`AI 回傳格式錯誤，無法解析為 JSON。原始內容（前 300 字）：${cleaned.slice(0, 300)}`);
 }
 
 function buildExtractPrompt(userText) {
