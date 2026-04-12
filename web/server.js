@@ -263,6 +263,7 @@ async function geminiGenerateContent(promptText, apiKey) {
     generationConfig: {
       temperature: 0.2,
       maxOutputTokens: 2048,
+      responseMimeType: 'application/json',
     },
   };
 
