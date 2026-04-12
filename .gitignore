@@ -45,3 +45,6 @@ design/stitch/snapshots/
 # Local-only API credentials / tracked OpenAI conversations
 web/api-keys.json
 web/openai-conversation-index.json
+
+# 本機資源資料夾（個人對話紀錄、學習素材，不進 git）
+0resource/

@@ -7,6 +7,12 @@
 - 取代獨立的需求確認書，在 brief 內含「使用者確認」區段
 - 與 `docs/roadmap.md` 搭配使用：roadmap 管全貌，brief 管這一版
 
+## 開版前置流程
+開新版本前，應先完成：
+1. **Backlog 評審**：`docs/product/backlog.md` → 確認「下版納入」清單
+2. **Inbox 整理**：`docs/product/inbox/` → 新增需求已評審並移入 backlog
+3. 詳細節奏見 `docs/guides/iteration-cadence.md`
+
 ## 檔案命名
 - `v1-brief.md`、`v2-brief.md`、`v3-brief.md`……
 

@@ -176,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-writeback').addEventListener('click', runWriteback);
   document.getElementById('btn-back').addEventListener('click', goBack);
   document.getElementById('btn-restart').addEventListener('click', restart);
+  document.getElementById('btn-adopt-all').addEventListener('click', adoptAll);
+  document.getElementById('btn-reject-all').addEventListener('click', rejectAll);
+  document.getElementById('btn-reset-decisions').addEventListener('click', resetDecisions);
 
   setImportSource(selectedImportSource, { clearImportedState: false });
   refreshCopilotSessions();
@@ -780,7 +783,7 @@ function renderCandidates() {
     const cat = CATEGORIES[cand.category];
     const sourcePresentation = getCurrentSourcePresentation(cand.source);
     const card = document.createElement('div');
-    card.className = 'candidate-card' + (cand.decision === 'rejected' ? ' rejected' : '');
+    card.className = 'candidate-card' + (cand.decision === 'rejected' ? ' rejected' : ' adopted');
     card.dataset.idx = idx;
 
     card.innerHTML = `
@@ -788,14 +791,16 @@ function renderCandidates() {
         <div class="candidate-category">
           <span class="material-symbols-outlined">${escapeHTML(cat.icon)}</span>
           <span>${escapeHTML(cat.label)}</span>
-          <span class="confidence-badge">${(cand.confidence * 100).toFixed(0)}%</span>
+          <span class="confidence-badge" title="AI 評估此項値得保存的信心程度">${(cand.confidence * 100).toFixed(0)}%</span>
         </div>
         <div class="candidate-actions">
-          <button class="btn-icon adopt" title="採用" data-action="adopt">
+          <button class="btn-icon adopt labeled" title="採用此項知識候選" data-action="adopt">
             <span class="material-symbols-outlined">check_circle</span>
+            <span class="btn-label">採用</span>
           </button>
-          <button class="btn-icon reject" title="拒絕" data-action="reject">
+          <button class="btn-icon reject labeled" title="略過此項，本次不儲存" data-action="reject">
             <span class="material-symbols-outlined">cancel</span>
+            <span class="btn-label">拒絕</span>
           </button>
         </div>
       </div>
@@ -818,9 +823,11 @@ function renderCandidates() {
       if (action === 'adopt') {
         cand.decision = 'pending'; // mark as adopted-pending
         card.classList.remove('rejected');
+        card.classList.add('adopted');
       } else if (action === 'reject') {
         cand.decision = 'rejected';
         card.classList.add('rejected');
+        card.classList.remove('adopted');
       } else if (action === 'toggle-edit') {
         const editArea = card.querySelector('.candidate-edit');
         editArea.classList.toggle('hidden');
@@ -852,6 +859,40 @@ function updateSummary() {
 
   document.getElementById('review-summary').textContent =
     `${adopted} 採用 / ${rejected} 拒絕 / 共 ${candidates.length} 項` + (sourceSummary ? ` · 來源：${sourceSummary}` : '');
+
+  const writebackBadge = document.getElementById('writeback-badge');
+  if (writebackBadge) writebackBadge.textContent = adopted;
+}
+
+/* ─── Bulk Decision Actions ─── */
+function adoptAll() {
+  candidates.forEach((cand, idx) => {
+    cand.decision = 'pending';
+    const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
+    if (card) { card.classList.remove('rejected'); card.classList.add('adopted'); }
+  });
+  updateSummary();
+}
+
+function rejectAll() {
+  candidates.forEach((cand, idx) => {
+    cand.decision = 'rejected';
+    const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
+    if (card) { card.classList.add('rejected'); card.classList.remove('adopted'); }
+  });
+  updateSummary();
+}
+
+function resetDecisions() {
+  candidates.forEach((cand, idx) => {
+    cand.decision = cand.confidence >= 0.6 ? 'pending' : 'rejected';
+    const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
+    if (card) {
+      if (cand.decision === 'rejected') { card.classList.add('rejected'); card.classList.remove('adopted'); }
+      else { card.classList.remove('rejected'); card.classList.add('adopted'); }
+    }
+  });
+  updateSummary();
 }
 
 /* ─── Step 2 → Step 3: Writeback ─── */

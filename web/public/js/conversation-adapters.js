@@ -863,7 +863,16 @@
       throw new Error('GeminiAdapter 需要非空文字輸入');
     }
 
-    return adaptGeminiTranscriptConversation(input, metadata);
+    try {
+      return adaptGeminiTranscriptConversation(input, metadata);
+    } catch (_transcriptError) {
+      // 若貼入的不是完整 transcript（例如只複製了 Gemini 回應片段，沒有角色標頭），
+      // 退回純文字處理，保留 gemini source 標記供寫回時顯示正確來源 badge。
+      return createConversationDoc(
+        [{ role: 'user', content: input.trim(), source: 'gemini', timestamp: null }],
+        stripControlMetadata(metadata)
+      );
+    }
   }
 
   function adaptClaudeTranscriptConversation(input, metadata) {

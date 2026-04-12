@@ -228,11 +228,26 @@
           </span>
           <div class="review-summary" id="review-summary"></div>
         </div>
+        <div class="instruction-strip">
+          <span><span class="instruction-adopt">✓ 採用</span> = 寫回至記憶檔　<span class="instruction-reject">✗ 拒絕</span> = 本次略過，不儲存　可點「編輯內容」修改後再採用</span>
+        </div>
+        <div class="bulk-actions">
+          <button class="btn btn-secondary btn-sm" id="btn-adopt-all" type="button">
+            <span class="material-symbols-outlined">select_all</span>全部採用
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-reject-all" type="button">
+            <span class="material-symbols-outlined">deselect</span>全部拒絕
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btn-reset-decisions" type="button">
+            <span class="material-symbols-outlined">restart_alt</span>重設
+          </button>
+        </div>
         <div id="candidates-list"></div>
         <div class="extract-actions">
           <button class="btn btn-primary" id="btn-writeback">
             <span class="material-symbols-outlined">save</span>
             寫回已採用的項目
+            <span class="writeback-badge" id="writeback-badge">0</span>
           </button>
           <button class="btn btn-secondary" id="btn-back">
             <span class="material-symbols-outlined">arrow_back</span>

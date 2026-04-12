@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "PAIS DEV (d:\\program)"
+    },
+    {
+      "path": "D:\\prod\\Personal-AI-Work-System",
+      "name": "PAIS PROD (D:\\prod)"
+    }
+  ],
+  "settings": {
+    "explorer.compactFolders": false
+  }
+}

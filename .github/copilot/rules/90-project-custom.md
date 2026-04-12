@@ -20,6 +20,16 @@
 - 若沒有涵蓋，再把專案特定規則寫在本檔
 - 若本檔與 managed rules 衝突，以人工明確確認後的專案規則為準
 
+## WKM 知識庫路徑約定
+
+- **WKM 專案根目錄**：`D:\program\WKM\`
+- **Wiki 根目錄**：`D:\program\WKM\wiki\`
+- **原始資料**：`D:\program\WKM\raw\`（只讀，agent 不修改）
+- **暫存區**：`D:\program\WKM\0resource\`（不是知識庫，僅暫存，不要把 wiki 內容放在這）
+- **系統設定**：`D:\program\WKM\SCHEMA.md`（每次操作前必讀）
+- 知識抽取者 agent 操作 wiki 時，永遠使用 Windows 絕對路徑
+- WKM 是獨立目錄，不混入 PAWS 的 git 歷史
+
 ## 初始欄位
 - Project-specific constraints:
     - 本 repo 目前是 docs-first / workflow-first 專案，未經人工確認不要引入新的 runtime、框架或部署假設。
