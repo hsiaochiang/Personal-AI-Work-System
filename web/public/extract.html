@@ -215,8 +215,13 @@
             <span class="material-symbols-outlined">auto_awesome</span>
             提取候選知識
           </button>
+          <button class="btn btn-secondary" id="btn-extract-llm" title="使用 Gemini AI 進行語意提取，需先在設定頁設定 Gemini API key">
+            <span class="material-symbols-outlined">psychology</span>
+            AI 輔助提取（Gemini）
+          </button>
           <span class="extract-hint" id="char-count">0 字</span>
         </div>
+        <div class="extract-status hidden" id="llm-extract-status"></div>
       </div>
 
       <!-- Step 2: Review Candidates -->

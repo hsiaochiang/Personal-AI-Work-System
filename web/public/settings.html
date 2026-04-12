@@ -65,7 +65,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>設定</h2>
-        <p class="description">管理 local-only 的 API keys。這一輪只支援 OpenAI API key，且 key 只會存於 server-side storage。</p>
+        <p class="description">管理 local-only 的 API keys（OpenAI、Gemini），key 只會存於 server-side storage，不會進入 git 追蹤。</p>
       </div>
 
       <div class="card settings-card">
@@ -93,6 +93,39 @@
                 儲存 API key
               </button>
               <button class="btn btn-secondary" id="btn-clear-openai-key" type="button">
+                <span class="material-symbols-outlined">delete</span>
+                清除已儲存 key
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="step-badge">2</span>
+            Gemini API Key
+          </span>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-copy">
+            <h3>Gemini API key</h3>
+            <p>用於「知識提取」頁的 AI 輔助提取功能（Gemini 2.0 Flash Lite）。可在 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a> 免費取得。原始 key 不會回傳到瀏覽器。</p>
+          </div>
+          <div class="settings-form">
+            <label class="settings-label" for="gemini-api-key">API key</label>
+            <input class="settings-input" id="gemini-api-key" type="password" placeholder="貼上 Gemini API key（AIza...）" autocomplete="off" spellcheck="false">
+            <div class="extract-status settings-status" id="gemini-settings-status">
+              <span class="material-symbols-outlined">vpn_key</span>
+              <span>讀取設定狀態中…</span>
+            </div>
+            <div class="settings-actions">
+              <button class="btn btn-primary" id="btn-save-gemini-key" type="button">
+                <span class="material-symbols-outlined">save</span>
+                儲存 API key
+              </button>
+              <button class="btn btn-secondary" id="btn-clear-gemini-key" type="button">
                 <span class="material-symbols-outlined">delete</span>
                 清除已儲存 key
               </button>

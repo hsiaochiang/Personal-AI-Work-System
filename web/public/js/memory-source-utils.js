@@ -112,6 +112,10 @@
       return { label: 'Gemini', className: 'source-gemini' };
     }
 
+    if (normalizedSource === 'gemini-llm') {
+      return { label: 'AI 建議', className: 'source-gemini' };
+    }
+
     if (normalizedSource === 'claude') {
       return { label: 'Claude', className: 'source-claude' };
     }

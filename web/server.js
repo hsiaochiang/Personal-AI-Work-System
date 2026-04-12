@@ -179,6 +179,185 @@ function getRequiredOpenAIApiKey() {
   return store.openai.apiKey;
 }
 
+// ── Gemini API Key 管理 ────────────────────────────────────────
+const GEMINI_API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_EXTRACT_MODEL = 'gemini-2.0-flash-lite';
+const GEMINI_MAX_INPUT_CHARS = 50000;
+
+function readGeminiKeyStore() {
+  const parsed = readJsonFile(API_KEYS_FILE, {});
+  const record = parsed && typeof parsed === 'object' ? parsed.gemini : null;
+  const apiKey = record && typeof record.apiKey === 'string' ? record.apiKey.trim() : '';
+  const updatedAt = normalizeIsoTimestamp(record && record.updatedAt);
+
+  return {
+    gemini: {
+      apiKey,
+      updatedAt,
+    },
+  };
+}
+
+function saveGeminiApiKey(apiKey) {
+  const normalized = String(apiKey || '').trim();
+  if (!normalized || normalized.length < 20) {
+    throw new Error('Gemini API key 不可為空且長度至少 20 字元');
+  }
+
+  const existing = readJsonFile(API_KEYS_FILE, {});
+  const nextStore = {
+    ...existing,
+    gemini: {
+      apiKey: normalized,
+      updatedAt: new Date().toISOString(),
+    },
+  };
+  writeJsonFile(API_KEYS_FILE, nextStore);
+  return nextStore;
+}
+
+function clearGeminiApiKey() {
+  const existing = readJsonFile(API_KEYS_FILE, {});
+  const nextStore = {
+    ...existing,
+    gemini: {
+      apiKey: '',
+      updatedAt: new Date().toISOString(),
+    },
+  };
+  writeJsonFile(API_KEYS_FILE, nextStore);
+  return nextStore;
+}
+
+function getGeminiSettingsSummary() {
+  const store = readGeminiKeyStore();
+  return {
+    configured: Boolean(store.gemini.apiKey),
+    maskedKey: store.gemini.apiKey ? maskApiKey(store.gemini.apiKey) : '',
+    updatedAt: store.gemini.updatedAt || null,
+  };
+}
+
+function getRequiredGeminiApiKey() {
+  const store = readGeminiKeyStore();
+  if (!store.gemini.apiKey) {
+    throw new Error('尚未設定 Gemini API key；請先到 /settings 儲存。');
+  }
+
+  return store.gemini.apiKey;
+}
+
+async function geminiGenerateContent(promptText, apiKey) {
+  if (typeof fetch !== 'function') {
+    throw new Error('目前 Node.js runtime 不支援 fetch');
+  }
+
+  const endpoint = `${GEMINI_API_BASE_URL}/${GEMINI_EXTRACT_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+  const requestBody = {
+    contents: [
+      {
+        parts: [{ text: promptText }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.2,
+      maxOutputTokens: 2048,
+    },
+  };
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody),
+  });
+
+  const responseText = await response.text();
+  let responseBody = null;
+  try {
+    responseBody = JSON.parse(responseText);
+  } catch (_) {
+    throw new Error(`Gemini API 回傳非 JSON：${responseText.slice(0, 200)}`);
+  }
+
+  if (!response.ok) {
+    const errMsg =
+      responseBody &&
+      responseBody.error &&
+      responseBody.error.message
+        ? responseBody.error.message
+        : `${response.status} ${response.statusText}`;
+    throw new Error(`Gemini API 錯誤：${errMsg}`);
+  }
+
+  const rawText =
+    responseBody &&
+    responseBody.candidates &&
+    responseBody.candidates[0] &&
+    responseBody.candidates[0].content &&
+    responseBody.candidates[0].content.parts &&
+    responseBody.candidates[0].content.parts[0] &&
+    responseBody.candidates[0].content.parts[0].text;
+
+  if (!rawText) {
+    throw new Error('Gemini API 回傳內容為空');
+  }
+
+  // 去除 markdown code block wrapper（若有）
+  const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {
+    throw new Error(`AI 回傳格式錯誤，無法解析為 JSON。原始內容（前 300 字）：${cleaned.slice(0, 300)}`);
+  }
+}
+
+function buildExtractPrompt(userText) {
+  const systemPrompt = `你是一個專業的個人知識管理助手，任務是從 AI 對話紀錄中提取有長期保存價值的知識。
+
+提取標準（必須同時符合）：
+1. 使用者一年後仍會需要的資訊
+2. 有具體的工具名稱、費用、功能差異、或操作方法
+3. 不是泛泛而談的概念，而是可以直接執行或參考的具體知識
+
+絕對不要提取：
+- 純問答過渡句（如「你說的很對」「讓我補充...」）
+- 已經是常識的概念（如「AI 可以幫助工作效率」）
+- 同一個事實的重複表達
+
+知識分類選項（category 欄位只能選以下之一）：
+- tool-insights：工具/軟體的具體特性、費用、功能比較
+- preference-rules：使用者的個人偏好或工作規則
+- task-patterns：可重複執行的工作模式或 SOP
+- decision-log：已做出的技術或商業決策（含理由）
+- market-knowledge：市場、產品、商業模式相關知識
+
+writebackTarget 選項（只能選以下之一）：
+- docs/memory/skill-candidates.md（工具知識）
+- docs/memory/preference-rules.md（偏好規則）
+- docs/memory/task-patterns.md（任務模式）
+- docs/memory/decision-log.md（決策記錄）
+- docs/memory/project-context.md（專案背景）
+
+輸出格式（必須是合法 JSON，不要加 markdown code block）：
+{
+  "candidates": [
+    {
+      "category": "tool-insights",
+      "summary": "一句話的知識點摘要（最多 80 字）",
+      "evidence": "從原文摘錄的關鍵句（最多 150 字）",
+      "writebackTarget": "docs/memory/skill-candidates.md",
+      "confidence": 0.85
+    }
+  ]
+}
+
+候選數量：最少 3 個，最多 7 個。只提取最有價值的，寧缺勿濫。`;
+
+  return `${systemPrompt}\n\n請從以下對話內容提取有長期保存價值的知識：\n\n<conversation>\n${userText}\n</conversation>`;
+}
+
 function normalizeConversationId(value) {
   const normalized = String(value || '').trim();
   if (!/^[A-Za-z0-9_-]{6,}$/.test(normalized)) {
@@ -821,6 +1000,78 @@ async function handleAPI(req, res) {
       }
       return true;
     }
+  }
+
+  // Gemini API key 管理
+  if (url.pathname === '/api/settings/gemini') {
+    if (req.method === 'GET') {
+      sendJSON(res, 200, getGeminiSettingsSummary());
+      return true;
+    }
+
+    if (req.method === 'POST') {
+      try {
+        const payload = await readJsonRequestBody(req);
+        if (payload && payload.clear) {
+          clearGeminiApiKey();
+        } else {
+          saveGeminiApiKey(payload && payload.apiKey);
+        }
+
+        sendJSON(res, 200, getGeminiSettingsSummary());
+      } catch (error) {
+        sendJSON(res, 400, { error: error.message || 'Invalid JSON body' });
+      }
+      return true;
+    }
+  }
+
+  // Gemini LLM 知識提取
+  if (url.pathname === '/api/extract/llm' && req.method === 'POST') {
+    try {
+      const payload = await readJsonRequestBody(req);
+      const inputText = payload && typeof payload.text === 'string' ? payload.text.trim() : '';
+
+      if (!inputText) {
+        sendJSON(res, 400, { error: '請提供要提取的文字內容（text 欄位不可為空）' });
+        return true;
+      }
+
+      if (inputText.length > GEMINI_MAX_INPUT_CHARS) {
+        sendJSON(res, 400, {
+          error: `內容過長（${inputText.length} 字），上限為 ${GEMINI_MAX_INPUT_CHARS} 字元。請縮短後再試。`,
+        });
+        return true;
+      }
+
+      const apiKey = getRequiredGeminiApiKey();
+      const prompt = buildExtractPrompt(inputText);
+      const result = await geminiGenerateContent(prompt, apiKey);
+
+      const candidates = Array.isArray(result && result.candidates) ? result.candidates : [];
+
+      // 驗證每個候選的必要欄位
+      const validCandidates = candidates.filter((c) =>
+        c &&
+        typeof c.category === 'string' &&
+        typeof c.summary === 'string' &&
+        typeof c.evidence === 'string' &&
+        typeof c.writebackTarget === 'string' &&
+        typeof c.confidence === 'number'
+      );
+
+      sendJSON(res, 200, {
+        candidates: validCandidates,
+        model: GEMINI_EXTRACT_MODEL,
+        extractedAt: new Date().toISOString(),
+        totalRaw: candidates.length,
+        totalValid: validCandidates.length,
+      });
+    } catch (error) {
+      const statusCode = error.message && error.message.includes('尚未設定') ? 400 : 500;
+      sendJSON(res, statusCode, { error: error.message || 'Gemini 提取失敗' });
+    }
+    return true;
   }
 
   // Handoff templates listing

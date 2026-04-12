@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshChatGPTSessionsButton.addEventListener('click', refreshChatGPTApiSessions);
   trackChatGPTSessionButton.addEventListener('click', trackChatGPTConversation);
   document.getElementById('btn-extract').addEventListener('click', runExtraction);
+  document.getElementById('btn-extract-llm').addEventListener('click', runLLMExtraction);
   document.getElementById('btn-writeback').addEventListener('click', runWriteback);
   document.getElementById('btn-back').addEventListener('click', goBack);
   document.getElementById('btn-restart').addEventListener('click', restart);
@@ -675,6 +676,115 @@ async function runExtraction() {
   document.getElementById('step-input').classList.add('hidden');
   document.getElementById('step-review').classList.remove('hidden');
   updateSummary();
+}
+
+/* ─── LLM Extraction (Gemini) ─── */
+
+function updateLLMStatus(message, icon, isError) {
+  const el = document.getElementById('llm-extract-status');
+  el.classList.remove('hidden');
+  el.innerHTML = `<span class="material-symbols-outlined">${escapeHTML(icon)}</span><span>${escapeHTML(message)}</span>`;
+  el.style.color = isError ? 'var(--color-error, #c0392b)' : '';
+}
+
+function hideLLMStatus() {
+  const el = document.getElementById('llm-extract-status');
+  el.classList.add('hidden');
+}
+
+/**
+ * 將 Gemini API 回傳的候選格式轉為 extract.js 內部格式。
+ */
+function mergeLLMCandidates(rawCandidates) {
+  const CATEGORY_MAP = {
+    'tool-insights': 'skill-candidates',
+    'preference-rules': 'preference-rules',
+    'task-patterns': 'task-patterns',
+    'decision-log': 'decision-log',
+    'market-knowledge': 'skill-candidates',
+  };
+
+  return rawCandidates.map((c, idx) => {
+    const internalCategory = CATEGORY_MAP[c.category] || 'skill-candidates';
+    const cat = CATEGORIES[internalCategory] || CATEGORIES['skill-candidates'];
+
+    return {
+      id: 'llm-cand-' + (idx + 1),
+      category: internalCategory,
+      content: `${c.summary}\n\n【原文佐證】${c.evidence}`,
+      keyLine: c.summary,
+      source: 'gemini-llm',
+      dedupeKey: c.summary.substring(0, 60).toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-'),
+      confidence: typeof c.confidence === 'number' ? Math.min(1, Math.max(0, c.confidence)) : 0.8,
+      decision: 'pending',
+      editedContent: null,
+      llmMeta: {
+        category: c.category,
+        writebackTarget: c.writebackTarget,
+        evidence: c.evidence,
+      },
+    };
+  });
+}
+
+async function runLLMExtraction() {
+  const text = document.getElementById('input-text').value.trim();
+  if (!text) {
+    alert('請先貼上要提取的對話內容。');
+    return;
+  }
+
+  const btnLLM = document.getElementById('btn-extract-llm');
+  const btnExtract = document.getElementById('btn-extract');
+  btnLLM.disabled = true;
+  btnExtract.disabled = true;
+  updateLLMStatus('AI 分析中，請稍候（通常 3~8 秒）…', 'hourglass_top', false);
+
+  try {
+    // Load current memory for dedup
+    memorySnapshot = {};
+    try {
+      const data = await apiFetch('/api/memory');
+      data.files.forEach(f => {
+        memorySnapshot[f.filename] = f.content;
+      });
+    } catch { /* continue without dedup */ }
+
+    const result = await apiPost('/api/extract/llm', { text });
+
+    if (!result.candidates || result.candidates.length === 0) {
+      updateLLMStatus('AI 未找到有保存價值的知識候選。請換一段更有資訊量的對話。', 'search_off', false);
+      return;
+    }
+
+    candidates = mergeLLMCandidates(result.candidates);
+    hideLLMStatus();
+
+    renderCandidates();
+    document.getElementById('step-input').classList.add('hidden');
+    document.getElementById('step-review').classList.remove('hidden');
+    updateSummary();
+
+    // 在 review summary 加入來源標示
+    const summaryEl = document.getElementById('review-summary');
+    if (summaryEl) {
+      const modelNote = document.createElement('span');
+      modelNote.className = 'source-badge source-gemini candidate-source-badge';
+      modelNote.style.marginLeft = '8px';
+      modelNote.textContent = `Gemini AI · ${result.candidates.length} 項`;
+      summaryEl.appendChild(modelNote);
+    }
+  } catch (error) {
+    const msg = error.message || '提取失敗，請稍後再試';
+    if (msg.includes('尚未設定')) {
+      updateLLMStatus('尚未設定 Gemini API key，請先到「設定」頁面儲存。', 'settings', true);
+    } else {
+      updateLLMStatus(`AI 提取失敗：${msg}`, 'error', true);
+    }
+  } finally {
+    btnLLM.disabled = false;
+    btnExtract.disabled = false;
+  }
 }
 
 /**
