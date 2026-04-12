@@ -68,6 +68,20 @@
       <div class="page-header">
         <h2>專案記憶</h2>
         <p class="description">從 docs/memory/ 讀取目前專案記憶，並顯示跨專案共用知識候選</p>
+        <button class="btn btn-secondary" id="btn-ai-review" style="margin-top:0.75rem">
+          ✨ AI 品質審查（Gemini）
+        </button>
+      </div>
+
+      <!-- AI Review Panel -->
+      <div class="card" id="ai-review-panel" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+          <strong>AI 品質審查結果</strong>
+          <button class="btn btn-ghost btn-sm" id="btn-ai-review-close" style="font-size:0.8rem">關閉</button>
+        </div>
+        <div id="ai-review-content">
+          <p style="color:var(--text-muted)">分析中，請稍候...</p>
+        </div>
       </div>
 
       <!-- KPI -->
@@ -103,5 +117,59 @@
   <script src="/js/memory-dedup-utils.js"></script>
   <script src="/js/shared-knowledge-utils.js"></script>
   <script src="/js/memory.js"></script>
-</body>
+  <script>
+    (function () {
+      const btn = document.getElementById('btn-ai-review');
+      const panel = document.getElementById('ai-review-panel');
+      const content = document.getElementById('ai-review-content');
+      const closeBtn = document.getElementById('btn-ai-review-close');
+
+      function severityIcon(s) {
+        if (s === 'error') return '🔴';
+        if (s === 'warning') return '🟡';
+        return '🔵';
+      }
+
+      closeBtn.addEventListener('click', () => { panel.style.display = 'none'; });
+
+      btn.addEventListener('click', async () => {
+        panel.style.display = '';
+        content.innerHTML = '<p style="color:var(--text-muted)">分析中，請稍候...</p>';
+        btn.disabled = true;
+        try {
+          const res = await fetch('/api/memory/ai-review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '審查失敗');
+
+          const items = (data.items || []);
+          const scoreHtml = data.score != null
+            ? `<span style="font-size:1.5rem;font-weight:700;color:${data.score >= 80 ? 'var(--color-success)' : data.score >= 60 ? 'var(--color-warning)' : 'var(--color-danger)'}">${data.score} 分</span>`
+            : '';
+
+          const itemsHtml = items.length === 0
+            ? '<p style="color:var(--color-success)">✅ 所有記憶資料品質良好，無需改善。</p>'
+            : items.map(it => `
+              <div style="border-left:3px solid var(--border-color);padding:0.5rem 0.75rem;margin-bottom:0.6rem">
+                <div style="display:flex;gap:0.4rem;align-items:baseline">
+                  <span>${severityIcon(it.severity)}</span>
+                  <strong style="font-size:0.85rem;color:var(--text-muted)">${it.file}</strong>
+                </div>
+                <p style="margin:0.25rem 0 0;font-size:0.9rem">${it.issue}</p>
+                <p style="margin:0.2rem 0 0;font-size:0.85rem;color:var(--text-muted)">💡 ${it.suggestion}</p>
+              </div>`).join('');
+
+          content.innerHTML = `
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem">
+              ${scoreHtml}
+              <p style="margin:0;color:var(--text-muted);font-size:0.9rem">${data.summary || ''}</p>
+            </div>
+            ${itemsHtml}`;
+        } catch (e) {
+          content.innerHTML = `<p style="color:var(--color-danger)">❌ ${e.message}</p>`;
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    })();
+  </script>
 </html>

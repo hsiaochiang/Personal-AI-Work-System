@@ -67,6 +67,7 @@ $patterns = @(
     "/docs/handoff/",
     "/docs/templates/",
     "/docs/shared/",
+    "/docs/product/",
     "/docs/roadmap.md",
     "/VERSION",
     "/CHANGELOG.md",

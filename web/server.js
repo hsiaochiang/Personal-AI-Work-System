@@ -1341,6 +1341,60 @@ async function handleAPI(req, res) {
     return true;
   }
 
+  // Memory AI quality review endpoint
+  if (url.pathname === '/api/memory/ai-review' && req.method === 'POST') {
+    try {
+      const apiKey = getRequiredGeminiApiKey();
+      const memoryDir = path.join(projectRoot, 'docs', 'memory');
+      const files = fs.readdirSync(memoryDir).filter(f => f.endsWith('.md') && !f.startsWith('.'));
+
+      const fileContents = files.map(f => {
+        const content = fs.readFileSync(path.join(memoryDir, f), 'utf8');
+        return `### ${f}\n${content}`;
+      }).join('\n\n---\n\n');
+
+      const prompt = `你是一個個人 AI 工作系統的記憶品質審查員。
+請審查以下所有記憶檔案的內容，找出品質問題並給出具體改善建議。
+
+記憶檔案內容：
+${fileContents}
+
+請以 JSON 格式回傳，格式如下：
+{
+  "summary": "（一句話總結整體品質）",
+  "score": 85,
+  "items": [
+    {
+      "file": "skill-candidates.md",
+      "severity": "warning",
+      "issue": "（描述問題）",
+      "suggestion": "（具體改善建議）"
+    }
+  ]
+}
+
+severity 只能是 "info"、"warning" 或 "error"。
+- error：嚴重過時或明顯錯誤的資訊，可能誤導 AI
+- warning：資訊不完整、缺少來源或有潛在過時風險
+- info：小改進建議，不影響正確性
+
+請只回傳 JSON，不要有任何說明文字。`;
+
+      const result = await geminiGenerateContent(prompt, apiKey);
+
+      if (!result || !result.items) {
+        sendJSON(res, 500, { error: 'AI 審查回傳格式不符預期' });
+        return true;
+      }
+
+      sendJSON(res, 200, result);
+    } catch (error) {
+      const message = error && error.message ? error.message : 'AI review failed';
+      sendJSON(res, 500, { error: message });
+    }
+    return true;
+  }
+
   return false;
 }
 
