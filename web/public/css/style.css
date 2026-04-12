@@ -999,7 +999,9 @@ body {
 .btn-icon .material-symbols-outlined { font-size: 18px; }
 .btn-icon.labeled { width: auto; height: auto; padding: 0.3rem 0.625rem; gap: 0.25rem; font-size: 0.75rem; font-weight: 600; }
 .btn-icon.adopt { color: #059669; border-color: #a7f3d0; }
+.btn-icon.adopt.is-active { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
 .btn-icon.reject { color: var(--error); border-color: #fecaca; }
+.btn-icon.reject.is-active { background: #fef2f2; color: var(--error); border-color: #fca5a5; }
 
 /* ─── Template Selector (Handoff) ─── */
 

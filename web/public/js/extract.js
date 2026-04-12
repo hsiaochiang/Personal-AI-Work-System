@@ -716,7 +716,7 @@ function mergeLLMCandidates(rawCandidates) {
       source: 'gemini-llm',
       dedupeKey: c.summary.substring(0, 60).toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-'),
       confidence: typeof c.confidence === 'number' ? Math.min(1, Math.max(0, c.confidence)) : 0.8,
-      decision: 'pending',
+      decision: null,
       editedContent: null,
       llmMeta: {
         category: c.category,
@@ -846,7 +846,7 @@ function extractCandidatesFromText(text, conversationDoc) {
         source: primarySource,
         dedupeKey: dedupeKey,
         confidence: confidence,
-        decision: confidence >= 0.6 ? 'pending' : 'rejected',
+        decision: confidence >= 0.6 ? null : 'rejected',
         editedContent: null,
       });
     }
@@ -893,7 +893,7 @@ function renderCandidates() {
     const cat = CATEGORIES[cand.category];
     const sourcePresentation = getCurrentSourcePresentation(cand.source);
     const card = document.createElement('div');
-    card.className = 'candidate-card' + (cand.decision === 'rejected' ? ' rejected' : ' adopted');
+    card.className = 'candidate-card' + (cand.decision === 'rejected' ? ' rejected' : cand.decision === 'pending' ? ' adopted' : '');
     card.dataset.idx = idx;
 
     card.innerHTML = `
@@ -904,11 +904,11 @@ function renderCandidates() {
           <span class="confidence-badge" title="AI 評估此項値得保存的信心程度">${(cand.confidence * 100).toFixed(0)}%</span>
         </div>
         <div class="candidate-actions">
-          <button class="btn-icon adopt labeled" title="採用此項知識候選" data-action="adopt">
+          <button class="btn-icon adopt labeled${cand.decision === 'pending' ? ' is-active' : ''}" title="採用此項知識候選" data-action="adopt">
             <span class="material-symbols-outlined">check_circle</span>
             <span class="btn-label">採用</span>
           </button>
-          <button class="btn-icon reject labeled" title="略過此項，本次不儲存" data-action="reject">
+          <button class="btn-icon reject labeled${cand.decision === 'rejected' ? ' is-active' : ''}" title="略過此項，本次不儲存" data-action="reject">
             <span class="material-symbols-outlined">cancel</span>
             <span class="btn-label">拒絕</span>
           </button>
@@ -934,10 +934,14 @@ function renderCandidates() {
         cand.decision = 'pending'; // mark as adopted-pending
         card.classList.remove('rejected');
         card.classList.add('adopted');
+        card.querySelector('[data-action="adopt"]').classList.add('is-active');
+        card.querySelector('[data-action="reject"]').classList.remove('is-active');
       } else if (action === 'reject') {
         cand.decision = 'rejected';
         card.classList.add('rejected');
         card.classList.remove('adopted');
+        card.querySelector('[data-action="reject"]').classList.add('is-active');
+        card.querySelector('[data-action="adopt"]').classList.remove('is-active');
       } else if (action === 'toggle-edit') {
         const editArea = card.querySelector('.candidate-edit');
         editArea.classList.toggle('hidden');
@@ -979,7 +983,11 @@ function adoptAll() {
   candidates.forEach((cand, idx) => {
     cand.decision = 'pending';
     const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
-    if (card) { card.classList.remove('rejected'); card.classList.add('adopted'); }
+    if (card) {
+      card.classList.remove('rejected'); card.classList.add('adopted');
+      card.querySelector('[data-action="adopt"]').classList.add('is-active');
+      card.querySelector('[data-action="reject"]').classList.remove('is-active');
+    }
   });
   updateSummary();
 }
@@ -988,18 +996,29 @@ function rejectAll() {
   candidates.forEach((cand, idx) => {
     cand.decision = 'rejected';
     const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
-    if (card) { card.classList.add('rejected'); card.classList.remove('adopted'); }
+    if (card) {
+      card.classList.add('rejected'); card.classList.remove('adopted');
+      card.querySelector('[data-action="reject"]').classList.add('is-active');
+      card.querySelector('[data-action="adopt"]').classList.remove('is-active');
+    }
   });
   updateSummary();
 }
 
 function resetDecisions() {
   candidates.forEach((cand, idx) => {
-    cand.decision = cand.confidence >= 0.6 ? 'pending' : 'rejected';
+    cand.decision = cand.confidence >= 0.6 ? null : 'rejected';
     const card = document.querySelector(`.candidate-card[data-idx="${idx}"]`);
     if (card) {
-      if (cand.decision === 'rejected') { card.classList.add('rejected'); card.classList.remove('adopted'); }
-      else { card.classList.remove('rejected'); card.classList.add('adopted'); }
+      if (cand.decision === 'rejected') {
+        card.classList.add('rejected'); card.classList.remove('adopted');
+        card.querySelector('[data-action="reject"]').classList.add('is-active');
+        card.querySelector('[data-action="adopt"]').classList.remove('is-active');
+      } else {
+        card.classList.remove('rejected', 'adopted');
+        card.querySelector('[data-action="adopt"]').classList.remove('is-active');
+        card.querySelector('[data-action="reject"]').classList.remove('is-active');
+      }
     }
   });
   updateSummary();
