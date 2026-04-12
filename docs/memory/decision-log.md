@@ -38,23 +38,11 @@
 - 決策理由：比單一大檔更容易長期維護，也比過度細分更容易開始使用
 - 影響範圍：專案檔案組織方式
 
-### 決策：保留規劃串與實作串分離，但不再把 git 分支與對話長度直接綁定
-
-- 決策內容：對話切分依任務目標與上下文邊界決定；git 分支則依程式變更邊界決定
-- 決策理由：降低長對話帶來的漂移，同時避免為了上下文過長而開出過多分支
-- 影響範圍：後續對話策略、實作節奏與分支管理方式
-
 ### 決策：本專案的長期成果應該包含 UI，但第一階段先不做完整介面
 
 - 決策內容：本專案長期應收斂成一個個人 AI 工作台；第一階段先以 markdown、流程與模板驗證核心工作流
 - 決策理由：先把高頻工作流跑通，再設計真正有價值的 UI，能避免過早做出華而不實的介面
 - 影響範圍：產品方向、階段規劃與後續實作順序
-
-### 決策：未來 UI 以 Project Hub、Workspace、Handoffs、Memory Review 為第一版核心畫面
-
-- 決策內容：未來若開始做 UI，第一版最小可用畫面集合為 Projects、Workspace、Handoffs、Memory Review
-- 決策理由：這四個畫面最直接對應目前已定義的核心工作流
-- 影響範圍：UI 規劃與未來 MVP 範圍
 
 ## 2026-03-14
 
@@ -64,14 +52,40 @@
 - 決策理由：本專案的價值核心在於工作流可持續使用與沉澱品質，過早追求速度容易做出能跑但不好用的系統
 - 影響範圍：V1 時程規劃、實作順序與功能邊界
 
-### 決策：專案文件依功能重組為 planning、memory、workflows、templates、product、roadmap、references
-
-- 決策內容：根目錄保留 `README.md` 作為入口，其餘文件依用途分類到對應資料夾
-- 決策理由：在進入 Phase 1 前先把資訊結構整理好，方便後續在 VS Code 另開 session 時快速找到正確文件
-- 影響範圍：專案檔案結構、文件導覽方式與後續維護
-
 ### 決策：Roadmap 合併為單一檔案
 
 - 決策內容：原 `roadmap/project-roadmap.md` 已合併至 `docs/roadmap.md`，後者為唯一路線圖
-- 決策理由：兩份 roadmap 命名不一致（S5=V2✅ vs Phase 3 全未勾選），三層架構增加認知負擔
+- 決策理由：兩份 roadmap 命名不一致，三層架構增加認知負擔
 - 影響範圍：所有 roadmap 查詢統一查 `docs/roadmap.md`
+
+## 2026-04-04
+
+### 決策：多工具 adapter 架構採 ConversationDoc 標準化介面
+
+- 決策內容：所有來源（ChatGPT / Gemini / Claude / Copilot / 純文字）先正規化為 `ConversationDoc`，再進入統一的提取流程
+- 決策理由：降低各來源 parser 與提取引擎的耦合，新增來源只需實作對應 adapter
+- 影響範圍：V3 架構、多來源匯入設計、後續 adapter 擴充方式
+
+### 決策：選用 Gemini 2.5-flash 作為 AI 輔助提取模型
+
+- 決策內容：原定使用 gemini-2.0-flash-lite，後因新帳號 2.0 系列已停用，改用 gemini-2.5-flash
+- 決策理由：2.5-flash 是目前對新帳號可用且效能最佳的模型；透過 `GET /v1beta/models` 列清單逐一測試確認
+- 影響範圍：`web/server.js` 的 GEMINI_EXTRACT_MODEL 設定、AI 輔助提取功能
+
+### 決策：Gemini 回應加入 responseMimeType: application/json
+
+- 決策內容：在 Gemini API 呼叫的 generationConfig 中加入 `responseMimeType: 'application/json'`，強制模型只輸出 JSON
+- 決策理由：不加時模型會在 JSON 前後附加說明文字，導致 JSON.parse 失敗
+- 影響範圍：v1.1.7 起的 AI 輔助提取穩定性
+
+### 決策：maxOutputTokens 設為 8192
+
+- 決策內容：原設 2048，改為 8192，以支援長文（~12000 字）輸入的完整 JSON 回應
+- 決策理由：2048 對 11877 字輸入生成的 JSON 不足，導致 JSON 截斷
+- 影響範圍：v1.1.8 起的 AI 輔助提取長文件支援
+
+### 決策：測試專案（mock-test）從 Projects Hub 移除
+
+- 決策內容：移除 projects.json 中的 `mock-test` 測試專案及 `temp-mock/` 目錄
+- 決策理由：正式環境不應保留測試資料，已完成多專案切換功能驗證
+- 影響範圍：Projects Hub 僅顯示「個人 AI 工作系統」一個專案

@@ -10,21 +10,29 @@
 - 提示詞分散在不同工具中，難以共享與演化
 - 真正需要累積的是知識、偏好、決策與任務模式，而不是大量 prompt
 
-## 範圍與邊界
+## 目前版本狀態（2026-04-12）
 
-### 目前範圍
+- **V1–V4** 已完成：單專案知識閉環、多專案管理、跨工具整合、治理自動化
+- **V5** 進行中：外部 API 整合，已完成 ChatGPT / Gemini / Claude adapter、AI 輔助提取
 
-- 規劃個人 AI 工作系統
-- 設計知識沉澱方式
-- 設計專案記憶結構
-- 定義第一階段 MVP
+## 現有功能範圍
 
-### 目前不在範圍內
+- 多工具對話知識提取（ChatGPT / Gemini / Claude / VS Code Copilot / 純文字）
+- AI 輔助提取（Gemini 2.5-flash）
+- 知識審核、寫回、自動備份
+- 記憶健康度評估、去重建議
+- 決策記錄與規則衝突偵測
+- Handoff 產生器
+- 多專案管理（Projects Hub）
+- 治理排程（Governance Scheduler）
+- OpenAI API key & Gemini API key 管理
 
-- 多工具同步實作
-- 全自動知識寫入
-- 向量資料庫或 embedding
-- 複雜 UI 與搜尋介面
+## 目前不在範圍內
+
+- 多使用者協作
+- 全自動知識寫入（所有操作需人工確認）
+- Gemini / Claude API 批量對話歷史載入
+- OAuth 整合
 
 ## 關鍵術語
 
@@ -32,12 +40,13 @@
 - 專案記憶：單一專案專屬的背景、偏好、規則與決策
 - 沉澱：從對話或材料中提取可重用知識並寫入文件
 - SKILL：可重用的固定工作流或能力模組
+- OpenSpec：本系統採用的 change 管理框架（Proposal → Design → Spec → Tasks → Archive）
 
 ## 限制與前提
 
-- 第一階段採半自動模式
-- 第一階段先從 VS Code / Copilot Chat 開始
-- 第一階段以專案為核心，不先展開所有跨專案能力
+- 所有寫回操作需人工審核確認
+- API Key 本機儲存（server-side `web/api-keys.json`），不進入 git
+- 服務運行於 `localhost:3001`（正式區）
 - 系統應優先追求低摩擦與可持續使用
 
 ## 已知背景事實
