@@ -181,7 +181,7 @@ function getRequiredOpenAIApiKey() {
 
 // ── Gemini API Key 管理 ────────────────────────────────────────
 const GEMINI_API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-const GEMINI_EXTRACT_MODEL = 'gemini-2.0-flash';
+const GEMINI_EXTRACT_MODEL = 'gemini-2.5-flash';
 const GEMINI_MAX_INPUT_CHARS = 50000;
 
 function readGeminiKeyStore() {
