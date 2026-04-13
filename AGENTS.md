@@ -79,6 +79,7 @@
 | `code-reviewer` | `.github/copilot/skills/code-reviewer.md` | Code review（安全、可讀性、一致性） | `#code-review`、commit 前 |
 | `smoke-tester` | `.github/copilot/skills/smoke-tester.md` | 冒煙測試，驗證基本功能不壞 | `#smoke-test`、每次 change 收尾 |
 | `git-steward` | `.github/copilot/skills/git-steward.md` | 正規 commit + push 流程 | `#commit-push` |
+| `knowledge-extractor` | `.github/copilot/skills/knowledge-extractor.md` | WKM 知識抽取總控（triage / ingest / Wilson 觀點 / prompt 抽取） | 個人知識庫整理、文章/影片/提示詞沉澱 |
 | `ui-designer` | `.github/copilot/skills/ui-designer.md` | UI 審查，產出 ui-review.md | `#ui-review`（僅 UI 類 change） |
 | `ux-fullstack-engineer` | `.github/copilot/skills/ux-fullstack-engineer.md` | UX 流程審查，產出 ux-review.md | `#ux-review`（僅 UI 類 change） |
 | `debug-sheriff` | `.github/copilot/skills/debug-sheriff.md` | Bug 診斷與修復流程 | bug 修復任務 |

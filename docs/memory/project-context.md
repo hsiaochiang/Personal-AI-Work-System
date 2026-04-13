@@ -46,6 +46,15 @@
 
 - 所有寫回操作需人工審核確認
 - API Key 本機儲存（server-side `web/api-keys.json`），不進入 git
+- 服務運行於 `localhost:3001`（正式區）策
+- 沉澱：從對話或材料中提取可重用知識並寫入文件
+- SKILL：可重用的固定工作流或能力模組
+- OpenSpec：本系統採用的 change 管理框架（Proposal → Design → Spec → Tasks → Archive）
+
+## 限制與前提
+
+- 所有寫回操作需人工審核確認
+- API Key 本機儲存（server-side `web/api-keys.json`），不進入 git
 - 服務運行於 `localhost:3001`（正式區）
 - 系統應優先追求低摩擦與可持續使用
 

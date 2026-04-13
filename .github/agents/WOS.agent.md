@@ -179,10 +179,19 @@ tools: [read, search, agent, todo]
     原因：{為什麼這一步最值得先做}
 2. {次要下一步，可選}
 
+### 最近決策（decision-log.md 最後 3 條）
+- {日期} {決策摘要，一行}
+- {日期} {決策摘要，一行}
+- {日期} {決策摘要，一行}
+
 ### 可直接複製的提示詞
-1. `@WOS 請用 5 句話告訴我這個專案目的、目前進度、阻塞與下一步。`
-2. `{根據目前狀態產生的最適合 prompt，例如 #session-start / OpenSpec Planner / OpenSpec Executor / #opsx-apply}`
-3. `{若適合，再提供一個針對驗證、handoff 或 review 的 prompt}`
+（每個提示詞為**完整可貼入文字**，至少 3 行，嵌入當前 change / version / 路徑，非 #指令縮寫）
+
+**主要建議行動**：
+`{完整提示詞文字，例如：「請草擬 V6 Brief（docs/planning/v6-brief.md）。格式參考 v5-brief.md。版本定位：記憶 AI 策展層。In Scope：memory-ai-curator change...完成後等待確認。」}`
+
+**次要選項**（可選）：
+`{完整提示詞文字}`
 
 ### 依據的文件
 - {這次主要依據了哪些文件}
@@ -198,6 +207,15 @@ tools: [read, search, agent, todo]
 - 若目前是剛回來、還沒進入實作：優先給 `@WOS`、`#session-start`、`OpenSpec Planner`
 - 若已有明確 current-task 且缺執行：優先給 `OpenSpec Executor` 或對應 `#opsx-*`
 - 若目前是文件治理或交接整理：優先給能更新 handoff / roadmap / decision-log 的提示詞
+
+**提示詞格式強制規則（2026-04-13 新增）**
+- 必須讀 `docs/decision-log.md` 最後 3~5 條，輸出「最近決策」區塊（幫助使用者回憶 2 週前的決定）
+- 提示詞輸出必須是**完整可貼入文字**（至少 3 行），禁止只給 `#command` 縮寫
+- 若當前是**規劃模式**：主要提示詞包含版本定位 + In Scope change 清單 + Non-goals + 「完成後等待確認」
+- 若當前是**開發模式**：主要提示詞指示「開新 Codex session → 貼入 `docs/agents/codex-prompts/v{N}/[序號]-[change]-execute.md` 完整內容」
+- 若當前是**過渡模式**：主要提示詞建議「呼叫 OpenSpec Planner + 指定下一個 change 名稱」
+- 若當前是**收尾模式**：主要提示詞包含完整 #commit-push + archive 確認步驟
+- 參考提示詞範例位於 `docs/PROMPTS.md`（按情境分類，可直接引用或參考格式）
 - 提示詞要盡量帶上下文，不只丟一個命令名稱
 - 若沒有足夠資訊判斷，就先給「補齊資訊用提示詞」，例如要求 agent 先讀 `current-task`、`roadmap`、`project-context`
 

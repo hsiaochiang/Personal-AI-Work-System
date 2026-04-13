@@ -45,4 +45,11 @@
 - 說明：從 Planner → Executor → Review Gate → Archive 的完整 change 管理循環，配合 handoff 交接
 - 目前狀態：候選升級
 - 為何值得觀察：V3~V5 共執行超過 15 個 change，流程已相當穩定
+- 尚缺：正式寫入 `.github/skills/` 的 SKILL 格式定義 engineering 設定與邊界條件文件
+
+### 候選 2：OpenSpec Change 生命週期管理
+
+- 說明：從 Planner → Executor → Review Gate → Archive 的完整 change 管理循環，配合 handoff 交接
+- 目前狀態：候選升級
+- 為何值得觀察：V3~V5 共執行超過 15 個 change，流程已相當穩定
 - 尚缺：正式寫入 `.github/skills/` 的 SKILL 格式定義

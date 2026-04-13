@@ -88,4 +88,18 @@
 
 - 決策內容：移除 projects.json 中的 `mock-test` 測試專案及 `temp-mock/` 目錄
 - 決策理由：正式環境不應保留測試資料，已完成多專案切換功能驗證
+- 影響範圍：Projects Hub 僅顯示「個人 AI 工作系統」一個專案中加入 `responseMimeType: 'application/json'`，強制模型只輸出 JSON
+- 決策理由：不加時模型會在 JSON 前後附加說明文字，導致 JSON.parse 失敗
+- 影響範圍：v1.1.7 起的 AI 輔助提取穩定性
+
+### 決策：maxOutputTokens 設為 8192
+
+- 決策內容：原設 2048，改為 8192，以支援長文（~12000 字）輸入的完整 JSON 回應
+- 決策理由：2048 對 11877 字輸入生成的 JSON 不足，導致 JSON 截斷
+- 影響範圍：v1.1.8 起的 AI 輔助提取長文件支援
+
+### 決策：測試專案（mock-test）從 Projects Hub 移除
+
+- 決策內容：移除 projects.json 中的 `mock-test` 測試專案及 `temp-mock/` 目錄
+- 決策理由：正式環境不應保留測試資料，已完成多專案切換功能驗證
 - 影響範圍：Projects Hub 僅顯示「個人 AI 工作系統」一個專案
