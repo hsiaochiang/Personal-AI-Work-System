@@ -52,7 +52,6 @@ llm-extract-gemini change 已開發完成，請執行 #opsx-archive。
 | 看未來功能想法 | [product/backlog.md](product/backlog.md) | — |
 | 有問題要回報 | [product/inbox/](product/inbox/) | — |
 | 找 agent/skill 資訊 | [AGENTS-INDEX.md](AGENTS-INDEX.md) | — |
-| 找給 AI 用的文件 | [for-agents/README.md](for-agents/README.md) | — |
 
 ---
 
@@ -71,6 +70,26 @@ llm-extract-gemini change 已開發完成，請執行 #opsx-archive。
 - **DEV**：`D:\program\Personal-AI-Work-System` → PORT 3000
 - **PROD**：`D:\prod\Personal-AI-Work-System` → PORT 3001（用 `start-prod.bat`）
 - **VERSION**：1.1.10
+
+---
+
+---
+
+## AI 不需要你讀的地方
+
+以下是 AI（Copilot/Codex）自動讀取的檔案，你**不需要進入**：
+
+| 目錄 | 說明 |
+|------|------|
+| `.github/agents/` | Agent 規格書（WOS、Planner、Executor、Review Gate） |
+| `.github/copilot/rules/` | 行為規則（AI 自動套用） |
+| `.github/copilot/skills/` | 技能定義（AI 自動觸發） |
+| `.github/skills/` | OpenSpec 技能（`/opsx-*` 指令用） |
+| `docs/agents/` | Agent 文件、codex-prompts、初始化設定 |
+| `docs/memory/` | AI 記憶檔案（由 Extract 頁面寫入） |
+| `openspec/` | Change 管理（changes/、specs/） |
+
+如需了解個別 agent/skill 的功能，查看 [AGENTS-INDEX.md](AGENTS-INDEX.md)。
 
 ---
 

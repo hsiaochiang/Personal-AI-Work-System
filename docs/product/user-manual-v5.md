@@ -70,7 +70,9 @@ Extract 是將散落在各工具的對話「沉澱」為專案記憶的核心入
 2. **匯入內容**: 貼上文字或上傳檔案。
    - **ChatGPT API**: 需先在 Settings 設定 OpenAI API Key，即可從 tracked 列表選擇最近對話。
    - **Copilot**: 直接刷新清單並點選最近的本機 Session。
-3. **提取候選**: 點擊「提取候選知識」，系統會識別「背景、偏好、輸出模式、決策」四類知識。
+3. **提取候選**（二種方式，擇一或搭配使用）：
+   - **規則提取**：點擊「提取候選知識」，系統以關鍵字規則識別「背景、偏好、輸出模式、決策」四類知識，速度快、不需 API。
+   - **AI 語意提取**（v1.1.3+）：點擊「AI 語意提取」，使用 Gemini 理解對話語意，能辨識規則提取可能遺漏的細節。**需先在 Settings 設定 Gemini API Key（見 [2.6.2](#gemini-api-key-設定必要)）**。
 4. **審核與寫回**: 審核每條候選（可編輯內容），點擊「寫回」。
    - **安全保護**: 每次寫回前系統會自動備份 `docs/memory/` 到 `.backup/`。
 
@@ -168,6 +170,32 @@ Memory 頁面是你**檢視並維護 AI 對你的了解程度**的地方。
 #### 2.6.1 OpenAI API Key 設定
 若要啟用 ChatGPT API 自動載入功能，請在此輸入您的 OpenAI API Key。
 - **安全性**: 密鑰僅儲存在伺服器端 `web/api-keys.json`。系統**不會**將您的 Key 上傳到任何外部服務，且該設定檔已列入 `.gitignore` 以防不慎 commit。
+
+#### 2.6.2 Gemini API Key 設定（必要）
+
+Gemini API Key 是這兩個功能運作的前提：
+
+| 功能 | 頁面 | 說明 |
+|------|------|------|
+| **AI 語意提取** | `/extract` | 點擊「AI 語意提取」按鈕，使用 Gemini 理解對話語意，比傳統規則提取更準確 |
+| **AI 品質審查** | `/memory` | 點擊「✨ AI 品質審查」，由 Gemini 分析所有記憶檔案並給出改善建議 |
+
+**取得 API Key：**
+1. 前往 [Google AI Studio](https://aistudio.google.com/)（需 Google 帳號）
+2. 點擊「Get API Key」→「Create API key」
+3. 複製產生的 Key（格式類似 `AIzaSy...`）
+
+**設定方式：**
+1. 開啟 http://localhost:3001/settings（PROD）或 http://localhost:3000/settings（DEV）
+2. 找到「Gemini API Key」區塊，貼入 Key
+3. 點擊「儲存」——頁面顯示 ✅ 已設定即完成
+
+**安全性：**
+- Key 僅存於本機 `web/api-keys.json`，不會上傳任何位置
+- `api-keys.json` 已列入 `.gitignore`，不會被 commit
+- 日後在 Settings 可隨時更換或清除
+
+> **⚠️ 注意**：若未設定 Gemini Key 就點擊 AI 功能按鈕，系統會顯示錯誤訊息「尚未設定 Gemini API key；請先到 /settings 儲存。」
 
 ---
 
