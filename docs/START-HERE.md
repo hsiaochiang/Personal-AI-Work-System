@@ -1,6 +1,6 @@
 # START-HERE — PAIS 現況儀表板
 
-> 每次呼叫 `/WOS` 後可要求更新此檔。最後更新：2026-04-13
+> 每次呼叫 `/WOS` 後可要求更新此檔。最後更新：2026-04-14
 
 ---
 
@@ -8,19 +8,27 @@
 
 | 項目 | 狀態 |
 |------|------|
-| **版本** | V5 完成 ✅ \| V6 Brief：**尚未建立** ⚠️ |
-| **模式** | 規劃模式（brief 未建立，不可開始 change） |
-| **Active Changes** | `memory-ai-curator`（artifacts 已建，待執行） |
-| **待處理** | `llm-extract-gemini`（已開發完成，需 archive） |
-| **上次 commit** | 查看 `git log --oneline -3` |
+| **版本** | v1.1.10 ✅ \| V6 Brief：**尚未建立** ⚠️ |
+| **模式** | 規劃模式（Brief 未建立，正式 change 不可開始） |
+| **⏳ 待 Archive** | `llm-extract-gemini`（實作已在 server.js，需走 archive 流程） |
+| **🔜 待執行** | `memory-ai-curator`（artifacts 已建 2026-04-13，Not Started） |
+| **本地未推送** | `ec5c1ec`（docs 更新，待 push） |
+| **上次 commit** | `ec5c1ec` chore: commit by Copilot - docs updates |
 
 ---
 
 ## 馬上可做的事
 
-**優先度 1：建立 V6 Brief（規劃模式的入場券）**
+**優先度 1：Archive llm-extract-gemini（清除技術債）**
 
-直接貼到 Copilot Chat：
+實作已完成（`readGeminiKeyStore`、`geminiGenerateContent`、`/api/extract/llm` 均已在 server.js），只差走 archive 流程。直接貼到 Copilot Chat 或 Codex CLI：
+```
+llm-extract-gemini change 實作已完成（server.js 已有所有路由與函式），
+請執行 #opsx-archive 完成 archive。
+```
+
+**優先度 2：建立 V6 Brief（archive 完成後）**
+
 ```
 請草擬 V6 Brief（路徑：docs/planning/v6-brief.md）。
 格式參考 docs/planning/v5-brief.md。
@@ -30,10 +38,10 @@ Non-goals：inline 編輯、跨專案同步、向量搜尋
 完成後等待我確認，不要自行繼續。
 ```
 
-**優先度 2：Archive llm-extract-gemini（清除債務）**
+**優先度 3：Push 本地 commit**
 
 ```
-llm-extract-gemini change 已開發完成，請執行 #opsx-archive。
+git push origin main
 ```
 
 ---

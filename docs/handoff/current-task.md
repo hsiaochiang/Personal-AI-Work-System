@@ -4,9 +4,46 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V5 版本收尾完成 — v1.1.0 發布
+- Name: V6 Brief 建立與 memory-ai-curator 實作準備
 - Owner agent: Copilot
-- Last updated on: 2026-04-05
+- Last updated on: 2026-04-14
+
+## Goal
+- V6 Brief 建立並通過使用者確認（`docs/planning/v6-brief.md`）
+- `memory-ai-curator` change 開始實作（T-01 ~ T-06）
+- VERSION 升至 1.1.11+（下一個 patch 後）
+
+## Done
+- V1–V5 全數 planned changes 已 archive
+- v1.1.0 已發布（git tag + VERSION + CHANGELOG）
+- `llm-extract-gemini`（Post-V5）✅ 已完成並 archive（2026-04-14）
+  - 後端：Gemini key 管理函式、`/api/settings/gemini`、`/api/extract/llm`
+  - 前端：settings.html Gemini Key UI、extract.html AI 輔助提取按鈕、extract.js LLM 提取邏輯
+  - Smoke：`docs/qa/2026-04-14_llm-extract-gemini-smoke.md` ✅
+
+## In Progress
+- V6 Brief 草稿（待使用者確認後開始 change）
+
+## Next Step
+
+| 優先 | 說明 |
+|:----:|------|
+| 🟢 1 | 確認 `docs/planning/v6-brief.md`（使用者確認後不可自行繼續） |
+| 🟢 2 | Brief 確認後：執行 `memory-ai-curator` T-01 → T-06 |
+| 🟢 3 | 每個 task 完成後 commit + push |
+
+## Files Touched（本 session）
+- docs/handoff/current-task.md
+- docs/START-HERE.md
+- docs/roadmap.md
+- docs/qa/2026-04-14_llm-extract-gemini-smoke.md
+- openspec/changes/archive/2026-04-14-llm-extract-gemini/tasks.md
+- docs/planning/v6-brief.md（待建立）
+
+## Validation Status
+- llm-extract-gemini archive：✅ 完成
+- Smoke 文件：✅ `docs/qa/2026-04-14_llm-extract-gemini-smoke.md`
+- V6 Brief：⏳ 待建立
 
 ## Goal
 - V1–V5 全數 planned changes 已 archive，v1.1.0 已發布（git tag + VERSION + CHANGELOG）
