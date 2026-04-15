@@ -139,6 +139,7 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-15 | V6 git publish | `memory-ai-curator` implementation commit `90b7578` 已建立並推送到 `origin/main`；brief、roadmap、handoff 同步改為待 `/opsx-sync` / archive 的收尾狀態 | 無（No user-facing change；本次僅更新發布與治理狀態，不改動 `/memory` 的已上線能力） |
 | 2026-04-15 | V6 review-gate cleanup | Review Gate 已完成 `memory-ai-curator` 收尾檢查，並修正 active change artifact 漂移：`proposal.md` 與 `tasks.md` 的狀態、版本與 route 描述已回到與實作一致；handoff 同步改為可進 commit / sync | 無（No user-facing change；本次僅修正治理文件與交接狀態，不改動 `/memory` 的已上線能力） |
 | 2026-04-15 | V6 executor verify | 完成 `memory-ai-curator` 第一輪實作與 verify：`/memory` 新增單條刪除、KPI 問題篩選、逐分類 AI curate panel、AI review 跳轉；同時補齊 strict validate、targeted verify、memory regression、ephemeral API smoke、UI review 與 UX review evidence | 有（使用者現在可在 `/memory` 直接刪除單條記憶、只看待清理項目，並讓 Gemini 針對單一分類提出整理版本後再人工確認覆寫） |
 | 2026-04-15 | V6 planner / executor-ready sync | 補齊 `memory-ai-curator` 的 change spec artifact，並同步 V6 brief 的 Prompt 清單、跨版本影響、版本狀態；manual 版本狀態同步切到 V6 進行中，但功能尚未實作完成 | 無（No user-facing change；本次為規劃與治理同步，`/memory` 尚未新增刪除、AI curate 或 KPI 篩選功能） |

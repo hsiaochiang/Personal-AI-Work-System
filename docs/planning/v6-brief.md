@@ -88,7 +88,7 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 
 | Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
 |---|---|---|---|---|
-| `memory-ai-curator` | 身為需要持續整理知識庫的使用者，我想要在 `/memory` 直接刪除問題條目、只看需要清理的內容，並讓 Gemini 針對單一分類提出整理建議，以便把記憶庫從靜態倉庫變成可維護的工作介面 | 🔄 進行中 | T-01~T-06、strict validate、targeted verify、memory regression、syntax check、ephemeral API smoke、UI review、UX review 已完成；Review Gate 判定 `CONDITIONAL PASS`，artifact 漂移已修正。下一步進入 commit / sync，archive 待人工決定 | `/memory` → 刪除條目 / 點 KPI 篩選 / 點「AI 整理」→ 確認覆寫 |
+| `memory-ai-curator` | 身為需要持續整理知識庫的使用者，我想要在 `/memory` 直接刪除問題條目、只看需要清理的內容，並讓 Gemini 針對單一分類提出整理建議，以便把記憶庫從靜態倉庫變成可維護的工作介面 | 🔄 進行中 | T-01~T-06、strict validate、targeted verify、memory regression、syntax check、ephemeral API smoke、UI review、UX review、Review Gate、implementation commit 與 push 已完成；下一步進入 `/opsx-sync`，archive 待人工決定 | `/memory` → 刪除條目 / 點 KPI 篩選 / 點「AI 整理」→ 確認覆寫 |
 
 ---
 
@@ -115,7 +115,7 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 - [x] `memory-ai-curator` 所有 tasks（T-01 ~ T-06）標記 `[x]`
 - [x] Smoke 文件：`docs/qa/<date>_memory-ai-curator-smoke.md` 全通過
 - [x] 無新增 open issue
-- [ ] git commit + push
+- [x] git commit + push
 
 ---
 
@@ -157,7 +157,7 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 
 - **開始日期**：2026-04-14
 - **完成日期**：
-- **狀態**：執行中（Review Gate conditional pass；待 commit / sync，archive 待人工決定）
+- **狀態**：執行中（implementation commit + push 已完成；待 `/opsx-sync`，archive 待人工決定）
 
 ---
 

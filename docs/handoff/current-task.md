@@ -4,14 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V6 `memory-ai-curator` Review Gate conditional pass，待 commit 前治理收尾
+- Name: V6 `memory-ai-curator` implementation commit 已完成，待 `/opsx-sync`
 - Owner agent: Codex
 - Last updated on: 2026-04-15
 
 ## Goal
-- 完成 `memory-ai-curator` 的 Review Gate 收尾
-- 補齊 active change artifact 漂移，讓 OpenSpec artifacts、handoff、manual、QA evidence 一致
-- 將 change 狀態推進到可 commit / sync，再交由人決定 archive
+- 完成 `memory-ai-curator` 的 implementation commit 後收尾
+- 維持 OpenSpec artifacts、handoff、manual、roadmap 一致
+- 將 change 狀態推進到可 `/opsx-sync`，再交由人決定 archive
 
 ## Done
 - 已讀取 `AGENTS.md`、`CODEX.md`、`docs/handoff/*`、`docs/roadmap.md`、`docs/planning/v6-brief.md`、`docs/system-manual.md`、`docs/agents/*`、`.github/agents/openspec-planner.agent.md`
@@ -38,21 +38,24 @@
   - 判定為 `CONDITIONAL PASS`
   - blocking issue 已收斂為 active change artifact 治理漂移，不是產品功能缺陷
   - 本輪已修正 `proposal.md` 的版本 / route 描述漂移與 `tasks.md` 的狀態漂移
+- 已完成 implementation commit / push：
+  - commit：`90b7578` `add memory ai curator workflow`
+  - 已推送至 `origin/main`
 
 ## In Progress
-- 準備進入 commit 前最後檢查，確認可做 `/opsx-sync`
+- 準備執行 `/opsx-sync`
 
 ## Open Issues
 - 無產品 blocker；Review Gate 的 artifact 漂移已修正
 - 尚未做真人瀏覽器逐點 walkthrough，但 API smoke、UI review、UX review 與 targeted verify 已補齊
-- 尚未執行 commit / push、`/opsx-sync`、`/opsx-archive`
+- 尚未執行 `/opsx-sync`、`/opsx-archive`
 
 ## Next Step
 | 優先 | 說明 |
 |:----:|------|
-| 🟢 1 | 檢查工作樹後執行 commit 前 review，確認只剩本 change 相關差異 |
-| 🟢 2 | 進入 implementation commit，之後執行 `/opsx-sync` |
-| 🟡 3 | sync 完成後由人決定是否執行 `/opsx-archive`；若仍希望補真人 walkthrough，可在 archive 前追加證據 |
+| 🟢 1 | 執行 `/opsx-sync`，把 `memory-ai-curator` main spec 同步到正式 specs |
+| 🟢 2 | sync 完成後由人決定是否執行 `/opsx-archive` |
+| 🟡 3 | 若仍希望補真人 walkthrough，可在 archive 前追加手動 UI 證據 |
 
 ## Files Touched（本 session）
 - `docs/handoff/current-task.md`
@@ -85,5 +88,6 @@
 - Ephemeral API smoke：✅ 暫存副本驗證 `POST /api/memory/item/delete`（backup + 單條刪除）、`POST /api/memory/ai-curate`（live Gemini success + missing-key 400）
 - UI review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md`
 - UX review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
-- Review Gate：✅ `CONDITIONAL PASS`（artifact 漂移已修正；可進 commit，sync / archive 待下一步）
+- Review Gate：✅ `CONDITIONAL PASS`（artifact 漂移已修正）
+- Git publish：✅ commit `90b7578` 已 push 到 `origin/main`
 - Not run yet：真人瀏覽器逐點 walkthrough（非 blocker）
