@@ -63,34 +63,101 @@
     };
   }
 
-  function parseMemoryMarkdown(md) {
+  function buildMemoryItemId(filename, groupIndex, itemIndex) {
+    const normalizedFilename = typeof filename === 'string' ? filename.trim() : '';
+    return `${normalizedFilename}::${groupIndex}::${itemIndex}`;
+  }
+
+  function parseDetailedMemoryMarkdown(md, filename) {
     const groups = [];
     let currentGroup = null;
+    let groupIndex = -1;
+    let itemIndex = 0;
     const lines = String(md || '').split('\n');
 
-    for (const line of lines) {
+    lines.forEach((line, lineIndex) => {
       const trimmed = line.trim();
 
       const headerMatch = trimmed.match(/^#{2,3}\s+(.+)$/);
       if (headerMatch) {
-        currentGroup = { title: headerMatch[1], items: [] };
+        groupIndex += 1;
+        itemIndex = 0;
+        currentGroup = {
+          title: headerMatch[1],
+          groupIndex,
+          lineIndex,
+          items: [],
+        };
         groups.push(currentGroup);
-        continue;
+        return;
       }
 
       if (!currentGroup || !trimmed.startsWith('- ')) {
-        continue;
+        return;
       }
 
       const item = parseAttributedMemoryListItem(trimmed);
       if (!item || !item.content) {
-        continue;
+        return;
       }
 
-      currentGroup.items.push(item);
-    }
+      currentGroup.items.push({
+        itemId: filename ? buildMemoryItemId(filename, currentGroup.groupIndex, itemIndex) : '',
+        groupIndex: currentGroup.groupIndex,
+        itemIndex,
+        groupTitle: currentGroup.title,
+        lineIndex,
+        rawLine: line,
+        indent: (line.match(/^\s*/) || [''])[0],
+        content: item.content,
+        source: item.source,
+      });
+      itemIndex += 1;
+    });
 
     return groups;
+  }
+
+  function parseMemoryMarkdown(md, options) {
+    const filename = options && typeof options.filename === 'string' ? options.filename.trim() : '';
+    const detailedGroups = parseDetailedMemoryMarkdown(md, filename);
+
+    return detailedGroups.map(group => ({
+      title: group.title,
+      groupIndex: group.groupIndex,
+      lineIndex: group.lineIndex,
+      items: group.items.map(item => ({
+        itemId: item.itemId,
+        groupIndex: item.groupIndex,
+        itemIndex: item.itemIndex,
+        groupTitle: item.groupTitle,
+        lineIndex: item.lineIndex,
+        rawLine: item.rawLine,
+        indent: item.indent,
+        content: item.content,
+        source: item.source,
+      })),
+    }));
+  }
+
+  function removeMemoryItemById(markdown, filename, itemId) {
+    const normalizedItemId = typeof itemId === 'string' ? itemId.trim() : '';
+    if (!normalizedItemId) {
+      throw new Error('itemId 為必填');
+    }
+
+    const detailedGroups = parseDetailedMemoryMarkdown(markdown, filename);
+    const targetItem = detailedGroups
+      .flatMap(group => group.items || [])
+      .find(item => item.itemId === normalizedItemId);
+
+    if (!targetItem) {
+      throw new Error(`找不到 itemId: ${normalizedItemId}`);
+    }
+
+    const lines = String(markdown || '').split('\n');
+    lines.splice(targetItem.lineIndex, 1);
+    return lines.join('\n').replace(/\n{3,}/g, '\n\n');
   }
 
   function getMemorySourcePresentation(source) {
@@ -142,11 +209,14 @@
   }
 
   return {
+    buildMemoryItemId,
     buildAttributedMemoryListItem,
     getMemorySourcePresentation,
     normalizeMemorySource,
+    parseDetailedMemoryMarkdown,
     parseAttributedMemoryListItem,
     parseMemoryMarkdown,
+    removeMemoryItemById,
     sanitizeMemoryListContent,
   };
 });

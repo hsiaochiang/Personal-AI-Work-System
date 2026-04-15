@@ -9,6 +9,7 @@ const {
   resolveVSCodeCopilotSessionDir,
   summarizeVSCodeCopilotSession,
 } = require('./public/js/conversation-adapters.js');
+const memorySourceUtils = require('./public/js/memory-source-utils.js');
 const memoryHealthUtils = require('./public/js/memory-health-utils.js');
 const memoryDedupUtils = require('./public/js/memory-dedup-utils.js');
 const ruleConflictUtils = require('./public/js/rule-conflict-utils.js');
@@ -366,6 +367,75 @@ writebackTarget 選項（只能選以下之一）：
 候選數量：最少 3 個，最多 7 個。只提取最有價值的，寧缺勿濫。`;
 
   return `${systemPrompt}\n\n請從以下對話內容提取有長期保存價值的知識：\n\n<conversation>\n${userText}\n</conversation>`;
+}
+
+function extractCuratorSummaryFromMarkdown(markdown) {
+  const match = String(markdown || '').match(/<!--\s*curator-summary:\s*([\s\S]*?)\s*-->/i);
+  return match ? match[1].trim() : '';
+}
+
+function stripCuratorSummaryComment(markdown) {
+  return String(markdown || '')
+    .replace(/\n?\s*<!--\s*curator-summary:[\s\S]*?-->\s*$/i, '')
+    .trim();
+}
+
+async function geminiGeneratePlainText(promptText, apiKey) {
+  if (typeof fetch !== 'function') {
+    throw new Error('目前 Node.js runtime 不支援 fetch');
+  }
+
+  const endpoint = `${GEMINI_API_BASE_URL}/${GEMINI_EXTRACT_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const requestBody = {
+    contents: [
+      {
+        parts: [{ text: promptText }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.3,
+      maxOutputTokens: 8192,
+    },
+  };
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody),
+  });
+
+  const responseText = await response.text();
+  let responseBody = null;
+  try {
+    responseBody = JSON.parse(responseText);
+  } catch (_) {
+    throw new Error(`Gemini API 回傳非 JSON：${responseText.slice(0, 200)}`);
+  }
+
+  if (!response.ok) {
+    const errMsg =
+      responseBody &&
+      responseBody.error &&
+      responseBody.error.message
+        ? responseBody.error.message
+        : `${response.status} ${response.statusText}`;
+    throw new Error(`Gemini API 錯誤：${errMsg}`);
+  }
+
+  const rawText =
+    responseBody &&
+    responseBody.candidates &&
+    responseBody.candidates[0] &&
+    responseBody.candidates[0].content &&
+    responseBody.candidates[0].content.parts &&
+    responseBody.candidates[0].content.parts[0] &&
+    responseBody.candidates[0].content.parts[0].text;
+
+  if (!rawText) {
+    throw new Error('Gemini API 回傳內容為空');
+  }
+
+  return rawText.trim();
 }
 
 function normalizeConversationId(value) {
@@ -1158,6 +1228,45 @@ async function handleAPI(req, res) {
     return true;
   }
 
+  if (url.pathname === '/api/memory/item/delete' && req.method === 'POST') {
+    try {
+      const payload = await readJsonRequestBody(req);
+      const filename = (payload.filename || '').trim();
+      const itemId = (payload.itemId || '').trim();
+      if (!filename || !itemId) {
+        sendJSON(res, 400, { error: 'filename 與 itemId 為必填' });
+        return true;
+      }
+
+      const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+      const currentContent = fs.readFileSync(resolved, 'utf8');
+      const updatedContent = memorySourceUtils.removeMemoryItemById(currentContent, filename, itemId);
+
+      writeMemoryFileWithBackup(MEMORY_DIR, BACKUP_DIR, resolved, updatedContent, (writeErr, backedUp) => {
+        if (writeErr) {
+          sendJSON(res, 500, { error: writeErr.message });
+          return;
+        }
+        sendJSON(res, 200, {
+          success: true,
+          filename,
+          itemId,
+          backedUp,
+        });
+      });
+    } catch (error) {
+      const message = error && error.message ? error.message : 'delete failed';
+      let statusCode = 400;
+      if (/whitelist|Path traversal/i.test(message)) {
+        statusCode = 403;
+      } else if (/找不到 itemId/i.test(message)) {
+        statusCode = 404;
+      }
+      sendJSON(res, statusCode, { error: message });
+    }
+    return true;
+  }
+
   // Decisions endpoint (decision-log.md + memory/decision-log.md)
   if (url.pathname === '/api/decisions') {
     const sources = [
@@ -1391,6 +1500,69 @@ severity 只能是 "info"、"warning" 或 "error"。
     } catch (error) {
       const message = error && error.message ? error.message : 'AI review failed';
       sendJSON(res, 500, { error: message });
+    }
+    return true;
+  }
+
+  if (url.pathname === '/api/memory/ai-curate' && req.method === 'POST') {
+    try {
+      const apiKey = getRequiredGeminiApiKey();
+      const payload = await readJsonRequestBody(req);
+      const filename = (payload.filename || '').trim();
+      const resolved = getWritableMemoryFilePath(MEMORY_DIR, filename);
+      const fileContent = fs.readFileSync(resolved, 'utf8');
+
+      const categoryLabels = {
+        'decision-log.md': '決策紀錄',
+        'output-patterns.md': '輸出模式',
+        'preference-rules.md': '偏好規則',
+        'project-context.md': '專案背景',
+        'skill-candidates.md': '技能候選',
+        'task-patterns.md': '任務模式',
+      };
+      const categoryLabel = categoryLabels[filename] || filename;
+
+      const prompt = `你是個人 AI 工作系統的記憶品質專家。
+以下是「${categoryLabel}」（${filename}）的完整內容：
+
+---
+${fileContent}
+---
+
+請整理並改善這份記憶文件，原則：
+1. 移除明顯過時或不再正確的條目（說明為何移除）
+2. 合併高度重複的條目
+3. 補充缺少來源或日期的標記（格式：<!-- source: 來源 -->，日期僅在原文可支持時補）
+4. 維持原有的 Markdown 結構（標題與 bullet list）
+5. 不要增加原本沒有的新知識
+
+直接回傳改善後的完整 Markdown 文字，不要有說明前言。
+請在最後附上 HTML 註解格式摘要：
+<!-- curator-summary: 你做了什麼 -->`;
+
+      const improvedRaw = await geminiGeneratePlainText(prompt, apiKey);
+      const summary = extractCuratorSummaryFromMarkdown(improvedRaw) || '（無摘要）';
+      const improved = stripCuratorSummaryComment(improvedRaw);
+
+      if (!improved) {
+        sendJSON(res, 500, { error: 'Gemini 回傳內容為空' });
+        return true;
+      }
+
+      sendJSON(res, 200, {
+        filename,
+        original: fileContent,
+        improved,
+        summary,
+      });
+    } catch (error) {
+      const message = error && error.message ? error.message : 'curate failed';
+      const statusCode = /尚未設定 Gemini API key/i.test(message)
+        ? 400
+        : /whitelist|Path traversal/i.test(message)
+          ? 403
+          : 500;
+      sendJSON(res, statusCode, { error: message });
     }
     return true;
   }

@@ -233,13 +233,23 @@
   }
 
   function enrichMemoryGroups(markdown, options) {
-    const groups = memorySourceUtils.parseMemoryMarkdown(markdown);
+    const filename = options && typeof options.filename === 'string'
+      ? options.filename
+      : '';
+    const groups = memorySourceUtils.parseMemoryMarkdown(markdown, { filename });
     const now = options && options.now ? options.now : new Date();
 
     return groups.map(group => ({
       title: group.title,
+      groupIndex: group.groupIndex,
+      lineIndex: group.lineIndex,
       extractedAt: parseMemoryGroupDate(group.title),
       items: group.items.map(item => ({
+        itemId: item.itemId || '',
+        groupIndex: item.groupIndex,
+        itemIndex: item.itemIndex,
+        groupTitle: item.groupTitle || group.title,
+        lineIndex: item.lineIndex,
         content: item.content,
         source: item.source,
         health: buildMemoryHealth(item, group.title, now),
@@ -308,7 +318,10 @@
     };
 
     const enrichedFiles = (files || []).map(file => {
-      const groups = enrichMemoryGroups(file.content, options);
+      const groups = enrichMemoryGroups(file.content, {
+        ...(options || {}),
+        filename: file.filename,
+      });
       const healthSummary = summarizeGroups(groups);
       mergeSummary(overall, healthSummary);
 

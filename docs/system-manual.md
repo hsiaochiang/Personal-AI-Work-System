@@ -10,7 +10,8 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - **V2** — 穩定化與多專案工作台 ✅ 已完成
 - **V3** — 跨工具整合層 ✅ 已完成
 - **V4** — 治理、自動化、個人 AI 作業系統 ✅ 已完成
-- **V5** — 外部 API 整合與多工具擴充層 🔄 進行中
+- **V5** — 外部 API 整合與多工具擴充層 ✅ 已完成
+- **V6** — 記憶 AI 策展層 🔄 進行中（brief 已確認，實作尚未完成）
 
 ## 功能總覽
 
@@ -56,6 +57,8 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - 改善（V4 Change 1）：`/api/memory` 會先計算記憶健康度摘要，`/memory` 頁面新增過期比例、建議清理數量與每條記憶的健康 badge / reason；第一版採新鮮度 × 來源權重
 - 改善（V4 Change 2）：`/api/memory` 會額外提供 dedup summary 與 suggestion groups；`/memory` 頁面新增「疑似重複建議」區塊，可在人工確認後執行 merge 或 delete，且改寫前會先 backup
 - 改善（V4 Change 4）：`/api/memory` 會額外提供與目前 project 相關的 `sharedKnowledge` payload；`/memory` 頁面新增「共用知識候選」區塊，顯示跨專案重複主題、參與專案與建議 shared 摘要；本輪維持 suggestion-only，不做 shared writeback
+- 改善（V6 Change 1）：每條記憶新增單條刪除操作，刪除前會先 confirm 並建立 backup；KPI「建議清理」可切換成只看 `health.status !== 'healthy'` 的條目
+- 改善（V6 Change 1）：每個記憶分類新增 `AI 整理` 入口，Gemini 會回傳 `original / improved / summary` 給使用者確認後再覆寫；AI 品質審查結果的 filename 也可直接跳到對應分類
 
 ### Shared Knowledge Snapshot（`docs/shared/`）
 - 能力描述：把跨專案 shared knowledge 候選輸出成 read-only markdown snapshot，作為人工整理 shared layer 的起點
@@ -106,6 +109,8 @@ npm start        # 或 node server.js
 - cross-project shared knowledge 第一版只處理不同 projectId、相同 memory filename 的重複主題；目前沒有 `/shared` 獨立頁面，也沒有 accept / writeback action
 - governance scheduler 第一版只在 server startup 建立 snapshot；若不重啟 server，到期資訊不會自動刷新
 - governance scheduler 目前沒有「標記已完成」或直接更新 `web/governance.json` 的 UI
+- memory curator 目前只支援逐條刪除與逐分類 AI curate；尚未支援 inline edit、批次 curate 或跨分類批次操作
+- AI curate 目前以 Gemini key + 單次全文 prompt 為主；尚無 diff-aware merge、批次預覽佇列或自動接受模式
 
 ## 版本歷史摘要
 | 版本 | 日期 | 主要變更 |
@@ -134,6 +139,9 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-15 | V6 review-gate cleanup | Review Gate 已完成 `memory-ai-curator` 收尾檢查，並修正 active change artifact 漂移：`proposal.md` 與 `tasks.md` 的狀態、版本與 route 描述已回到與實作一致；handoff 同步改為可進 commit / sync | 無（No user-facing change；本次僅修正治理文件與交接狀態，不改動 `/memory` 的已上線能力） |
+| 2026-04-15 | V6 executor verify | 完成 `memory-ai-curator` 第一輪實作與 verify：`/memory` 新增單條刪除、KPI 問題篩選、逐分類 AI curate panel、AI review 跳轉；同時補齊 strict validate、targeted verify、memory regression、ephemeral API smoke、UI review 與 UX review evidence | 有（使用者現在可在 `/memory` 直接刪除單條記憶、只看待清理項目，並讓 Gemini 針對單一分類提出整理版本後再人工確認覆寫） |
+| 2026-04-15 | V6 planner / executor-ready sync | 補齊 `memory-ai-curator` 的 change spec artifact，並同步 V6 brief 的 Prompt 清單、跨版本影響、版本狀態；manual 版本狀態同步切到 V6 進行中，但功能尚未實作完成 | 無（No user-facing change；本次為規劃與治理同步，`/memory` 尚未新增刪除、AI curate 或 KPI 篩選功能） |
 | 2026-04-04 | V5 Change 4 archive | `adapter-docs-update` 已完成 main spec sync、`openspec validate adapter-docs-update --type spec --strict` 與 `openspec archive adapter-docs-update -y --skip-specs`；active change 已封存至 `openspec/changes/archive/2026-04-04-adapter-docs-update/`，下一步可檢查 V5 是否進入版本收尾 | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/extract` 與文件可見能力維持不變） |
 | 2026-04-04 | V5 Change 4 review gate pass | Review Gate 已重查 `adapter-docs-update` 的 scope / spec / tasks / QA / UI / UX evidence，並重跑 strict validate、targeted verify 與關鍵 import regression；確認 `conversation-schema.md` 與 `/extract` 的「支援格式」提示只描述已上線能力，無 blocking mismatch，目前可進入 commit / sync / archive 決策 | 無（No user-facing change；本次僅更新治理狀態與收尾判定，`/extract` 與文件可見能力維持 executor verify 後的同一版本） |
 | 2026-04-04 | V5 Change 4 executor verify | 完成 `adapter-docs-update` 的 apply / verify：建立 `openspec/changes/adapter-docs-update/` active change、更新 `docs/workflows/conversation-schema.md` 的 V5 支援來源矩陣、在 `/extract` 各來源 panel 與 selector hint 補上一致的「支援格式」提示，並新增 `tools/verify_adapter_docs_update.js`；重跑 strict validate、targeted verify 與多來源 regression 全數 PASS，下一步待 Review Gate 判定是否可進入 commit / sync / archive | 有（使用者現在可在 `/extract` 直接看到每個來源支援的 transcript / JSON / TXT / tracked API session / local session 格式與限制，不必靠試錯判斷；本輪沒有新增新 adapter 或 API 能力） |

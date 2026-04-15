@@ -22,6 +22,8 @@ const CATEGORY_ICONS = {
 let memoryPageRefs = null;
 let dedupActionPending = false;
 let dedupStatusMessage = null;
+let cleanupFilterMode = 'all';
+let latestMemoryFiles = [];
 
 function getMemorySourceUtilsAPI() {
   if (!window.MemorySourceUtils) {
@@ -239,6 +241,24 @@ function createBadge(text, className) {
   return badge;
 }
 
+function buildMemoryCategoryId(filename) {
+  return `category-${String(filename || '').replace(/\.md$/i, '')}`;
+}
+
+function updateCleanupFilterUI() {
+  const cleanupValue = memoryPageRefs && memoryPageRefs.kpiCleanup;
+  const cleanupCard = cleanupValue ? cleanupValue.closest('.kpi-card') : null;
+  if (!cleanupCard) {
+    return;
+  }
+
+  cleanupCard.classList.toggle('kpi-active', cleanupFilterMode === 'needsAttention');
+  cleanupCard.style.cursor = 'pointer';
+  cleanupCard.title = cleanupFilterMode === 'needsAttention'
+    ? '點擊顯示全部記憶條目'
+    : '點擊只看需要清理的條目';
+}
+
 function setDedupButtonsDisabled(disabled) {
   dedupActionPending = disabled;
   document.querySelectorAll('[data-dedup-action]').forEach(button => {
@@ -447,6 +467,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     kpiCleanup: document.getElementById('kpi-cleanup'),
   };
 
+  const cleanupCard = memoryPageRefs.kpiCleanup && memoryPageRefs.kpiCleanup.closest('.kpi-card');
+  if (cleanupCard) {
+    cleanupCard.addEventListener('click', () => {
+      cleanupFilterMode = cleanupFilterMode === 'needsAttention' ? 'all' : 'needsAttention';
+      updateCleanupFilterUI();
+      renderMemory(memoryPageRefs.container, latestMemoryFiles, cleanupFilterMode);
+    });
+    updateCleanupFilterUI();
+  }
+
   showLoading(memoryPageRefs.container);
   await loadMemoryData();
 });
@@ -471,19 +501,24 @@ async function loadMemoryData() {
 
     const parsed = data.files.map(file => ({
       filename: file.filename,
-      groups: Array.isArray(file.groups) ? file.groups : parseMemoryFile(file.content),
+      groups: Array.isArray(file.groups) ? file.groups : parseMemoryFile(file.content, file.filename),
     }));
     const summary = data.summary || getMemoryHealthUtilsAPI().buildMemoryApiPayload(data.files).summary;
+    latestMemoryFiles = parsed;
 
     if (kpiFiles) kpiFiles.textContent = data.files.length;
     if (kpiTotal) kpiTotal.textContent = summary.totalItems;
     if (kpiStaleRatio) kpiStaleRatio.textContent = formatPercent(summary.staleRatio);
     if (kpiCleanup) kpiCleanup.textContent = summary.needsAttentionCount;
+    if (cleanupFilterMode === 'needsAttention' && !summary.needsAttentionCount) {
+      cleanupFilterMode = 'all';
+    }
+    updateCleanupFilterUI();
 
     updateSharedKnowledgeOverview(data.sharedKnowledge);
     updateDedupOverview(data.dedup);
     updateHealthOverview(summary);
-    renderMemory(container, parsed);
+    renderMemory(container, parsed, cleanupFilterMode);
   } catch (error) {
     showError(container, '無法載入記憶資料: ' + error.message);
   }
@@ -493,16 +528,121 @@ async function loadMemoryData() {
  * Parse a memory markdown file into groups of items.
  * Groups are ## or ### headings, items are - list entries.
  */
-function parseMemoryFile(md) {
-  return getMemorySourceUtilsAPI().parseMemoryMarkdown(md);
+function parseMemoryFile(md, filename) {
+  return getMemorySourceUtilsAPI().parseMemoryMarkdown(md, { filename });
 }
 
-function renderMemory(container, files) {
+async function handleMemoryItemDelete(filename, itemId, content) {
+  if (!itemId) {
+    alert('刪除失敗：缺少條目識別資訊，請重新整理後再試。');
+    return;
+  }
+
+  const confirmed = window.confirm(`確認刪除此條目？\n\n${content.slice(0, 160)}`);
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await apiPost('/api/memory/item/delete', { filename, itemId });
+    await loadMemoryData();
+  } catch (error) {
+    alert(`刪除失敗：${error.message}`);
+  }
+}
+
+async function handleMemoryAICurate(filename, categoryEl, triggerButton) {
+  const existing = categoryEl.querySelector('.memory-curate-panel');
+  if (existing) {
+    existing.remove();
+  }
+
+  const button = triggerButton || categoryEl.querySelector('.memory-curate-btn');
+  if (!button) {
+    return;
+  }
+
+  const originalLabel = button.innerHTML;
+  button.disabled = true;
+  button.textContent = '分析中…';
+
+  try {
+    const data = await apiPost('/api/memory/ai-curate', { filename });
+    const panel = document.createElement('div');
+    panel.className = 'memory-curate-panel';
+    panel.innerHTML = `
+      <div class="memory-curate-panel-header">
+        <div>
+          <strong>AI 整理建議</strong>
+          <div class="memory-curate-summary">${escapeHTML(data.summary || '（無摘要）')}</div>
+        </div>
+      </div>
+      <div class="memory-curate-diff">
+        <div class="memory-curate-side">
+          <div class="memory-curate-label">原始內容</div>
+          <pre class="memory-curate-pre">${escapeHTML(data.original || '')}</pre>
+        </div>
+        <div class="memory-curate-side">
+          <div class="memory-curate-label">AI 改善版本</div>
+          <pre class="memory-curate-pre">${escapeHTML(data.improved || '')}</pre>
+        </div>
+      </div>
+      <div class="memory-curate-actions">
+        <button class="btn btn-primary" type="button" data-curate-action="confirm">確認覆寫</button>
+        <button class="btn btn-ghost" type="button" data-curate-action="skip">略過</button>
+      </div>`;
+
+    panel.querySelector('[data-curate-action="skip"]').addEventListener('click', () => {
+      panel.remove();
+    });
+
+    panel.querySelector('[data-curate-action="confirm"]').addEventListener('click', async () => {
+      try {
+        await apiPost('/api/memory/write', {
+          filename: data.filename,
+          content: data.improved,
+        });
+        panel.remove();
+        await loadMemoryData();
+      } catch (error) {
+        alert(`覆寫失敗：${error.message}`);
+      }
+    });
+
+    categoryEl.appendChild(panel);
+  } catch (error) {
+    const hint = /尚未設定 Gemini API key/i.test(error.message)
+      ? ' 請先到 /settings 儲存 Gemini API key。'
+      : '';
+    alert(`AI 整理失敗：${error.message}${hint}`);
+  } finally {
+    button.disabled = false;
+    button.innerHTML = originalLabel;
+  }
+}
+
+function renderMemory(container, files, filterMode = 'all') {
   container.innerHTML = '';
+  let renderedCategoryCount = 0;
 
   files.forEach(file => {
+    const visibleGroups = (file.groups || [])
+      .map(group => ({
+        ...group,
+        items: (group.items || []).filter(item => (
+          filterMode !== 'needsAttention'
+          || (item.health && item.health.status !== 'healthy')
+        )),
+      }))
+      .filter(group => (group.items || []).length > 0);
+
+    if (!visibleGroups.length) {
+      return;
+    }
+
     const category = document.createElement('div');
     category.className = 'memory-category';
+    category.id = buildMemoryCategoryId(file.filename);
 
     const header = document.createElement('div');
     header.className = 'memory-category-header';
@@ -520,12 +660,19 @@ function renderMemory(container, files) {
     const totalItems = file.groups.reduce((sum, group) => sum + group.items.length, 0);
     const count = document.createElement('span');
     count.className = 'memory-count';
-    count.textContent = `${totalItems} 條`;
+    count.textContent = `${visibleGroups.reduce((sum, group) => sum + group.items.length, 0)} / ${totalItems} 條`;
     header.appendChild(count);
+
+    const curateBtn = document.createElement('button');
+    curateBtn.className = 'btn btn-ghost btn-sm memory-curate-btn';
+    curateBtn.type = 'button';
+    curateBtn.innerHTML = '<span class="material-symbols-outlined">auto_awesome</span>AI 整理';
+    curateBtn.addEventListener('click', () => handleMemoryAICurate(file.filename, category, curateBtn));
+    header.appendChild(curateBtn);
 
     category.appendChild(header);
 
-    file.groups.forEach(group => {
+    visibleGroups.forEach(group => {
       if (group.items.length === 0) {
         return;
       }
@@ -591,10 +738,31 @@ function renderMemory(container, files) {
           card.appendChild(body);
         }
 
+        if (item.itemId) {
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn-icon memory-item-delete';
+          deleteBtn.type = 'button';
+          deleteBtn.title = '刪除此條目';
+          deleteBtn.innerHTML = '<span class="material-symbols-outlined">delete</span>';
+          deleteBtn.addEventListener('click', () => handleMemoryItemDelete(file.filename, item.itemId, item.content));
+          card.appendChild(deleteBtn);
+        }
+
         category.appendChild(card);
       });
     });
 
     container.appendChild(category);
+    renderedCategoryCount += 1;
   });
+
+  if (!renderedCategoryCount) {
+    showEmpty(
+      container,
+      filterMode === 'needsAttention' ? 'task_alt' : 'folder_open',
+      filterMode === 'needsAttention'
+        ? '目前沒有需要優先清理的記憶條目。'
+        : '尚無記憶檔案'
+    );
+  }
 }

@@ -72,19 +72,49 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 
 ---
 
-## Changes 狀態表
+## 完成條件（Acceptance Criteria）
 
-| Change 名稱 | 狀態 | 備註 |
-|------------|:----:|------|
-| memory-ai-curator | 🔄 進行中 | T-01~T-06，Not Started → 實作中 |
+| # | 驗收條件 | 驗收方式 |
+|:-:|---------|---------|
+| 1 | `/memory` 每個條目都有可確認刪除的操作入口，且成功刪除前會先 backup | UI 操作單條刪除 → 後端回傳 success → `.backup/` 產生新檔 |
+| 2 | 點擊 KPI「建議清理」後只顯示 `health.status !== 'healthy'` 的條目，且可回到完整列表 | `/memory` 點擊 KPI → 列表切到問題條目 → 再點一次或清除篩選回到完整列表 |
+| 3 | 每個記憶分類都有「AI 整理」入口，Gemini 會回傳改善版，使用者確認後才覆寫 | 觸發 `/api/memory/ai-curate` → 顯示 before/after 預覽 → 確認覆寫 |
+| 4 | AI 品質審查的每條建議都可跳到對應分類 | `/memory` 點 AI 品質審查 → 點某筆 `file` → 頁面滑動到對應 category |
+| 5 | `memory-ai-curator` strict validate、targeted verify、smoke 全部通過 | `openspec validate --changes "memory-ai-curator" --strict` + 本 change 驗證腳本 / smoke 文件 |
 
 ---
 
-## 完成標準（Done Gate）
+## 預計拆分的 Changes
 
-- [ ] `memory-ai-curator` 所有 tasks（T-01 ~ T-06）標記 `[x]`
-- [ ] Smoke 文件：`docs/qa/<date>_memory-ai-curator-smoke.md` 全通過
-- [ ] 無新增 open issue
+| Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
+|---|---|---|---|---|
+| `memory-ai-curator` | 身為需要持續整理知識庫的使用者，我想要在 `/memory` 直接刪除問題條目、只看需要清理的內容，並讓 Gemini 針對單一分類提出整理建議，以便把記憶庫從靜態倉庫變成可維護的工作介面 | 🔄 進行中 | T-01~T-06、strict validate、targeted verify、memory regression、syntax check、ephemeral API smoke、UI review、UX review 已完成；Review Gate 判定 `CONDITIONAL PASS`，artifact 漂移已修正。下一步進入 commit / sync，archive 待人工決定 | `/memory` → 刪除條目 / 點 KPI 篩選 / 點「AI 整理」→ 確認覆寫 |
+
+---
+
+## Codex 執行 Prompt 清單
+
+> 使用方式：複製下方路徑，於 Codex CLI terminal 執行：
+> ```powershell
+> codex --yolo < docs/agents/codex-prompts/v6/<filename>.md
+> ```
+> 角色切換（Planner → Executor → Review）**必須開新 session**，不可 resume。
+>
+> 狀態說明：`—` 未執行 ｜ `🔄 執行中` ｜ `✅ 完成`
+
+| # | 路徑 | 角色 | Change | 狀態 |
+|---|------|------|--------|------|
+| 01 | `docs/agents/codex-prompts/v6/01-memory-ai-curator-plan.md` | Planner | memory-ai-curator | ✅ 完成 |
+| 02 | `docs/agents/codex-prompts/v6/02-memory-ai-curator-execute.md` | Executor | memory-ai-curator | ✅ 完成 |
+| 03 | `docs/agents/codex-prompts/v6/03-memory-ai-curator-review.md` | Review Gate | memory-ai-curator | ✅ 完成 |
+
+---
+
+## Done Gate
+
+- [x] `memory-ai-curator` 所有 tasks（T-01 ~ T-06）標記 `[x]`
+- [x] Smoke 文件：`docs/qa/<date>_memory-ai-curator-smoke.md` 全通過
+- [x] 無新增 open issue
 - [ ] git commit + push
 
 ---
@@ -96,6 +126,38 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 > **確認日期**：2026-04-14
 
 確認後請將「確認狀態」改為 ✅，並填入日期。確認前不得開始實作。
+
+---
+
+## 跨版本影響
+
+| 方向 | 說明 |
+|------|------|
+| **依賴 V4** | `memory-health-scoring` 提供 `health.status` 與 summary，作為 KPI 篩選與問題條目聚焦基礎 |
+| **依賴 V4** | `memory-dedup-suggestions` 已建立 memory rewrite + backup 邊界，可作為單條刪除的安全基線 |
+| **依賴 V5** | `geminiGenerateContent()` 與 Gemini key 設定已存在，V6 的 AI curate 直接複用此能力 |
+| **影響後續版本** | 若 V6 驗證良好，後續可再評估批次 curate、inline edit、shared memory action 或更進一步的搜尋能力 |
+
+---
+
+## 使用者影響與 Manual Sync
+
+- **使用者可見影響**：有
+- **影響摘要**：`/memory` 將新增單條刪除、KPI 問題篩選、逐分類 AI 整理與 AI review 直接跳轉，讓記憶管理從只讀檢視升級成可操作的治理介面
+- **需同步更新的 `docs/system-manual.md` 區段**：
+  - 「目前版本」
+  - 「專案記憶（/memory）」
+  - 「已知限制」
+  - 「Planning Impact Log」
+- **備註**：在 V6 功能尚未實作完成前，manual 應先同步版本狀態與 planning 進度，但不要宣稱能力已上線
+
+---
+
+## 版本狀態
+
+- **開始日期**：2026-04-14
+- **完成日期**：
+- **狀態**：執行中（Review Gate conditional pass；待 commit / sync，archive 待人工決定）
 
 ---
 

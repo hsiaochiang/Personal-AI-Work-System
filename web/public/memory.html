@@ -152,7 +152,11 @@
               <div style="border-left:3px solid var(--border-color);padding:0.5rem 0.75rem;margin-bottom:0.6rem">
                 <div style="display:flex;gap:0.4rem;align-items:baseline">
                   <span>${severityIcon(it.severity)}</span>
-                  <strong style="font-size:0.85rem;color:var(--text-muted)">${it.file}</strong>
+                  <a href="#category-${String(it.file || '').replace(/\.md$/i, '')}"
+                     style="font-size:0.85rem;color:var(--primary);text-decoration:none;font-weight:600"
+                     onclick="document.getElementById('category-${String(it.file || '').replace(/\.md$/i, '')}')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false;">
+                    ${it.file}
+                  </a>
                 </div>
                 <p style="margin:0.25rem 0 0;font-size:0.9rem">${it.issue}</p>
                 <p style="margin:0.2rem 0 0;font-size:0.85rem;color:var(--text-muted)">💡 ${it.suggestion}</p>

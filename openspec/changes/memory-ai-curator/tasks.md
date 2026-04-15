@@ -1,6 +1,6 @@
 # Tasks: memory-ai-curator
 
-> **狀態**：Not Started  
+> **狀態**：Review Gate conditional pass; pending commit / sync  
 > **建立日期**：2026-04-13  
 >
 > **執行原則**：每個 Task 獨立可驗收。後端先行，前端依賴後端完成後再做。  
@@ -9,6 +9,11 @@
 ---
 
 ## Task 列表
+
+> 2026-04-15 Executor 備註：itemId 採 `filename::groupIndex::itemIndex` 的 deterministic locator，
+> 由 `parseDetailedMemoryMarkdown()` 依 markdown 結構穩定生成。
+> 後端刪除改以 `removeMemoryItemById()` 依 lineIndex 精準刪除單一 bullet，
+> 不需要在 markdown 行內額外嵌入 `<!-- id: ... -->` comment。
 
 ### T-01：後端 — 新增 `POST /api/memory/item/delete` 路由
 
@@ -57,10 +62,10 @@ if (url.pathname === '/api/memory/item/delete' && req.method === 'POST') {
 **注意**：記憶條目的 itemId 由 `memory-source-utils.js` 的 `parseMemoryMarkdown()` 產生。需確認 itemId 以行內 HTML comment 格式嵌入（若目前不是，見 T-02 處理）。
 
 **驗收條件**：
-- [ ] `POST /api/memory/item/delete` 帶合法 filename + itemId → 200 `{ success: true }`
-- [ ] filename 不在白名單 → 403
-- [ ] itemId 找不到 → 404
-- [ ] 成功後 `docs/memory/.backup/` 有備份檔
+- [x] `POST /api/memory/item/delete` 帶合法 filename + itemId → 200 `{ success: true }`
+- [x] filename 不在白名單 → 403
+- [x] itemId 找不到 → 404
+- [x] 成功後 `docs/memory/.backup/` 有備份檔
 
 ---
 
@@ -78,9 +83,9 @@ if (url.pathname === '/api/memory/item/delete' && req.method === 'POST') {
 4. 若 itemId 只存在解析後的 runtime 物件：後端刪除改接受 `{ filename, lineContent }` 作為定位依據（行內容 match）
 
 **驗收條件**：
-- [ ] 確認 itemId 定位機制，在此 task 的 comment 中記錄確認結果
-- [ ] 無論哪種機制，`POST /api/memory/item/delete` 能正確找到並刪除目標行
-- [ ] 刪除後原有其他行不受影響
+- [x] 確認 itemId 定位機制，在此 task 的 comment 中記錄確認結果
+- [x] 無論哪種機制，`POST /api/memory/item/delete` 能正確找到並刪除目標行
+- [x] 刪除後原有其他行不受影響
 
 ---
 
@@ -166,10 +171,10 @@ ${fileContent}
 ```
 
 **驗收條件**：
-- [ ] 帶合法 filename + Gemini key 已設定 → 200 回傳 `{ filename, original, improved, summary }`
-- [ ] `improved` 欄位是合法 markdown 字串
-- [ ] Gemini key 未設定 → 400
-- [ ] filename 不在白名單 → 403
+- [x] 帶合法 filename + Gemini key 已設定 → 200 回傳 `{ filename, original, improved, summary }`
+- [x] `improved` 欄位是合法 markdown 字串
+- [x] Gemini key 未設定 → 400
+- [x] filename 不在白名單 → 403
 
 ---
 
@@ -224,10 +229,10 @@ async function handleMemoryItemDelete(filename, itemId, content) {
 ```
 
 **驗收條件**：
-- [ ] 每個記憶條目右下角有刪除 icon，hover 才明顯
-- [ ] 點擊刪除 → confirm() → 呼叫後端 → 重新載入頁面資料
-- [ ] KPI「建議清理」點擊後只顯示 health ≠ healthy 的條目
-- [ ] 再次點擊 KPI 或有「顯示全部」可回到完整列表
+- [x] 每個記憶條目右下角有刪除 icon，hover 才明顯
+- [x] 點擊刪除 → confirm() → 呼叫後端 → 重新載入頁面資料
+- [x] KPI「建議清理」點擊後只顯示 health ≠ healthy 的條目
+- [x] 再次點擊 KPI 或有「顯示全部」可回到完整列表
 
 ---
 
@@ -338,11 +343,11 @@ async function handleAICurate(filename, categoryEl) {
 ```
 
 **驗收條件**：
-- [ ] 每個記憶分類標題列出現「✨ AI 整理」按鈕
-- [ ] 點擊後呈現 loading 狀態，回傳後展開 before/after panel
-- [ ] 「確認覆寫」→ 呼叫 `/api/memory/write` → 重新載入
-- [ ] 「略過」→ 關閉 panel，不修改資料
-- [ ] Gemini key 未設定時顯示清楚錯誤訊息（hint 連結至 /settings）
+- [x] 每個記憶分類標題列出現「✨ AI 整理」按鈕
+- [x] 點擊後呈現 loading 狀態，回傳後展開 before/after panel
+- [x] 「確認覆寫」→ 呼叫 `/api/memory/write` → 重新載入
+- [x] 「略過」→ 關閉 panel，不修改資料
+- [x] Gemini key 未設定時顯示清楚錯誤訊息（hint 連結至 /settings）
 
 ---
 
@@ -379,8 +384,8 @@ category.id = `category-${file.filename.replace('.md', '')}`;
 ```
 
 **驗收條件**：
-- [ ] AI 審查結果每條 filename 可點擊，點後頁面滑動到對應分類
-- [ ] category 容器有對應的 `id` 屬性
+- [x] AI 審查結果每條 filename 可點擊，點後頁面滑動到對應分類
+- [x] category 容器有對應的 `id` 屬性
 
 ---
 
@@ -399,10 +404,10 @@ T-06（AI 審查跳至分類）[獨立，可最後做]
 
 ## 整體驗收標準
 
-- [ ] `/memory` 頁面每個條目有刪除按鈕（hover 顯示）
-- [ ] KPI「建議清理」點擊可篩選，顯示問題條目
-- [ ] 每個分類有「✨ AI 整理」按鈕，可呼叫 Gemini 整理並確認覆寫
-- [ ] AI 審查結果每個建議可跳至對應分類
-- [ ] 所有刪除/覆寫操作前均有備份
-- [ ] Gemini key 未設定時，AI 相關功能顯示友善錯誤（而非崩潰）
-- [ ] DEV localhost:3000 全功能測試通過後部署 PROD
+- [x] `/memory` 頁面每個條目有刪除按鈕（hover 顯示）
+- [x] KPI「建議清理」點擊可篩選，顯示問題條目
+- [x] 每個分類有「✨ AI 整理」按鈕，可呼叫 Gemini 整理並確認覆寫
+- [x] AI 審查結果每個建議可跳至對應分類
+- [x] 所有刪除/覆寫操作前均有備份
+- [x] Gemini key 未設定時，AI 相關功能顯示友善錯誤（而非崩潰）
+- [x] DEV localhost:3000 全功能測試通過後部署 PROD

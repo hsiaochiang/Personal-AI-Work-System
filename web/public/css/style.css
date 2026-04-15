@@ -511,6 +511,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--primary-container);
 }
@@ -540,6 +541,7 @@ body {
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
+  position: relative;
 }
 
 .memory-health-overview {
@@ -834,6 +836,97 @@ body {
   margin-top: 0.375rem;
 }
 
+.memory-item-delete {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  opacity: 0;
+  color: #b91c1c;
+}
+
+.memory-item:hover .memory-item-delete,
+.memory-item:focus-within .memory-item-delete {
+  opacity: 1;
+}
+
+.memory-item-delete:hover {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.kpi-card.kpi-active {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.kpi-card.kpi-active .kpi-label,
+.kpi-card.kpi-active .kpi-value {
+  color: var(--on-primary);
+}
+
+.memory-curate-btn {
+  margin-left: auto;
+}
+
+.memory-curate-panel {
+  margin: 0.75rem 0 1rem;
+  padding: 1rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #f7faf8, var(--surface-container-lowest));
+}
+
+.memory-curate-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+}
+
+.memory-curate-summary {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--on-surface-variant);
+}
+
+.memory-curate-diff {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.memory-curate-side {
+  min-width: 0;
+}
+
+.memory-curate-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  margin-bottom: 0.35rem;
+}
+
+.memory-curate-pre {
+  min-height: 180px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.memory-curate-actions {
+  display: flex;
+  gap: 0.625rem;
+  margin-top: 0.875rem;
+}
+
 .memory-group-header {
   font-size: 0.8125rem;
   font-weight: 600;
@@ -930,6 +1023,9 @@ body {
   }
   .extract-source-select {
     width: 100%;
+  }
+  .memory-curate-diff {
+    grid-template-columns: 1fr;
   }
 }
 

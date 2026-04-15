@@ -4,101 +4,86 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V6 Brief 建立與 memory-ai-curator 實作準備
-- Owner agent: Copilot
-- Last updated on: 2026-04-14
+- Name: V6 `memory-ai-curator` Review Gate conditional pass，待 commit 前治理收尾
+- Owner agent: Codex
+- Last updated on: 2026-04-15
 
 ## Goal
-- V6 Brief 建立並通過使用者確認（`docs/planning/v6-brief.md`）
-- `memory-ai-curator` change 開始實作（T-01 ~ T-06）
-- VERSION 升至 1.1.11+（下一個 patch 後）
+- 完成 `memory-ai-curator` 的 Review Gate 收尾
+- 補齊 active change artifact 漂移，讓 OpenSpec artifacts、handoff、manual、QA evidence 一致
+- 將 change 狀態推進到可 commit / sync，再交由人決定 archive
 
 ## Done
-- V1–V5 全數 planned changes 已 archive
-- v1.1.0 已發布（git tag + VERSION + CHANGELOG）
-- `llm-extract-gemini`（Post-V5）✅ 已完成並 archive（2026-04-14）
-  - 後端：Gemini key 管理函式、`/api/settings/gemini`、`/api/extract/llm`
-  - 前端：settings.html Gemini Key UI、extract.html AI 輔助提取按鈕、extract.js LLM 提取邏輯
-  - Smoke：`docs/qa/2026-04-14_llm-extract-gemini-smoke.md` ✅
+- 已讀取 `AGENTS.md`、`CODEX.md`、`docs/handoff/*`、`docs/roadmap.md`、`docs/planning/v6-brief.md`、`docs/system-manual.md`、`docs/agents/*`、`.github/agents/openspec-planner.agent.md`
+- 已確認 `docs/planning/v6-brief.md` 有使用者確認（Wilson，2026-04-14）
+- 已確認 `memory-ai-curator` 屬於 V6 In Scope，且 `docs/agents/codex-prompts/v6/01~03-*.md` 已存在
+- 已補齊 `openspec/changes/memory-ai-curator/specs/memory-ai-curator/spec.md`
+- 已同步 `docs/planning/v6-brief.md`：補 `Codex 執行 Prompt 清單`、`跨版本影響`、`使用者影響與 Manual Sync`、`版本狀態`
+- 已同步 `docs/system-manual.md` 的版本狀態與 Planning Impact Log，使 V5/V6 狀態和 roadmap 對齊
+- 已實作 `memory-ai-curator` 第一輪程式碼：
+  - `memory-source-utils.js`：新增穩定 item targeting 與單條刪除 helper
+  - `memory-health-utils.js`：`/api/memory` payload 會帶 item metadata
+  - `web/server.js`：新增 `POST /api/memory/item/delete`、`POST /api/memory/ai-curate`
+  - `web/public/js/memory.js`：新增 KPI 問題篩選、單條刪除、分類 AI 整理 panel
+  - `web/public/memory.html`：AI 審查結果可跳至分類
+  - `web/public/css/style.css`：新增刪除按鈕、active KPI、AI curate panel 樣式
+  - `tools/verify_memory_ai_curator.js`：新增 targeted verify
+- 已完成 verify / evidence：
+  - `openspec/changes/memory-ai-curator/tasks.md` 已全數勾選
+  - `docs/qa/2026-04-15_memory-ai-curator-smoke.md` 已建立
+  - `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md` 已建立
+  - `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md` 已建立
+  - 使用暫存副本完成 `POST /api/memory/item/delete` backup smoke 與 `POST /api/memory/ai-curate` live / missing-key contract 驗證
+- 已完成 Review Gate：
+  - 判定為 `CONDITIONAL PASS`
+  - blocking issue 已收斂為 active change artifact 治理漂移，不是產品功能缺陷
+  - 本輪已修正 `proposal.md` 的版本 / route 描述漂移與 `tasks.md` 的狀態漂移
 
 ## In Progress
-- V6 Brief 草稿（待使用者確認後開始 change）
+- 準備進入 commit 前最後檢查，確認可做 `/opsx-sync`
+
+## Open Issues
+- 無產品 blocker；Review Gate 的 artifact 漂移已修正
+- 尚未做真人瀏覽器逐點 walkthrough，但 API smoke、UI review、UX review 與 targeted verify 已補齊
+- 尚未執行 commit / push、`/opsx-sync`、`/opsx-archive`
 
 ## Next Step
-
 | 優先 | 說明 |
 |:----:|------|
-| 🟢 1 | 確認 `docs/planning/v6-brief.md`（使用者確認後不可自行繼續） |
-| 🟢 2 | Brief 確認後：執行 `memory-ai-curator` T-01 → T-06 |
-| 🟢 3 | 每個 task 完成後 commit + push |
+| 🟢 1 | 檢查工作樹後執行 commit 前 review，確認只剩本 change 相關差異 |
+| 🟢 2 | 進入 implementation commit，之後執行 `/opsx-sync` |
+| 🟡 3 | sync 完成後由人決定是否執行 `/opsx-archive`；若仍希望補真人 walkthrough，可在 archive 前追加證據 |
 
 ## Files Touched（本 session）
-- docs/handoff/current-task.md
-- docs/START-HERE.md
-- docs/roadmap.md
-- docs/qa/2026-04-14_llm-extract-gemini-smoke.md
-- openspec/changes/archive/2026-04-14-llm-extract-gemini/tasks.md
-- docs/planning/v6-brief.md（待建立）
+- `docs/handoff/current-task.md`
+- `docs/handoff/blockers.md`
+- `docs/planning/v6-brief.md`
+- `docs/system-manual.md`
+- `docs/roadmap.md`
+- `openspec/changes/memory-ai-curator/specs/memory-ai-curator/spec.md`
+- `openspec/changes/memory-ai-curator/proposal.md`
+- `openspec/changes/memory-ai-curator/tasks.md`
+- `web/public/js/memory-source-utils.js`
+- `web/public/js/memory-health-utils.js`
+- `web/public/js/memory.js`
+- `web/public/memory.html`
+- `web/public/css/style.css`
+- `web/server.js`
+- `tools/verify_memory_ai_curator.js`
+- `docs/qa/2026-04-15_memory-ai-curator-smoke.md`
+- `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md`
+- `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
 
 ## Validation Status
-- llm-extract-gemini archive：✅ 完成
-- Smoke 文件：✅ `docs/qa/2026-04-14_llm-extract-gemini-smoke.md`
-- V6 Brief：⏳ 待建立
-
-## Goal
-- V1–V5 全數 planned changes 已 archive，v1.1.0 已發布（git tag + VERSION + CHANGELOG）
-- roadmap、system-manual、handoff 文件已同步更新
-- 無 active blockers；無 active openspec changes
-
-## Done
-- V1 (Phase Spec + 1–5) ✅ 全 archive
-- V2 (Changes 1–4) ✅ 全 archive
-- V3 (Changes 1–6) ✅ 全 archive
-- V4 (Changes 1–5) ✅ 全 archive
-- V5 (Changes 1–4) ✅ 全 archive（2026-04-04）
-- `docs/roadmap.md` V5 狀態更新為 ✅ 已完成（2026-04-05）
-- `VERSION` 建立：1.1.0
-- `CHANGELOG.md` 建立：V1–V5 功能摘要
-- git tag v1.1.0 建立並推送（2026-04-05）
-- `docs/product/user-manual-v5.md` 撰寫完成（2026-04-05）
-
-## In Progress
-- 無
-
-## Next Step
-
-| 優先 | 說明 |
-|:----:|------|
-| 🟢 1 | 系統進入穩定運行期；可依需要規劃 V6（Out-of-scope 項目如 OAuth / cloud sync / vector search） |
-| 🟢 2 | 日常使用：`node web/server.js` → http://localhost:3000 |
-
-## Files Touched（本 session）
-- docs/product/user-manual-v5.md
-- docs/runlog/2026-04-05_README.md
-- docs/handoff/current-task.md
-- docs/workflows/conversation-schema.md
-- web/public/extract.html
-- web/public/js/extract.js
-- tools/verify_adapter_docs_update.js
-- openspec/specs/adapter-docs-update/spec.md
-- openspec/changes/archive/2026-04-04-adapter-docs-update/proposal.md
-- openspec/changes/archive/2026-04-04-adapter-docs-update/design.md
-- openspec/changes/archive/2026-04-04-adapter-docs-update/specs/adapter-docs-update/spec.md
-- openspec/changes/archive/2026-04-04-adapter-docs-update/tasks.md
-- docs/qa/2026-04-04_adapter-docs-update-smoke.md
-- docs/uiux/2026-04-04_adapter-docs-update-ui-review.md
-- docs/uiux/2026-04-04_adapter-docs-update-ux-review.md
-- docs/planning/v5-brief.md
-- docs/roadmap.md
-- docs/system-manual.md
-- docs/runlog/2026-04-04_README.md
-
-## Validation Status
-- Brief confirmation：✅ `docs/planning/v5-brief.md` 已有人類確認
-- Scope gate：✅ `adapter-docs-update` 屬於 V5 In Scope，未擴張到新 adapter / API 功能
-- OpenSpec validate：✅ `openspec validate --changes adapter-docs-update --strict`
-- Targeted verify：✅ `node tools/verify_adapter_docs_update.js`
-- Regression verify：✅ `verify_import_ui_multi_source`、`verify_plain_text_adapter`、`verify_chatgpt_adapter`、`verify_chatgpt_api_auto_import`、`verify_gemini_adapter`、`verify_claude_adapter`、`verify_local_import_vscode_copilot`
-- Main spec sync：✅ `openspec/specs/adapter-docs-update/spec.md` + `openspec validate adapter-docs-update --type spec --strict`
-- Archive：✅ `openspec archive adapter-docs-update -y --skip-specs`
-- Evidence sync：✅ `handoff` / `roadmap` / `brief` / `system-manual` / `runlog` / `docs/qa` / `docs/uiux` 已切到 archive complete / V5 close-ready 狀態
+- Brief confirmation：✅ `docs/planning/v6-brief.md` 已有人類確認（2026-04-14）
+- Scope gate：✅ `memory-ai-curator` 屬於 V6 In Scope
+- Active change duplicate check：✅ 已有同名 active change，無需再開新 change
+- OpenSpec validate：✅ `openspec validate --changes "memory-ai-curator" --strict`
+- Targeted verify：✅ `node tools/verify_memory_ai_curator.js`
+- Regression verify：✅ `node tools/verify_memory_dedup_suggestions.js`、`node tools/verify_memory_health_scoring.js`
+- Syntax check：✅ `node --check web/server.js`、`node --check web/public/js/memory.js`
+- Ephemeral API smoke：✅ 暫存副本驗證 `POST /api/memory/item/delete`（backup + 單條刪除）、`POST /api/memory/ai-curate`（live Gemini success + missing-key 400）
+- UI review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md`
+- UX review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
+- Review Gate：✅ `CONDITIONAL PASS`（artifact 漂移已修正；可進 commit，sync / archive 待下一步）
+- Not run yet：真人瀏覽器逐點 walkthrough（非 blocker）

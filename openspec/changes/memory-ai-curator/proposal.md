@@ -1,6 +1,6 @@
 # Change Proposal: memory-ai-curator
 
-> **狀態**：Draft  
+> **狀態**：Review Gate conditional pass; pending commit / sync  
 > **建立日期**：2026-04-13  
 > **提出者**：Wilson / GitHub Copilot  
 
@@ -60,8 +60,10 @@
 
 ## 對 Roadmap 的影響
 
-本 change 屬於 V4（治理、自動化）的補強，增強記憶管理的自動化、品質與可操作性。不引入新的 API 路由底層架構，複用現有的 `/api/memory/dedup`、`/api/memory/write` 與 `/api/memory/ai-review` 端點，並新增：
-- `DELETE /api/memory/item`：刪除單一記憶條目
-- `POST /api/memory/ai-curate`：AI 整理指定分類，回傳建議改善版本
+本 change 屬於 V6（記憶 AI 策展層）的第一個 active change，目標是把 `/memory` 從只讀治理頁升級成可操作的策展介面。不引入新的 runtime dependency，複用既有的 `/api/memory`、`/api/memory/write`、`/api/memory/ai-review`、Gemini key 設定與 backup write boundary，並新增：
+- `POST /api/memory/item/delete`：依 deterministic `itemId` 刪除單一記憶條目
+- `POST /api/memory/ai-curate`：針對單一 memory 分類產生 AI 整理建議，回傳 `filename` / `original` / `improved` / `summary`
+
+本輪 Review Gate 已確認功能與 evidence 對齊；剩餘收尾為治理同步（proposal/tasks 狀態校正）後進入 commit / sync / archive 決策。
 
 ---
