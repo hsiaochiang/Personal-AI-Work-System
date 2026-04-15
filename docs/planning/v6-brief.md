@@ -88,7 +88,7 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 
 | Change 名稱 | 使用者故事 | 狀態 | 備註 | 使用方式 |
 |---|---|---|---|---|
-| `memory-ai-curator` | 身為需要持續整理知識庫的使用者，我想要在 `/memory` 直接刪除問題條目、只看需要清理的內容，並讓 Gemini 針對單一分類提出整理建議，以便把記憶庫從靜態倉庫變成可維護的工作介面 | 🔄 進行中 | T-01~T-06、strict validate、targeted verify、memory regression、syntax check、ephemeral API smoke、UI review、UX review、Review Gate、implementation commit 與 push 已完成；下一步進入 `/opsx-sync`，archive 待人工決定 | `/memory` → 刪除條目 / 點 KPI 篩選 / 點「AI 整理」→ 確認覆寫 |
+| `memory-ai-curator` | 身為需要持續整理知識庫的使用者，我想要在 `/memory` 直接刪除問題條目、只看需要清理的內容，並讓 Gemini 針對單一分類提出整理建議，以便把記憶庫從靜態倉庫變成可維護的工作介面 | ✅ 已 archive | T-01~T-06、strict validate、targeted verify、memory regression、syntax check、ephemeral API smoke、UI review、UX review、Review Gate、implementation commit / push、main spec sync 與 archive 已完成；archive path：`openspec/changes/archive/2026-04-15-memory-ai-curator/` | `/memory` → 刪除條目 / 點 KPI 篩選 / 點「AI 整理」→ 確認覆寫 |
 
 ---
 
@@ -156,8 +156,8 @@ V6 要回答的問題是：**如何讓記憶庫從「靜態倉庫」變成「可
 ## 版本狀態
 
 - **開始日期**：2026-04-14
-- **完成日期**：
-- **狀態**：執行中（implementation commit + push 已完成；待 `/opsx-sync`，archive 待人工決定）
+- **完成日期**：2026-04-15
+- **狀態**：已完成（main spec sync 與 archive 已完成）
 
 ---
 

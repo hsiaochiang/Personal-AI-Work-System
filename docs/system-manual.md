@@ -11,7 +11,7 @@ Personal AI Work System（WOS）是一個讓使用者在多個 AI 對話 session
 - **V3** — 跨工具整合層 ✅ 已完成
 - **V4** — 治理、自動化、個人 AI 作業系統 ✅ 已完成
 - **V5** — 外部 API 整合與多工具擴充層 ✅ 已完成
-- **V6** — 記憶 AI 策展層 🔄 進行中（brief 已確認，實作尚未完成）
+- **V6** — 記憶 AI 策展層 ✅ 已完成
 
 ## 功能總覽
 
@@ -139,6 +139,7 @@ npm start        # 或 node server.js
 
 | 日期 | 版本 | 異動摘要 | 使用者可見影響 |
 |------|------|---------|---------------|
+| 2026-04-15 | V6 archive complete | `memory-ai-curator` 已完成 main spec sync 與 archive：正式 spec 建立於 `openspec/specs/memory-ai-curator/spec.md`，active change 封存至 `openspec/changes/archive/2026-04-15-memory-ai-curator/`；brief / roadmap / handoff 同步改為 V6 已完成 | 無（No user-facing change；本次為治理收尾與封存狀態更新，`/memory` 的可見能力維持 implementation commit 後的同一版本） |
 | 2026-04-15 | V6 git publish | `memory-ai-curator` implementation commit `90b7578` 已建立並推送到 `origin/main`；brief、roadmap、handoff 同步改為待 `/opsx-sync` / archive 的收尾狀態 | 無（No user-facing change；本次僅更新發布與治理狀態，不改動 `/memory` 的已上線能力） |
 | 2026-04-15 | V6 review-gate cleanup | Review Gate 已完成 `memory-ai-curator` 收尾檢查，並修正 active change artifact 漂移：`proposal.md` 與 `tasks.md` 的狀態、版本與 route 描述已回到與實作一致；handoff 同步改為可進 commit / sync | 無（No user-facing change；本次僅修正治理文件與交接狀態，不改動 `/memory` 的已上線能力） |
 | 2026-04-15 | V6 executor verify | 完成 `memory-ai-curator` 第一輪實作與 verify：`/memory` 新增單條刪除、KPI 問題篩選、逐分類 AI curate panel、AI review 跳轉；同時補齊 strict validate、targeted verify、memory regression、ephemeral API smoke、UI review 與 UX review evidence | 有（使用者現在可在 `/memory` 直接刪除單條記憶、只看待清理項目，並讓 Gemini 針對單一分類提出整理版本後再人工確認覆寫） |

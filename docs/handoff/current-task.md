@@ -4,14 +4,14 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V6 `memory-ai-curator` implementation commit 已完成，待 `/opsx-sync`
+- Name: V6 `memory-ai-curator` 已 archive；待下一版規劃或 release 決策
 - Owner agent: Codex
 - Last updated on: 2026-04-15
 
 ## Goal
-- 完成 `memory-ai-curator` 的 implementation commit 後收尾
+- 完成 V6 `memory-ai-curator` 的 sync / archive 收尾
 - 維持 OpenSpec artifacts、handoff、manual、roadmap 一致
-- 將 change 狀態推進到可 `/opsx-sync`，再交由人決定 archive
+- 將 repo 狀態推進到可交棒下一版規劃或 release 決策
 
 ## Done
 - 已讀取 `AGENTS.md`、`CODEX.md`、`docs/handoff/*`、`docs/roadmap.md`、`docs/planning/v6-brief.md`、`docs/system-manual.md`、`docs/agents/*`、`.github/agents/openspec-planner.agent.md`
@@ -41,21 +41,26 @@
 - 已完成 implementation commit / push：
   - commit：`90b7578` `add memory ai curator workflow`
   - 已推送至 `origin/main`
+- 已完成 main spec sync / archive：
+  - main spec：`openspec/specs/memory-ai-curator/spec.md`
+  - spec strict validate：✅ `openspec validate memory-ai-curator --type spec --strict`
+  - archive：✅ `openspec archive memory-ai-curator -y --skip-specs`
+  - archive path：`openspec/changes/archive/2026-04-15-memory-ai-curator/`
 
 ## In Progress
-- 準備執行 `/opsx-sync`
+- 無
 
 ## Open Issues
-- 無產品 blocker；Review Gate 的 artifact 漂移已修正
+- 無 blocker
 - 尚未做真人瀏覽器逐點 walkthrough，但 API smoke、UI review、UX review 與 targeted verify 已補齊
-- 尚未執行 `/opsx-sync`、`/opsx-archive`
+- 若要進一步提高 UI 證據密度，可補真人 walkthrough，但不影響本輪 archive 結論
 
 ## Next Step
 | 優先 | 說明 |
 |:----:|------|
-| 🟢 1 | 執行 `/opsx-sync`，把 `memory-ai-curator` main spec 同步到正式 specs |
-| 🟢 2 | sync 完成後由人決定是否執行 `/opsx-archive` |
-| 🟡 3 | 若仍希望補真人 walkthrough，可在 archive 前追加手動 UI 證據 |
+| 🟢 1 | 若要發版，先決定是否把 V6 做成新 release（版本號 / tag / changelog） |
+| 🟢 2 | 若不先發版，開始規劃下一版 brief |
+| 🟡 3 | 若想補強證據，可追加真人 walkthrough，但非必要 |
 
 ## Files Touched（本 session）
 - `docs/handoff/current-task.md`
@@ -66,6 +71,7 @@
 - `openspec/changes/memory-ai-curator/specs/memory-ai-curator/spec.md`
 - `openspec/changes/memory-ai-curator/proposal.md`
 - `openspec/changes/memory-ai-curator/tasks.md`
+- `openspec/specs/memory-ai-curator/spec.md`
 - `web/public/js/memory-source-utils.js`
 - `web/public/js/memory-health-utils.js`
 - `web/public/js/memory.js`
@@ -90,4 +96,6 @@
 - UX review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
 - Review Gate：✅ `CONDITIONAL PASS`（artifact 漂移已修正）
 - Git publish：✅ commit `90b7578` 已 push 到 `origin/main`
+- Main spec sync：✅ `openspec/specs/memory-ai-curator/spec.md` + `openspec validate memory-ai-curator --type spec --strict`
+- Archive：✅ `openspec archive memory-ai-curator -y --skip-specs`
 - Not run yet：真人瀏覽器逐點 walkthrough（非 blocker）
