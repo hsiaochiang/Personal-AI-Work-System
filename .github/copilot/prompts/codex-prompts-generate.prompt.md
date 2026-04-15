@@ -1,6 +1,7 @@
 ---
+name: codex-prompts-generate
+description: "Use when: brief 使用者確認日期已填，準備進入執行階段。Does: 讀取 v{N}-brief.md，為每個 change 產出三個 Codex CLI 提示詞（plan/execute/review），並在 brief 新增「Codex 執行 Prompt 清單」區段。Returns: docs/agents/codex-prompts/v{N}/ 目錄下的完整提示詞檔案（數量 = Changes × 3）。"
 agent: agent
-description: "確認 v{N}-brief.md 後，為每個 Change 生成帶序號的 Codex 三角色提示詞 MD 檔案，並在 brief 新增 Prompt 清單區段"
 ---
 
 > ⚠️ **格式強制聲明（執行前必讀）**

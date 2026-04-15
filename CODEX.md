@@ -29,10 +29,6 @@
 - `.github/copilot/skills/ui-designer.md`
 - `.github/copilot/skills/ux-fullstack-engineer.md`
 - `.github/copilot/skills/scribe.md`
-- `.github/copilot/skills/knowledge-extractor.md`
-
-### Repo-native Skills
-- `.agents/skills/knowledge-extractor/SKILL.md`
 
 ### OpenSpec Workflow Skills
 - `.github/skills/openspec-propose/SKILL.md`

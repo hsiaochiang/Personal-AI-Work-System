@@ -1,6 +1,8 @@
 ---
 name: Review Gate
-description: 對 OpenSpec Executor 的執行結果進行最終把關，判斷是否可收尾與歸檔
+description: "Use when: OpenSpec Executor 執行完成，要決定是否可以歸檔此 change。Does: 審查 change 的實作完整性、文件同步狀態、AC 達成率，給出通過/退回判定。Returns: 通過（可歸檔）或退回（列出必修項目）。"
+version: 1.0.0
+allowed_tools: [read, search]
 ---
 
 # 角色

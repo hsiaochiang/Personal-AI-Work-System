@@ -7,7 +7,6 @@
   - 必須更新 `docs/uiux/<date>_ui-review.md`（差異→修正→驗收→證據）
 - UX 流程修改：
   - 必須更新 `docs/uiux/<date>_ux-review.md`（flow/狀態/DoD）
-  - **多步驟流程端到端規則**：若 change 修改了多步驟流程（如 extract Step 1~3）中的任何一個步驟，UI/UX review scope 必須覆蓋整個端到端使用路徑（從入口 → 每個步驟 → 最終行動按鈕），不得只審查直接修改的步驟
 - Bug 修復：
   - 必須產出 `docs/bugs/<date>_<slug>.md`（重現/定位/修復/驗證/防回歸）
   - 必須產出 `docs/qa/<date>_smoke.md`（最小 smoke checklist + 結果）

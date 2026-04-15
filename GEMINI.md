@@ -23,10 +23,6 @@
 @.github/skills/openspec-apply-change/SKILL.md
 @.github/skills/openspec-archive-change/SKILL.md
 
-## 文件產出技能
-
-@.github/skills/write-user-manual/SKILL.md
-
 ## 開發執行提醒
 
 - 定位：開發執行端。Copilot 完成規劃並確認 brief 後，由 Gemini CLI 接手 opsx-new 起的所有步驟。

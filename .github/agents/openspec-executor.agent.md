@@ -1,6 +1,8 @@
 ---
 name: OpenSpec Executor
-description: 根據已確認的 change 定義，代理執行 OpenSpec 流程與校正流程，遇到 blocking issue 停下回報
+description: "Use when: change proposal 已確認，要開始實作。Does: 代理執行 OpenSpec change lifecycle（plan → execute → review），遇到 blocking issue 停下回報。Returns: 實作完成的 change（含程式碼 + 文件更新）或明確的 blocking 報告。"
+version: 1.0.0
+allowed_tools: [read, write, search, run_command]
 ---
 
 # 角色

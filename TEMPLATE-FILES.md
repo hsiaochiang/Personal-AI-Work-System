@@ -13,7 +13,7 @@
 - 若想查分類，可跑 `deploy/bootstrap.py --list-managed --root <target>`。
 - 若發現需要修改 managed files，應優先回饋上游模板，而不是只在下游專案修改。
 
-## Managed Files (64)
+## Managed Files (67)
 - .claude/skills/openspec-apply-change/SKILL.md
 - .claude/skills/openspec-archive-change/SKILL.md
 - .claude/skills/openspec-explore/SKILL.md
@@ -23,6 +23,7 @@
 - .github/agents/openspec-planner.agent.md
 - .github/agents/review-gate.agent.md
 - .github/copilot-instructions.md
+- .github/copilot/prompts/check.prompt.md
 - .github/copilot/prompts/code-review.prompt.md
 - .github/copilot/prompts/codex-prompts-generate.prompt.md
 - .github/copilot/prompts/commit-push.prompt.md
@@ -35,6 +36,7 @@
 - .github/copilot/prompts/opsx-sync.prompt.md
 - .github/copilot/prompts/opsx-validate.prompt.md
 - .github/copilot/prompts/opsx-verify.prompt.md
+- .github/copilot/prompts/promote-decision.prompt.md
 - .github/copilot/prompts/session-close.prompt.md
 - .github/copilot/prompts/session-start.prompt.md
 - .github/copilot/prompts/smoke-test.prompt.md
@@ -71,6 +73,7 @@
 - docs/agents/platform-setup-guide.md
 - docs/agents/platform-snippets.md
 - docs/agents/platform-ui-walkthrough.md
+- docs/agents/workflow-playbook.md
 - docs/agents/wos-playbook.md
 - docs/bugs/README.md
 - docs/handoff/README.md

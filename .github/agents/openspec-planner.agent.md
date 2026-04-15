@@ -1,6 +1,8 @@
 ---
 name: OpenSpec Planner
-description: 規劃 OpenSpec change，整理 change name、scope、non-scope、acceptance criteria 與前置風險
+description: "Use when: 要開始一個新 change，需要整理 scope 與 acceptance criteria。Does: 把需求轉化為可執行的 change 定義（name / scope / non-scope / AC / 風險）。Returns: 填好的 change proposal，可直接交給 OpenSpec Executor 執行。"
+version: 1.0.0
+allowed_tools: [read, write, search]
 ---
 
 # 角色

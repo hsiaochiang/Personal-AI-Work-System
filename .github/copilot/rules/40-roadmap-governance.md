@@ -107,15 +107,21 @@
 3. In Scope / Out of Scope
 4. 完成條件（Acceptance Criteria，含 checkbox）
 5. 預計拆分的 Changes
-6. 跨版本影響
-7. 使用者確認（確認日期 / 確認人 / 確認範圍）
-8. 版本狀態
+6. **Codex 執行 Prompt 清單**（由 `#codex-prompts-generate` 產出，使用者確認後才會自動建立）
+7. 跨版本影響
+8. 使用者確認（確認日期 / 確認人 / 確認範圍）
+9. 版本狀態
+
+> 注意：第 6 項「Codex 執行 Prompt 清單」必須由 `#codex-prompts-generate` skill 產生，
+> 不可手動寫。它的表格長度必須等於 Changes 數 × 3（每個 change 對應 plan/execute/review 三個檔案）。
 
 ### Agent 必須遵守的 Brief 規則
 - **開新 change 前**：必須先看當前版本 brief，確認 change 在 scope 內
 - **版本完成時**：回寫 brief 的完成狀態（勾選 Acceptance Criteria）+ 更新 roadmap
 - **跨版本影響**：本版做了什麼決定會影響下一版、out of scope 但下一版應處理的項目、技術債或架構約束，都必須記錄在 brief 的「跨版本影響」區段
 - **新版開始時**：先讀上一版 brief 的「跨版本影響」承接脈絡
+- **brief 確認後**：必須在同一輪或下一輪對話中產出 Codex 執行 Prompt 清單。
+  若使用者確認日期已填但此區段缺失，`@WOS` 必須在前置檢查中警告並建議呼叫 `#codex-prompts-generate`。
 
 ### 何時必須更新 Version Brief
 
