@@ -88,7 +88,7 @@
 ## 3. 當前版本：V6 已完成 — 記憶 AI 策展層
 
 > **Current development version：待規劃下一版**
-> **Current release：V5（v1.1.0）**
+> **Current release：V6（v1.1.11）**
 > **Development status：V6 `memory-ai-curator` 已完成 main spec sync 與 archive（2026-04-15）**
 > **可用程度：** `node web/server.js` → http://localhost:3000
 
