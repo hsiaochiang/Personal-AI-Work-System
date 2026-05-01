@@ -2,6 +2,16 @@
 
 let allSearchData = null;
 
+// T-04: 記憶檔案 → 類型標籤映射
+const SEARCH_MEMORY_TYPE_MAP = {
+  'project-context.md':  { label: '專案背景', icon: 'info' },
+  'preference-rules.md': { label: '偏好與規則', icon: 'tune' },
+  'task-patterns.md':    { label: '任務模式', icon: 'pattern' },
+  'decision-log.md':     { label: '決策記錄', icon: 'gavel' },
+  'output-patterns.md':  { label: '輸出模式', icon: 'output' },
+  'skill-candidates.md': { label: '技能候選', icon: 'school' },
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   const input = document.getElementById('global-search-input');
   const clearBtn = document.getElementById('global-search-clear');
@@ -58,9 +68,13 @@ function runSearch(query) {
   if (allSearchData?.memData?.files) {
     const hits = [];
     allSearchData.memData.files.forEach(file => {
+      let currentSectionDate = null;
       (file.content || '').split('\n').forEach(line => {
+        // 追蹤 ## 提取於 YYYY-MM-DD header
+        const sectionMatch = line.match(/^##\s+提取於\s+(\d{4}-\d{2}-\d{2})/);
+        if (sectionMatch) { currentSectionDate = sectionMatch[1]; return; }
         if (line.toLowerCase().includes(q) && line.trim()) {
-          hits.push({ title: file.filename, snippet: line.trim() });
+          hits.push({ title: file.filename, snippet: line.trim(), sectionDate: currentSectionDate });
         }
       });
     });
@@ -129,9 +143,26 @@ function runSearch(query) {
     group.items.forEach(item => {
       const el = document.createElement('div');
       el.className = 'search-result-item';
-      el.innerHTML =
-        `<div class="search-result-title">${escapeHTML(item.title)}</div>` +
-        `<div class="search-result-snippet">${highlightQuery(item.snippet, query)}</div>`;
+
+      // T-04: 記憶 group 顯示類型 chip + 新鮮度；其他 group 保留原有 title 顯示
+      if (item.sectionDate !== undefined) {
+        const typeInfo = SEARCH_MEMORY_TYPE_MAP[item.title] || { label: item.title.replace('.md', ''), icon: 'article' };
+        const stale = isStaleDateStr(item.sectionDate);
+        const relDate = relativeDate(item.sectionDate);
+        const freshnessHtml = relDate
+          ? `<span class="search-result-freshness${stale ? ' freshness-stale' : ''}" title="${escapeHTML(item.sectionDate)}">${stale ? '⚠️ ' : ''}${escapeHTML(relDate)}</span>`
+          : '';
+        el.innerHTML =
+          `<div class="search-result-meta">` +
+          `<span class="search-result-type-chip"><span class="material-symbols-outlined">${escapeHTML(typeInfo.icon)}</span>${escapeHTML(typeInfo.label)}</span>` +
+          freshnessHtml +
+          `</div>` +
+          `<div class="search-result-snippet">${highlightQuery(item.snippet, query)}</div>`;
+      } else {
+        el.innerHTML =
+          `<div class="search-result-title">${escapeHTML(item.title)}</div>` +
+          `<div class="search-result-snippet">${highlightQuery(item.snippet, query)}</div>`;
+      }
       section.appendChild(el);
     });
 
@@ -147,4 +178,21 @@ function highlightQuery(text, query) {
   const escapedQ = escapeHTML(safeQ);
   return escaped.replace(new RegExp(escapedQ, 'gi'),
     match => `<mark class="search-highlight">${match}</mark>`);
+}
+
+// T-04: 相對時間顯示（如：「3 個月前」）
+function relativeDate(dateStr) {
+  if (!dateStr) return null;
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+  if (days < 1) return '今天';
+  if (days < 7) return `${days} 天前`;
+  if (days < 30) return `${Math.floor(days / 7)} 週前`;
+  if (days < 365) return `${Math.floor(days / 30)} 個月前`;
+  return `${Math.floor(days / 365)} 年前`;
+}
+
+// T-04: 超過 90 天視為 stale
+function isStaleDateStr(dateStr) {
+  if (!dateStr) return false;
+  return (Date.now() - new Date(dateStr).getTime()) / 86400000 > 90;
 }

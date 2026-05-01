@@ -713,6 +713,7 @@ function mergeLLMCandidates(rawCandidates) {
       category: internalCategory,
       content: `${c.summary}\n\n【原文佐證】${c.evidence}`,
       keyLine: c.summary,
+      title: null,
       source: 'gemini-llm',
       dedupeKey: c.summary.substring(0, 60).toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-'),
       confidence: typeof c.confidence === 'number' ? Math.min(1, Math.max(0, c.confidence)) : 0.8,
@@ -843,6 +844,7 @@ function extractCandidatesFromText(text, conversationDoc) {
         category: bestCategory,
         content: trimmed,
         keyLine: keyLine,
+        title: null,
         source: primarySource,
         dedupeKey: dedupeKey,
         confidence: confidence,
@@ -899,8 +901,12 @@ function renderCandidates() {
     card.innerHTML = `
       <div class="candidate-header">
         <div class="candidate-category">
-          <span class="material-symbols-outlined">${escapeHTML(cat.icon)}</span>
-          <span>${escapeHTML(cat.label)}</span>
+          <span class="material-symbols-outlined category-icon">${escapeHTML(cat.icon)}</span>
+          <select class="candidate-category-select" data-action="change-category" title="修改知識類型">
+            ${Object.entries(CATEGORIES).map(([k, v]) =>
+              `<option value="${escapeHTML(k)}"${k === cand.category ? ' selected' : ''}>${escapeHTML(v.label)}</option>`
+            ).join('')}
+          </select>
           <span class="confidence-badge" title="AI 評估此項値得保存的信心程度">${(cand.confidence * 100).toFixed(0)}%</span>
         </div>
         <div class="candidate-actions">
@@ -914,7 +920,7 @@ function renderCandidates() {
           </button>
         </div>
       </div>
-      <div class="candidate-content">${escapeHTML(cand.keyLine)}</div>
+      <input class="candidate-title-input" type="text" value="${escapeHTML(cand.title || cand.keyLine)}" placeholder="知識標題（一行摘要）" data-action="title-input">
       <div class="candidate-meta-row">
         <div class="candidate-target">→ ${escapeHTML(cat.filename)}</div>
         <span class="source-badge ${escapeHTML(sourcePresentation.className)} candidate-source-badge">${escapeHTML(sourcePresentation.label)}</span>
@@ -924,6 +930,25 @@ function renderCandidates() {
         <span class="material-symbols-outlined">edit</span> 編輯內容
       </button>
     `;
+
+    // T-02: 類型選擇器 change 事件（select 不觸發 click delegation）
+    const catSelect = card.querySelector('.candidate-category-select');
+    catSelect.addEventListener('change', () => {
+      const newKey = catSelect.value;
+      const newCat = CATEGORIES[newKey];
+      if (!newCat) return;
+      cand.category = newKey;
+      const iconEl = card.querySelector('.category-icon');
+      if (iconEl) iconEl.textContent = newCat.icon;
+      const targetEl = card.querySelector('.candidate-target');
+      if (targetEl) targetEl.textContent = `→ ${newCat.filename}`;
+    });
+
+    // T-03: 標題輸入欄
+    const titleInput = card.querySelector('.candidate-title-input');
+    titleInput.addEventListener('input', () => {
+      cand.title = titleInput.value;
+    });
 
     // Event delegation
     card.addEventListener('click', (e) => {
@@ -1043,7 +1068,7 @@ async function runWriteback() {
     const filename = CATEGORIES[cand.category].filename;
     if (!groups[filename]) groups[filename] = [];
     groups[filename].push({
-      content: cand.editedContent || cand.content,
+      content: cand.title || cand.keyLine || cand.editedContent || cand.content,
       source: cand.source,
     });
   });
