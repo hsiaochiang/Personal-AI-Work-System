@@ -4,17 +4,30 @@
 > 版本完成度與長期進度以 `docs/roadmap.md` 為準。
 
 ## Task
-- Name: V6 `memory-ai-curator` 已 archive；待下一版規劃或 release 決策
-- Owner agent: Codex
-- Last updated on: 2026-04-15
+- Name: UX 巡檢完成 + knowledge-quality-ux 已歸檔；待執行 P2-A11Y-01 或規劃 V7
+- Owner agent: Copilot
+- Last updated on: 2026-05-01
 
 ## Goal
-- 完成 V6 `memory-ai-curator` 的 sync / archive 收尾
-- 維持 OpenSpec artifacts、handoff、manual、roadmap 一致
-- 將 repo 狀態推進到可交棒下一版規劃或 release 決策
+- 執行 P2-A11Y-01（color-contrast violations，5 頁面）
+- 或規劃 V7 版本 brief（方向待使用者確認）
 
 ## Done
-- 已讀取 `AGENTS.md`、`CODEX.md`、`docs/handoff/*`、`docs/roadmap.md`、`docs/planning/v6-brief.md`、`docs/system-manual.md`、`docs/agents/*`、`.github/agents/openspec-planner.agent.md`
+- （以上 V6 memory-ai-curator 完整紀錄略，見 2026-04-29 版本）
+- **2026-05-01** 執行 PAIS 首次完整 UX 巡檢（Phase A–E）：
+  - Phase A：Playwright + axe-core 掃描 9 頁面（截圖 27 張、axe JSON 9 份）
+  - Phase B：Cognitive Walkthrough — 5 任務流程、21 步驟、11 FAIL
+  - Phase C：Nielsen 10 Heuristics — 16 個發現、得分 16/35
+  - Phase D：UX Backlog（16 項）+ ux-audit-report.md
+  - Phase E：ux-auditor.md skill 抽象化，加入 AGENTS.md + copilot-instructions.md
+- **2026-05-01** 實作並歸檔 `knowledge-quality-ux` change（T-01~T-05）：
+  - T-01：extract.html select accessible name 修復（P0 axe critical → 0）
+  - T-02：候選卡片類型選擇器（靜態 span → select + 即時更新）
+  - T-03：候選卡片可編輯標題輸入欄
+  - T-04：搜尋記憶 group 加入類型 chip + 新鮮度
+  - T-05：CSS 新增 6 個 class
+  - 歸檔：`openspec/changes/archive/2026-05-01-knowledge-quality-ux/`
+  - PAIS PROD commit `afb13d2`、PAIS DEV commit `f6786b0` → pushed
 - 已確認 `docs/planning/v6-brief.md` 有使用者確認（Wilson，2026-04-14）
 - 已確認 `memory-ai-curator` 屬於 V6 In Scope，且 `docs/agents/codex-prompts/v6/01~03-*.md` 已存在
 - 已補齊 `openspec/changes/memory-ai-curator/specs/memory-ai-curator/spec.md`
@@ -58,44 +71,15 @@
 ## Next Step
 | 優先 | 說明 |
 |:----:|------|
-| 🟢 1 | 若要發版，先決定是否把 V6 做成新 release（版本號 / tag / changelog） |
-| 🟢 2 | 若不先發版，開始規劃下一版 brief |
-| 🟡 3 | 若想補強證據，可追加真人 walkthrough，但非必要 |
+| 🟢 1 | 執行 P2-A11Y-01：調整 `--color-text-secondary` CSS token 通過 WCAG AA，影響 5 頁面 |
+| 🟡 2 | 規劃 V7 brief（方向待使用者確認後，呼叫 OpenSpec Planner） |
 
-## Files Touched（本 session）
+## Files Touched（本 session，2026-04-29）
+- `VERSION`（1.1.10 → 1.1.11）
+- `CHANGELOG.md`（新增 V6 條目）
+- `docs/roadmap.md`（Current release 更新為 V6 v1.1.11）
 - `docs/handoff/current-task.md`
-- `docs/handoff/blockers.md`
-- `docs/planning/v6-brief.md`
-- `docs/system-manual.md`
-- `docs/roadmap.md`
-- `openspec/changes/memory-ai-curator/specs/memory-ai-curator/spec.md`
-- `openspec/changes/memory-ai-curator/proposal.md`
-- `openspec/changes/memory-ai-curator/tasks.md`
-- `openspec/specs/memory-ai-curator/spec.md`
-- `web/public/js/memory-source-utils.js`
-- `web/public/js/memory-health-utils.js`
-- `web/public/js/memory.js`
-- `web/public/memory.html`
-- `web/public/css/style.css`
-- `web/server.js`
-- `tools/verify_memory_ai_curator.js`
-- `docs/qa/2026-04-15_memory-ai-curator-smoke.md`
-- `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md`
-- `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
 
 ## Validation Status
-- Brief confirmation：✅ `docs/planning/v6-brief.md` 已有人類確認（2026-04-14）
-- Scope gate：✅ `memory-ai-curator` 屬於 V6 In Scope
-- Active change duplicate check：✅ 已有同名 active change，無需再開新 change
-- OpenSpec validate：✅ `openspec validate --changes "memory-ai-curator" --strict`
-- Targeted verify：✅ `node tools/verify_memory_ai_curator.js`
-- Regression verify：✅ `node tools/verify_memory_dedup_suggestions.js`、`node tools/verify_memory_health_scoring.js`
-- Syntax check：✅ `node --check web/server.js`、`node --check web/public/js/memory.js`
-- Ephemeral API smoke：✅ 暫存副本驗證 `POST /api/memory/item/delete`（backup + 單條刪除）、`POST /api/memory/ai-curate`（live Gemini success + missing-key 400）
-- UI review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ui-review.md`
-- UX review：✅ `docs/uiux/2026-04-15_memory-ai-curator-ux-review.md`
-- Review Gate：✅ `CONDITIONAL PASS`（artifact 漂移已修正）
-- Git publish：✅ commit `90b7578` 已 push 到 `origin/main`
-- Main spec sync：✅ `openspec/specs/memory-ai-curator/spec.md` + `openspec validate memory-ai-curator --type spec --strict`
-- Archive：✅ `openspec archive memory-ai-curator -y --skip-specs`
-- Not run yet：真人瀏覽器逐點 walkthrough（非 blocker）
+- v1.1.11 release：✅ git tag + push origin 完成
+- PROD 部署：✅ `D:\prod\Personal-AI-Work-System` checkout `v1.1.11`
