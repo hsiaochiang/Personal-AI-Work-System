@@ -1,0 +1,12 @@
+{
+  "page": "task",
+  "url": "http://localhost:3000/task",
+  "timestamp": "2026-05-01T13:09:40.425Z",
+  "violations": [],
+  "passes": 20,
+  "incomplete": 0,
+  "inapplicable": 67,
+  "violationCount": 0,
+  "criticalCount": 0,
+  "seriousCount": 0
+}

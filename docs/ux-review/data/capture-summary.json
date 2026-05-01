@@ -1,0 +1,59 @@
+{
+  "screenshots": {
+    "success": 27,
+    "failed": 0
+  },
+  "axe": {
+    "success": 9,
+    "failed": 0,
+    "violations": {
+      "index": {
+        "total": 1,
+        "critical": 0,
+        "serious": 1
+      },
+      "extract": {
+        "total": 0,
+        "critical": 0,
+        "serious": 0
+      },
+      "memory": {
+        "total": 1,
+        "critical": 0,
+        "serious": 1
+      },
+      "handoff": {
+        "total": 1,
+        "critical": 0,
+        "serious": 1
+      },
+      "decisions": {
+        "total": 0,
+        "critical": 0,
+        "serious": 0
+      },
+      "projects": {
+        "total": 1,
+        "critical": 0,
+        "serious": 1
+      },
+      "settings": {
+        "total": 1,
+        "critical": 0,
+        "serious": 1
+      },
+      "search": {
+        "total": 0,
+        "critical": 0,
+        "serious": 0
+      },
+      "task": {
+        "total": 0,
+        "critical": 0,
+        "serious": 0
+      }
+    }
+  },
+  "timestamp": "2026-05-01T13:08:21.082Z",
+  "baseUrl": "http://localhost:3000"
+}

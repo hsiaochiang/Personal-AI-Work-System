@@ -79,6 +79,7 @@
 | 最終 Gate | `Review Gate` | `rules/35-quality-gate.md` + `rules/70-openspec-workflow.md` | `code-reviewer.md` | commit/sync/archive 建議 |
 | UI 調整 | `#ui-review` | `rules/10-style-guide.md` | `skills/ui-designer.md` | `docs/uiux/<date>_ui-review.md` |
 | UX 流程 | `#ux-review` | `rules/20-ux-flow.md` | `skills/ux-fullstack-engineer.md` | `docs/uiux/<date>_ux-review.md` |
+| UX 稽核 | `#ux-audit` | — | `skills/ux-auditor.md` | `docs/ux-review/ux-audit-report.md` + Backlog |
 | 修 Bug | — | `rules/30-debug-contract.md` | `skills/debug-sheriff.md` + `skills/smoke-tester.md` | `docs/bugs/` + `docs/qa/` |
 | 新功能實作 | `#opsx-new` → `#opsx-ff` → `#opsx-apply` | `rules/50-tech-stack.md` + `rules/70-openspec-workflow.md` | `skills/openspec-conductor.md` | spec + runlog + smoke |
 | 驗證 | `#opsx-verify` | `rules/35-quality-gate.md` | — | 驗證報告 |

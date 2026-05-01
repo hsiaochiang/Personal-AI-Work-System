@@ -1,0 +1,61 @@
+{
+  "page": "handoff",
+  "url": "http://localhost:3000/handoff",
+  "timestamp": "2026-05-01T13:09:02.132Z",
+  "violations": [
+    {
+      "id": "scrollable-region-focusable",
+      "impact": "serious",
+      "tags": [
+        "cat.keyboard",
+        "wcag2a",
+        "wcag211",
+        "wcag213",
+        "TTv5",
+        "TT4.a",
+        "EN-301-549",
+        "EN-9.2.1.1",
+        "EN-9.2.1.3",
+        "RGAAv4",
+        "RGAA-7.3.2"
+      ],
+      "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+      "help": "Scrollable region must have keyboard access",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/scrollable-region-focusable?application=playwright",
+      "nodes": [
+        {
+          "any": [
+            {
+              "id": "focusable-content",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "Element should have focusable content"
+            },
+            {
+              "id": "focusable-element",
+              "data": null,
+              "relatedNodes": [],
+              "impact": "serious",
+              "message": "Element should be focusable"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<pre class=\"handoff-preview\" id=\"handoff-preview\"># Planning Handoff\n\n## 這次要釐清什麼\n\n- \n\n## 已知背景\n\n- \n\n## 已定案內容\n\n- \n\n## 尚未定案內容\n\n- \n\n## 本輪希望產出的結果\n\n- \n\n## 相關檔案\n\n- \n\n## 這次要討論\n\n- \n\n## 這次先不要展開\n\n- \n\n## 完成後應回寫的文件\n\n- \n</pre>",
+          "target": [
+            "#handoff-preview"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element should have focusable content\n  Element should be focusable"
+        }
+      ]
+    }
+  ],
+  "passes": 23,
+  "incomplete": 0,
+  "inapplicable": 63,
+  "violationCount": 1,
+  "criticalCount": 0,
+  "seriousCount": 1
+}

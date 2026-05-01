@@ -1,0 +1,12 @@
+{
+  "page": "decisions",
+  "url": "http://localhost:3000/decisions",
+  "timestamp": "2026-05-01T13:09:09.818Z",
+  "violations": [],
+  "passes": 23,
+  "incomplete": 1,
+  "inapplicable": 64,
+  "violationCount": 0,
+  "criticalCount": 0,
+  "seriousCount": 0
+}

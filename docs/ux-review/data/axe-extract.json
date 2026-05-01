@@ -1,0 +1,12 @@
+{
+  "page": "extract",
+  "url": "http://localhost:3000/extract",
+  "timestamp": "2026-05-01T13:08:40.737Z",
+  "violations": [],
+  "passes": 25,
+  "incomplete": 1,
+  "inapplicable": 62,
+  "violationCount": 0,
+  "criticalCount": 0,
+  "seriousCount": 0
+}

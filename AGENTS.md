@@ -81,10 +81,12 @@
 | `git-steward` | `.github/copilot/skills/git-steward.md` | 正規 commit + push 流程 | `#commit-push` |
 | `ui-designer` | `.github/copilot/skills/ui-designer.md` | UI 審查，產出 ui-review.md | `#ui-review`（僅 UI 類 change） |
 | `ux-fullstack-engineer` | `.github/copilot/skills/ux-fullstack-engineer.md` | UX 流程審查，產出 ux-review.md | `#ux-review`（僅 UI 類 change） |
+| `ux-auditor` | `.github/copilot/skills/ux-auditor.md` | 完整 UX 稽核（截圖 + axe + HE + CW + Backlog），知識系統專用評估框架 | `#ux-audit`（針對已上線應用的完整稽核）|
 | `debug-sheriff` | `.github/copilot/skills/debug-sheriff.md` | Bug 診斷與修復流程 | bug 修復任務 |
 | `scribe` | `.github/copilot/skills/scribe.md` | Session 收尾，產出 experience slides | `#session-close` |
 | `deploy-conductor` | `.github/copilot/skills/deploy-conductor.md` | 布版完整生命週期（Prepare→Execute→Verify） | `#deploy-prepare`、`#deploy-execute`、`#deploy-verify` |
 | `upgrade-advisor` | `.github/copilot/skills/upgrade-advisor.md` | 目標專案升級顧問（版本差異 + 升級計畫） | `#template-upgrade`（在目標專案中使用） |
+| `frontend-design` | `.claude/skills/frontend-design/SKILL.md` | 產生獨特、生產級前端介面，避免 AI 泛用美學 | 使用者要求建構 web 元件、頁面或應用程式 |
 
 ### 各平台存取方式
 

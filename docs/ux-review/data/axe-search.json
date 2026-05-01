@@ -1,0 +1,12 @@
+{
+  "page": "search",
+  "url": "http://localhost:3000/search",
+  "timestamp": "2026-05-01T13:09:32.830Z",
+  "violations": [],
+  "passes": 21,
+  "incomplete": 0,
+  "inapplicable": 66,
+  "violationCount": 0,
+  "criticalCount": 0,
+  "seriousCount": 0
+}

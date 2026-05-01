@@ -1,0 +1,68 @@
+{
+  "page": "projects",
+  "url": "http://localhost:3000/projects",
+  "timestamp": "2026-05-01T13:09:17.417Z",
+  "violations": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "cat.color",
+        "wcag2aa",
+        "wcag143",
+        "TTv5",
+        "TT13.c",
+        "EN-301-549",
+        "EN-9.1.4.3",
+        "ACT",
+        "RGAAv4",
+        "RGAA-3.2.1"
+      ],
+      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",
+      "nodes": [
+        {
+          "any": [
+            {
+              "id": "color-contrast",
+              "data": {
+                "fgColor": "#555555",
+                "bgColor": "#2a2a32",
+                "contrastRatio": 1.9,
+                "fontSize": "7.9pt (10.5px)",
+                "fontWeight": "normal",
+                "messageKey": null,
+                "expectedContrastRatio": "4.5:1"
+              },
+              "relatedNodes": [
+                {
+                  "html": "<div class=\"project-card\" data-id=\"personal-ai\">",
+                  "target": [
+                    ".project-card"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element has insufficient color contrast of 1.9 (foreground color: #555555, background color: #2a2a32, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ],
+          "all": [],
+          "none": [],
+          "impact": "serious",
+          "html": "<div class=\"project-card-path\">D:\\program\\Personal-AI-Work-System</div>",
+          "target": [
+            ".project-card-path"
+          ],
+          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.9 (foreground color: #555555, background color: #2a2a32, font size: 7.9pt (10.5px), font weight: normal). Expected contrast ratio of 4.5:1"
+        }
+      ]
+    }
+  ],
+  "passes": 20,
+  "incomplete": 0,
+  "inapplicable": 67,
+  "violationCount": 1,
+  "criticalCount": 0,
+  "seriousCount": 1
+}
