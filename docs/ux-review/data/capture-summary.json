@@ -8,9 +8,9 @@
     "failed": 0,
     "violations": {
       "index": {
-        "total": 1,
+        "total": 0,
         "critical": 0,
-        "serious": 1
+        "serious": 0
       },
       "extract": {
         "total": 0,
@@ -33,14 +33,14 @@
         "serious": 0
       },
       "projects": {
-        "total": 1,
+        "total": 0,
         "critical": 0,
-        "serious": 1
+        "serious": 0
       },
       "settings": {
-        "total": 1,
+        "total": 0,
         "critical": 0,
-        "serious": 1
+        "serious": 0
       },
       "search": {
         "total": 0,
@@ -54,6 +54,6 @@
       }
     }
   },
-  "timestamp": "2026-05-01T13:08:21.082Z",
+  "timestamp": "2026-05-01T15:09:48.106Z",
   "baseUrl": "http://localhost:3000"
 }

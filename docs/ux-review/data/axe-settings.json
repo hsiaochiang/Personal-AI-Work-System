@@ -1,68 +1,12 @@
 {
   "page": "settings",
   "url": "http://localhost:3000/settings",
-  "timestamp": "2026-05-01T13:09:24.986Z",
-  "violations": [
-    {
-      "id": "color-contrast",
-      "impact": "serious",
-      "tags": [
-        "cat.color",
-        "wcag2aa",
-        "wcag143",
-        "TTv5",
-        "TT13.c",
-        "EN-301-549",
-        "EN-9.1.4.3",
-        "ACT",
-        "RGAAv4",
-        "RGAA-3.2.1"
-      ],
-      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-      "help": "Elements must meet minimum color contrast ratio thresholds",
-      "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",
-      "nodes": [
-        {
-          "any": [
-            {
-              "id": "color-contrast",
-              "data": {
-                "fgColor": "#0000ee",
-                "bgColor": "#2a2a32",
-                "contrastRatio": 1.51,
-                "fontSize": "8.8pt (11.7px)",
-                "fontWeight": "normal",
-                "messageKey": null,
-                "expectedContrastRatio": "4.5:1"
-              },
-              "relatedNodes": [
-                {
-                  "html": "<div class=\"card settings-card\">",
-                  "target": [
-                    ".card.settings-card:nth-child(3)"
-                  ]
-                }
-              ],
-              "impact": "serious",
-              "message": "Element has insufficient color contrast of 1.51 (foreground color: #0000ee, background color: #2a2a32, font size: 8.8pt (11.7px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ],
-          "all": [],
-          "none": [],
-          "impact": "serious",
-          "html": "<a href=\"https://aistudio.google.com/app/apikey\" target=\"_blank\" rel=\"noopener\">Google AI Studio</a>",
-          "target": [
-            "a[target=\"_blank\"]"
-          ],
-          "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.51 (foreground color: #0000ee, background color: #2a2a32, font size: 8.8pt (11.7px), font weight: normal). Expected contrast ratio of 4.5:1"
-        }
-      ]
-    }
-  ],
+  "timestamp": "2026-05-01T15:10:58.477Z",
+  "violations": [],
   "passes": 25,
   "incomplete": 1,
   "inapplicable": 62,
-  "violationCount": 1,
+  "violationCount": 0,
   "criticalCount": 0,
-  "seriousCount": 1
+  "seriousCount": 0
 }
