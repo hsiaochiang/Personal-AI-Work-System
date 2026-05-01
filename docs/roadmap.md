@@ -177,6 +177,13 @@ V1–V6 已完成；工作台現已具備多來源匯入、memory 治理、規�
 |:-:|--------|:----:|------|
 | — | llm-extract-gemini | ✅ 已 archive | Gemini API 輔助知識提取路徑：`/api/extract/llm`、Gemini key 管理（settings）、extract.html AI 輔助提取按鈕；archive 2026-04-14 |
 
+### Post-V6 獨立 Change（UX 品質修補期）
+
+| # | Change | 狀態 | 備註 |
+|:-:|--------|:----:|------|
+| — | knowledge-quality-ux | ✅ 已 archive | T-01~T-05：extract P0 a11y 修復、候選卡片 select+title、搜尋 type chip+freshness、CSS；archive 2026-05-01 |
+| — | color-contrast-a11y | ✅ 已 archive | 6 處 style.css：token `--on-surface-variant` #9a9590→#a8a39d、4 個 class `var(--outline)`→`var(--on-surface-variant)`、`.settings-copy a` 連結色；axe 9 頁面 color-contrast violations = 0；archive 2026-05-01 |
+
 ### V6 Change 進度
 
 > Brief 確認日期：2026-04-14（Wilson）
