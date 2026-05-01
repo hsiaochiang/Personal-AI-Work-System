@@ -10,7 +10,7 @@
 
   /* Text Colors (warm white) */
   --on-surface: #e8e6e1;
-  --on-surface-variant: #9a9590;
+  --on-surface-variant: #a8a39d;
   --on-background: #e8e6e1;
 
   /* Primary — Amber Gold */
@@ -393,7 +393,7 @@ body {
 
 .governance-todo-note {
   font-size: 0.74rem;
-  color: var(--outline);
+  color: var(--on-surface-variant);
   line-height: 1.5;
 }
 
@@ -823,7 +823,7 @@ body {
   margin-top: 0.35rem;
   margin-bottom: 0.35rem;
   font-size: 0.72rem;
-  color: var(--outline);
+  color: var(--on-surface-variant);
 }
 
 .memory-dedup-primary-badge {
@@ -866,7 +866,7 @@ body {
 
 .memory-item-health-reason {
   font-size: 0.75rem;
-  color: var(--outline);
+  color: var(--on-surface-variant);
   margin-bottom: 0.5rem;
 }
 
@@ -1533,6 +1533,9 @@ body {
   font-size: 0.78rem;
   line-height: 1.55;
   color: var(--on-surface-variant);
+}
+.settings-copy a {
+  color: var(--primary);
 }
 
 .chatgpt-track-row,
@@ -2374,7 +2377,7 @@ body {
 }
 .project-card-path {
   font-size: 0.7rem;
-  color: var(--outline);
+  color: var(--on-surface-variant);
   font-family: monospace;
   word-break: break-all;
 }
