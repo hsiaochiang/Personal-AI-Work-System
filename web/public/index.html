@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>專案總覽 — 個人 AI 工作系統</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -68,6 +68,57 @@
       <div class="page-header">
         <h2>專案總覽</h2>
         <p class="description">從 roadmap.md 讀取的即時進度</p>
+      </div>
+
+      <!-- Onboarding Guide -->
+      <div class="onboarding-card" id="onboarding-card">
+        <div class="onboarding-header">
+          <div class="onboarding-title">
+            <span class="material-symbols-outlined" aria-hidden="true">waving_hand</span>
+            歡迎使用 Personal AI 工作系統
+          </div>
+          <button class="onboarding-dismiss" id="btn-dismiss-onboarding" aria-label="關閉引導並不再顯示">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <p class="onboarding-subtitle">以下是 5 個核心功能，帶你快速上手：</p>
+        <div class="onboarding-features">
+          <a href="/extract" class="onboarding-feature">
+            <span class="material-symbols-outlined" aria-hidden="true">auto_awesome</span>
+            <div>
+              <strong>知識提取</strong>
+              <span>貼入 AI 對話，自動找出值得保存的知識候選</span>
+            </div>
+          </a>
+          <a href="/memory" class="onboarding-feature">
+            <span class="material-symbols-outlined" aria-hidden="true">psychology</span>
+            <div>
+              <strong>專案記憶</strong>
+              <span>查看、搜尋、整理已沉澱的知識與偏好規則</span>
+            </div>
+          </a>
+          <a href="/handoff" class="onboarding-feature">
+            <span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>
+            <div>
+              <strong>Handoff 產生器</strong>
+              <span>為新 AI 對話產生標準化的啟動上下文文件</span>
+            </div>
+          </a>
+          <a href="/decisions" class="onboarding-feature">
+            <span class="material-symbols-outlined" aria-hidden="true">gavel</span>
+            <div>
+              <strong>決策與規則</strong>
+              <span>記錄並查閱重要決定、偏好規則、技術選型</span>
+            </div>
+          </a>
+          <a href="/search" class="onboarding-feature">
+            <span class="material-symbols-outlined" aria-hidden="true">manage_search</span>
+            <div>
+              <strong>全域搜尋</strong>
+              <span>跨類型搜尋所有記憶，快速找回需要的知識</span>
+            </div>
+          </a>
+        </div>
       </div>
 
       <!-- KPI Grid -->

@@ -67,7 +67,7 @@
     <main class="main-content">
       <div class="page-header">
         <h2>知識提取</h2>
-        <p class="description">先選擇對話來源工具，再用對應入口載入 Copilot / ChatGPT / Gemini / Claude / 純文字內容，系統會以正確 adapter 正規化為 `ConversationDoc`，再進入既有提取、審核與寫回流程。</p>
+        <p class="description">選擇 AI 工具 → 載入對話 → 審核候選知識 → 一鍵寫入記憶庫。支援 Copilot、ChatGPT、Gemini、Claude 與純文字。</p>
       </div>
 
       <!-- Step 1: Input -->
@@ -268,6 +268,10 @@
             <span class="step-badge">3</span>
             寫回結果
           </span>
+        </div>
+        <div class="writeback-success-banner hidden" id="writeback-success-banner">
+          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+          <span id="writeback-success-msg">知識已成功寫入記憶庫</span>
         </div>
         <div id="writeback-result"></div>
         <div class="extract-actions">

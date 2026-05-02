@@ -1,6 +1,27 @@
 /* ─── Overview page logic ─── */
 
+const ONBOARDING_KEY = 'pais_onboarding_dismissed';
+
+function initOnboardingCard() {
+  const card = document.getElementById('onboarding-card');
+  if (!card) return;
+
+  if (localStorage.getItem(ONBOARDING_KEY) === 'true') {
+    card.classList.add('hidden');
+    return;
+  }
+
+  const btn = document.getElementById('btn-dismiss-onboarding');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      localStorage.setItem(ONBOARDING_KEY, 'true');
+      card.classList.add('hidden');
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  initOnboardingCard();
   const phaseContainer = document.getElementById('phase-content');
   const governanceContainer = document.getElementById('governance-content');
 

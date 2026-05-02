@@ -180,8 +180,15 @@ body {
 
 .page-header {
   margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
-
+.page-header-copy {
+  flex: 1;
+}
 .page-header h2 {
   font-family: var(--font-headline);
   font-size: 1.5rem;
@@ -224,6 +231,91 @@ body {
   font-size: 1rem;
   font-weight: 700;
   color: var(--on-surface);
+}
+
+/* ─── Onboarding Card ─── */
+
+.onboarding-card {
+  background: linear-gradient(135deg, var(--surface-container) 0%, var(--surface-container-high) 100%);
+  border: 1px solid var(--primary-container);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.onboarding-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+.onboarding-title .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+.onboarding-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--on-surface-variant);
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+.onboarding-dismiss:hover {
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+}
+.onboarding-subtitle {
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+  margin: 0 0 1rem;
+}
+.onboarding-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.625rem;
+}
+.onboarding-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--surface-container-lowest);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--on-surface);
+  transition: background 0.15s;
+}
+.onboarding-feature:hover {
+  background: var(--surface-container);
+}
+.onboarding-feature .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.onboarding-feature strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.onboarding-feature span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+  line-height: 1.4;
 }
 
 /* ─── KPI Grid ─── */
@@ -1752,6 +1844,20 @@ body {
 }
 
 /* ─── Writeback Results ─── */
+
+.writeback-success-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--success-container);
+  color: var(--success);
+}
+.writeback-success-banner .material-symbols-outlined { font-size: 20px; }
 
 .writeback-item {
   display: flex;

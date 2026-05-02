@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updatePreview();
 
   document.getElementById('btn-copy').addEventListener('click', copyToClipboard);
+  const btnCopyTop = document.getElementById('btn-copy-top');
+  if (btnCopyTop) btnCopyTop.addEventListener('click', copyToClipboard);
   document.getElementById('btn-clear').addEventListener('click', clearForm);
 });
 

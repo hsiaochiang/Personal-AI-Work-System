@@ -1107,6 +1107,18 @@ async function runWriteback() {
 
   // Render results
   resultContainer.innerHTML = '';
+  const successCount = results.reduce((sum, r) => r.ok ? sum + r.count : sum, 0);
+  const allOk = results.every(r => r.ok);
+  const banner = document.getElementById('writeback-success-banner');
+  const bannerMsg = document.getElementById('writeback-success-msg');
+  if (banner && bannerMsg) {
+    if (allOk && successCount > 0) {
+      bannerMsg.textContent = `${successCount} 條知識已成功寫入記憶庫`;
+      banner.classList.remove('hidden');
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
   results.forEach(r => {
     const div = document.createElement('div');
     div.className = 'writeback-item ' + (r.ok ? 'success' : 'failure');
