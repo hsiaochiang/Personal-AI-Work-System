@@ -183,6 +183,8 @@ V1–V6 已完成；工作台現已具備多來源匯入、memory 治理、規�
 |:-:|--------|:----:|------|
 | — | knowledge-quality-ux | ✅ 已 archive | T-01~T-05：extract P0 a11y 修復、候選卡片 select+title、搜尋 type chip+freshness、CSS；archive 2026-05-01 |
 | — | color-contrast-a11y | ✅ 已 archive | 6 處 style.css：token `--on-surface-variant` #9a9590→#a8a39d、4 個 class `var(--outline)`→`var(--on-surface-variant)`、`.settings-copy a` 連結色；axe 9 頁面 color-contrast violations = 0；archive 2026-05-01 |
+| — | onboarding-guide | ✅ 已 archive | 首頁新增可關閉 onboarding 引導卡（5 功能圖磚，localStorage 持久化）；解決 UX 稽核 T1 onboarding 失敗；archive 2026-05-03 |
+| — | ux-polish-p1 | ✅ 已 archive | P1-UX-02~04：Extract 成功 banner、頁面副標去技術術語、Handoff 頂端一鍵複製；archive 2026-05-03 |
 
 ### V6 Change 進度
 
