@@ -748,7 +748,23 @@ function renderMemory(container, files, filterMode = 'all') {
           card.appendChild(deleteBtn);
         }
 
-        category.appendChild(card);
+        const copyAiBtn = document.createElement('button');
+        copyAiBtn.className = 'btn-icon memory-item-copy-ai';
+        copyAiBtn.type = 'button';
+        copyAiBtn.title = '複製給 AI';
+        copyAiBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+        copyAiBtn.addEventListener('click', () => {
+          const typeLabel = sourcePresentation ? sourcePresentation.label : 'PAIS';
+          const title = kvMatch ? kvMatch[1] : item.content.substring(0, 40);
+          const body = kvMatch ? kvMatch[2] : item.content;
+          const today = new Date().toISOString().slice(0, 10);
+          const text = `[${typeLabel}]：${title} — ${body}（來源：PAIS，${today}）`;
+          navigator.clipboard.writeText(text).catch(() => {});
+          const icon = copyAiBtn.querySelector('.material-symbols-outlined');
+          icon.textContent = 'check';
+          setTimeout(() => { icon.textContent = 'content_copy'; }, 1500);
+        });
+        card.appendChild(copyAiBtn);
       });
     });
 

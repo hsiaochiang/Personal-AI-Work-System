@@ -158,10 +158,40 @@ function runSearch(query) {
           freshnessHtml +
           `</div>` +
           `<div class="search-result-snippet">${highlightQuery(item.snippet, query)}</div>`;
+
+        const copyAiBtn = document.createElement('button');
+        copyAiBtn.className = 'btn-icon search-result-copy-ai';
+        copyAiBtn.type = 'button';
+        copyAiBtn.title = '複製給 AI';
+        copyAiBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+        copyAiBtn.addEventListener('click', () => {
+          const today = new Date().toISOString().slice(0, 10);
+          const text = `[${typeInfo.label}]：${item.snippet}（來源：PAIS，${today}）`;
+          navigator.clipboard.writeText(text).catch(() => {});
+          const icon = copyAiBtn.querySelector('.material-symbols-outlined');
+          icon.textContent = 'check';
+          setTimeout(() => { icon.textContent = 'content_copy'; }, 1500);
+        });
+        el.appendChild(copyAiBtn);
       } else {
         el.innerHTML =
           `<div class="search-result-title">${escapeHTML(item.title)}</div>` +
           `<div class="search-result-snippet">${highlightQuery(item.snippet, query)}</div>`;
+
+        const copyAiBtn = document.createElement('button');
+        copyAiBtn.className = 'btn-icon search-result-copy-ai';
+        copyAiBtn.type = 'button';
+        copyAiBtn.title = '複製給 AI';
+        copyAiBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+        copyAiBtn.addEventListener('click', () => {
+          const today = new Date().toISOString().slice(0, 10);
+          const text = `[PAIS]：${item.title} — ${item.snippet}（來源：PAIS，${today}）`;
+          navigator.clipboard.writeText(text).catch(() => {});
+          const icon = copyAiBtn.querySelector('.material-symbols-outlined');
+          icon.textContent = 'check';
+          setTimeout(() => { icon.textContent = 'content_copy'; }, 1500);
+        });
+        el.appendChild(copyAiBtn);
       }
       section.appendChild(el);
     });

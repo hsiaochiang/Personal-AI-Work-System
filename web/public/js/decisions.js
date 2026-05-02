@@ -129,6 +129,7 @@ function parseMemoryDecisions(content) {
       why: contentMap['決策理由'] || '',
       impact: contentMap['影響範圍'] || '',
       evidence: '',
+      status: contentMap['狀態'] || '有效',
       source: 'memory',
       conflict: false,
     });
@@ -250,11 +251,19 @@ function renderDecisions() {
     const badgeClass = d.source === 'memory' ? 'source-memory' : 'source-log';
     const badgeLabel = d.source === 'memory' ? '記憶層' : '決策 Log';
 
+    const statusMap = {
+      '有效':   { cls: 'decision-status-active',   label: '有效' },
+      '已取代': { cls: 'decision-status-replaced', label: '已取代' },
+      '已過期': { cls: 'decision-status-expired',  label: '已過期' },
+    };
+    const statusInfo = statusMap[d.status] || statusMap['有效'];
+
     card.innerHTML = `
       <div class="decision-card-header">
         <div class="decision-meta">
           ${d.date ? `<span class="decision-date">${escapeHTML(d.date)}</span>` : ''}
           <span class="source-badge ${badgeClass}">${badgeLabel}</span>
+          <span class="decision-status-badge ${statusInfo.cls}">${statusInfo.label}</span>
         </div>
       </div>
       <div class="decision-title">${escapeHTML(d.decision)}</div>
