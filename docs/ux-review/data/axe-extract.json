@@ -1,11 +1,11 @@
 {
   "page": "extract",
   "url": "http://localhost:3000/extract",
-  "timestamp": "2026-05-01T15:10:09.140Z",
+  "timestamp": "2026-05-02T16:27:51.896Z",
   "violations": [],
-  "passes": 25,
+  "passes": 26,
   "incomplete": 1,
-  "inapplicable": 62,
+  "inapplicable": 61,
   "violationCount": 0,
   "criticalCount": 0,
   "seriousCount": 0

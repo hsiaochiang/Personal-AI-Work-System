@@ -1,7 +1,7 @@
 {
   "page": "handoff",
   "url": "http://localhost:3000/handoff",
-  "timestamp": "2026-05-01T15:10:33.833Z",
+  "timestamp": "2026-05-02T16:28:14.013Z",
   "violations": [
     {
       "id": "scrollable-region-focusable",
@@ -52,9 +52,9 @@
       ]
     }
   ],
-  "passes": 23,
+  "passes": 29,
   "incomplete": 0,
-  "inapplicable": 63,
+  "inapplicable": 57,
   "violationCount": 1,
   "criticalCount": 0,
   "seriousCount": 1
